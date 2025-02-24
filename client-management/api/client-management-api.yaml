@@ -1,0 +1,286 @@
+openapi: 3.0.3
+info:
+  title: Client Management API
+  version: 1.0.0
+  description: API для управления клиентами в edmebank
+servers:
+  - url: https://api.edmebank.com/client-management
+    description: Production server
+  - url: http://localhost:8080
+    description: Local development server
+
+paths:
+  /api/clients/register:
+    post:
+      summary: Регистрация нового клиента
+      description: Создание нового клиента в системе
+      operationId: registerClient
+      tags:
+        - Clients
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ClientRegistrationRequest"
+      responses:
+        "200":
+          description: Клиент успешно зарегистрирован
+          content:
+            application/json:
+              schema:
+                type: string
+                example: "Клиент зарегистрирован"
+        "400":
+          description: Ошибка валидации данных
+        "409":
+          description: Клиент с такими данными уже существует
+
+  /api/clients/{clientId}/update:
+    put:
+      summary: Обновление данных клиента
+      description: Внесение изменений в персональные данные клиента
+      operationId: updateClient
+      tags:
+        - Clients
+      parameters:
+        - name: clientId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ClientUpdateRequest"
+      responses:
+        "200":
+          description: Данные клиента обновлены
+          content:
+            application/json:
+              schema:
+                type: string
+                example: "Данные клиента обновлены"
+        "404":
+          description: Клиент не найден
+
+  /api/clients/{clientId}/documents:
+    post:
+      summary: Загрузка документов клиента
+      description: Добавление и обновление документов удостоверяющих личность
+      operationId: uploadDocuments
+      tags:
+        - Clients
+      parameters:
+        - name: clientId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ClientDocumentRequest"
+      responses:
+        "200":
+          description: Документы загружены
+          content:
+            application/json:
+              schema:
+                type: string
+                example: "Документы загружены"
+        "400":
+          description: Ошибка валидации данных
+
+  /api/clients/{clientId}/aml-check:
+    get:
+      summary: AML/KYC проверка клиента
+      description: Проверка клиента на благонадежность
+      operationId: checkClientAML
+      tags:
+        - Clients
+      parameters:
+        - name: clientId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: AML/KYC проверка завершена
+          content:
+            application/json:
+              schema:
+                type: string
+                example: "AML/KYC проверка завершена"
+        "404":
+          description: Клиент не найден
+
+  /api/clients/{clientId}/products:
+    post:
+      summary: Привязка клиента к банковскому продукту
+      description: Привязка клиента к банковскому счету, кредиту или депозиту
+      operationId: linkProductToClient
+      tags:
+        - Clients
+      parameters:
+        - name: clientId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ClientProductRequest"
+      responses:
+        "200":
+          description: Продукт успешно привязан
+          content:
+            application/json:
+              schema:
+                type: string
+                example: "Продукт привязан к клиенту"
+        "404":
+          description: Клиент не найден
+
+  /api/clients/{clientId}/notifications:
+    post:
+      summary: Отправка уведомления клиенту
+      description: Уведомление клиента о важных событиях (срок действия паспорта, необходимость обновления данных и т.п.)
+      operationId: sendNotification
+      tags:
+        - Clients
+      parameters:
+        - name: clientId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NotificationRequest"
+      responses:
+        "200":
+          description: Уведомление успешно отправлено
+          content:
+            application/json:
+              schema:
+                type: string
+                example: "Уведомление отправлено"
+        "404":
+          description: Клиент не найден
+
+components:
+  schemas:
+    ClientRegistrationRequest:
+      type: object
+      required:
+        - firstName
+        - lastName
+        - birthDate
+        - passport
+        - address
+        - phone
+      properties:
+        firstName:
+          type: string
+          example: Иван
+        lastName:
+          type: string
+          example: Петров
+        middleName:
+          type: string
+          example: Сергеевич
+        birthDate:
+          type: string
+          format: date
+          example: "1990-05-15"
+        passport:
+          type: object
+          properties:
+            series:
+              type: string
+              example: "4510"
+            number:
+              type: string
+              example: "123456"
+            issuedBy:
+              type: string
+              example: "ОВД Пресненского района г. Москвы"
+            issuedDate:
+              type: string
+              format: date
+              example: "2010-07-20"
+        address:
+          type: string
+          example: "Москва, ул. Тверская, д. 10"
+        phone:
+          type: string
+          example: "+79261112233"
+        email:
+          type: string
+          format: email
+          example: "ivan.petrov@example.com"
+
+    ClientUpdateRequest:
+      type: object
+      properties:
+        phone:
+          type: string
+          example: "+79260001122"
+        email:
+          type: string
+          format: email
+          example: "new.email@example.com"
+        address:
+          type: string
+          example: "Санкт-Петербург, Невский пр., д. 15"
+
+    ClientDocumentRequest:
+      type: object
+      properties:
+        documentType:
+          type: string
+          example: "passport"
+        documentData:
+          type: string
+          format: binary
+          description: "Файл документа в base64"
+
+    ClientProductRequest:
+      type: object
+      required:
+        - productId
+      properties:
+        productId:
+          type: string
+          format: uuid
+          example: "550e8400-e29b-41d4-a716-446655440000"
+
+    NotificationRequest:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          example: "Напоминаем вам о необходимости обновить паспорт."
+        type:
+          type: string
+          enum: [EMAIL, SMS, PUSH]
+          example: "SMS"

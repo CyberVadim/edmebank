@@ -1,1 +1,5 @@
-spring.application.name=client-management
+spring:
+  main:
+    banner-mode: off
+  application:
+    name: client-management
