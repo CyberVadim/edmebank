@@ -6,7 +6,7 @@ info:
 servers:
   - url: https://api.edmebank.com/client-management
     description: Production server
-  - url: http://localhost:8080
+  - url: http://localhost:8081
     description: Local development server
 
 paths:
