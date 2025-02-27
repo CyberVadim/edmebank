@@ -8,11 +8,19 @@ import com.edmebank.clientmanagement.exception.ClientNotFoundException;
 import com.edmebank.clientmanagement.exception.InvalidPassportException;
 import com.edmebank.clientmanagement.mapper.ClientMapper;
 import com.edmebank.clientmanagement.model.Client;
+import com.edmebank.clientmanagement.model.ClientDocument;
+import com.edmebank.clientmanagement.repository.ClientDocumentRepository;
 import com.edmebank.clientmanagement.repository.ClientRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -23,6 +31,7 @@ import java.util.UUID;
 public class ClientService {
 
     private final ClientRepository clientRepository;
+    private final ClientDocumentRepository clientDocumentRepository;
     private final ClientMapper clientMapper;
     private final DadataFeignClient dadataFeignClient;
 
@@ -78,5 +87,35 @@ public class ClientService {
             throw new InvalidPassportException("Паспорт числится недействительным в базе МВД");
         }
         return qc == 0; // Паспорт действителен
+    }
+
+    public void uploadDocuments(UUID clientId, List<MultipartFile> documents) {
+        String uploadDir = "D:/EDMEData/documents/";
+
+        Client client = clientRepository.findById(clientId)
+                .orElseThrow(() -> new ClientNotFoundException("Клиент с ID " + clientId + " не найден"));
+
+        for (MultipartFile document : documents) {
+            try {
+                // Создаем директорию, если ее нет
+                Files.createDirectories(Paths.get(uploadDir));
+
+                // Генерируем уникальное имя файла
+                String filename = clientId + "_" + document.getOriginalFilename();
+                Path filePath = Paths.get(uploadDir + filename);
+
+                // Сохраняем файл
+                Files.write(filePath, document.getBytes());
+
+                // Сохраняем путь в БД
+                ClientDocument clientDocument = new ClientDocument();
+                clientDocument.setClient(client);
+                clientDocument.setDocumentPath(filePath.toString());
+                clientDocumentRepository.save(clientDocument);
+
+            } catch (IOException e) {
+                throw new RuntimeException("Ошибка при сохранении файла", e);
+            }
+        }
     }
 }

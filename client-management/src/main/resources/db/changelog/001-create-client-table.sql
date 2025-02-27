@@ -24,5 +24,5 @@ CREATE TABLE IF NOT EXISTS cm_schema.clients
 -- Добавление тестовых данных
 INSERT INTO cm_schema.clients (id, first_name, last_name, date_of_birth, passport_number, email)
 VALUES
-    (gen_random_uuid(), 'Иван', 'Иванов', '1985-06-15', '1234567890', 'ivan.ivanov@example.com'),
-    (gen_random_uuid(), 'Мария', 'Петрова', '1990-08-22', '0987654321', 'maria.petrova@example.com');
+    ('10000000-0000-0000-0000-000000000201', 'Иван', 'Иванов', '1985-06-15', '1234567890', 'ivan.ivanov@example.com'),
+    ('10000000-0000-0000-0000-000000000202', 'Мария', 'Петрова', '1990-08-22', '0987654321', 'maria.petrova@example.com');
