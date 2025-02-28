@@ -6,5 +6,8 @@
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
     <include file="/db/changelog/001-create-client-table.sql"/>
-    <include file="/db/changelog/002-create-client-table.sql"/>
+    <include file="/db/changelog/002-create-client-document-table.sql"/>
+    <include file="/db/changelog/003-create-account-table.sql"/>
+    <include file="/db/changelog/004-create-credit-table.sql"/>
+    <include file="/db/changelog/005-create-deposit-table.sql"/>
 </databaseChangeLog>

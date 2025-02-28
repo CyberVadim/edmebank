@@ -1,6 +1,7 @@
 package com.edmebank.clientmanagement.controller;
 
 import com.edmebank.clientmanagement.dto.ClientDTO;
+import com.edmebank.clientmanagement.dto.bank_product.ClientProductRequest;
 import com.edmebank.clientmanagement.service.ClientService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -45,18 +46,21 @@ public class ClientController {
             return ResponseEntity.badRequest().body("Ошибка загрузки документов");
         }
     }
-//
+
+    //
 //    @GetMapping("/{clientId}/aml-check")
 //    public ResponseEntity<String> checkClientAML(@PathVariable UUID clientId) {
 //        // Логика AML/KYC проверки
 //        return ResponseEntity.ok("AML/KYC проверка завершена");
 //    }
 //
-//    @PostMapping("/{clientId}/products")
-//    public ResponseEntity<String> linkProductToClient(@PathVariable UUID clientId, @RequestBody ClientProductRequest request) {
-//        // Логика привязки банковского продукта
-//        return ResponseEntity.ok("Продукт привязан к клиенту");
-//    }
+    @PostMapping("/{clientId}/products")
+    public ResponseEntity<String> linkProductToClient(
+            @PathVariable UUID clientId,
+            @RequestBody ClientProductRequest request) {
+        clientService.linkProductToClient(clientId, request);
+        return ResponseEntity.ok("Продукт привязан к клиенту");
+    }
 //
 //    @PostMapping("/{clientId}/notifications")
 //    public ResponseEntity<String> sendNotification(@PathVariable UUID clientId, @RequestBody NotificationRequest request) {

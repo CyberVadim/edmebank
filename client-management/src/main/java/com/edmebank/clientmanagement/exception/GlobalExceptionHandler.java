@@ -2,6 +2,7 @@ package com.edmebank.clientmanagement.exception;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -47,5 +48,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(InvalidPassportException.class)
     public Map<String, String> handleInvalidPassportException(InvalidPassportException ex) {
         return Map.of("error", ex.getMessage());
+    }
+
+    @ExceptionHandler(TerroristFoundException.class)
+    public ResponseEntity<Map<String, String>> handleTerroristFoundException(TerroristFoundException ex) {
+        Map<String, String> response = new HashMap<>();
+        response.put("error", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
     }
 }
