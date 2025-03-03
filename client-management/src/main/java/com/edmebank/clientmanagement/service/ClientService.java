@@ -3,7 +3,6 @@ package com.edmebank.clientmanagement.service;
 import com.edmebank.clientmanagement.client.DadataFeignClient;
 import com.edmebank.clientmanagement.client.TerrorismCheckClient;
 import com.edmebank.clientmanagement.dto.ClientDTO;
-import com.edmebank.clientmanagement.dto.bank_product.ClientProductRequest;
 import com.edmebank.clientmanagement.dto.dadata.DadataPassportResponse;
 import com.edmebank.clientmanagement.dto.documenter.TerrorismCheckRequest;
 import com.edmebank.clientmanagement.dto.documenter.TerrorismCheckResponse;
@@ -14,15 +13,8 @@ import com.edmebank.clientmanagement.exception.TerroristFoundException;
 import com.edmebank.clientmanagement.mapper.ClientMapper;
 import com.edmebank.clientmanagement.model.Client;
 import com.edmebank.clientmanagement.model.ClientDocument;
-import com.edmebank.clientmanagement.model.bank_product.Account;
-import com.edmebank.clientmanagement.model.bank_product.Credit;
-import com.edmebank.clientmanagement.model.bank_product.Deposit;
-import com.edmebank.clientmanagement.repository.AccountRepository;
 import com.edmebank.clientmanagement.repository.ClientDocumentRepository;
 import com.edmebank.clientmanagement.repository.ClientRepository;
-import com.edmebank.clientmanagement.repository.CreditRepository;
-import com.edmebank.clientmanagement.repository.DepositRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -30,14 +22,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
 import java.util.UUID;
 
 @Slf4j
@@ -47,9 +37,6 @@ public class ClientService {
 
     private final ClientRepository clientRepository;
     private final ClientDocumentRepository clientDocumentRepository;
-    private final AccountRepository accountRepository;
-    private final CreditRepository creditRepository;
-    private final DepositRepository depositRepository;
     private final ClientMapper clientMapper;
     private final DadataFeignClient dadataFeignClient;
     private final TerrorismCheckClient terrorismCheckClient;
@@ -124,35 +111,6 @@ public class ClientService {
         }
     }
 
-    @Transactional
-    public void linkProductToClient(UUID clientId, ClientProductRequest request) {
-        Client client = clientRepository.findById(clientId)
-                .orElseThrow(() -> new ClientNotFoundException("Клиент не найден"));
-
-        switch (request.getProductType()) {
-            case "ACCOUNT":
-                Account account = new Account();
-                account.setAccountNumber(generateAccountNumber());
-                account.setClient(client);
-                accountRepository.save(account);
-                break;
-            case "CREDIT":
-                Credit credit = new Credit();
-                credit.setAmount(BigDecimal.valueOf(0.0));
-                credit.setClient(client);
-                creditRepository.save(credit);
-                break;
-            case "DEPOSIT":
-                Deposit deposit = new Deposit();
-                deposit.setBalance(BigDecimal.valueOf(0.0));
-                deposit.setClient(client);
-                depositRepository.save(deposit);
-                break;
-            default:
-                throw new IllegalArgumentException("Некорректный тип продукта");
-        }
-    }
-
     public boolean isValidPassport(String passportNumber) {
         String token = "Token 50353c0408a3f1a0c2805bd8e0342a2d11a394f2";
         String secret = "b7d373eed05ca1b9f3d8550913b1ae99f07fae34";
@@ -194,8 +152,5 @@ public class ClientService {
         }
 
         return false;
-    }
-    private String generateAccountNumber() {
-        return "ACC" + (1000000000 + new Random().nextInt(900000000));
     }
 }

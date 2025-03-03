@@ -54,13 +54,7 @@ public class ClientController {
 //        return ResponseEntity.ok("AML/KYC проверка завершена");
 //    }
 //
-    @PostMapping("/{clientId}/products")
-    public ResponseEntity<String> linkProductToClient(
-            @PathVariable UUID clientId,
-            @RequestBody ClientProductRequest request) {
-        clientService.linkProductToClient(clientId, request);
-        return ResponseEntity.ok("Продукт привязан к клиенту");
-    }
+
 //
 //    @PostMapping("/{clientId}/notifications")
 //    public ResponseEntity<String> sendNotification(@PathVariable UUID clientId, @RequestBody NotificationRequest request) {

@@ -18,7 +18,7 @@ import java.util.UUID;
 @Table(name = "credits")
 @Getter
 @Setter
-public class Credit {
+public class Credit implements BankProduct {
     @Id
     @GeneratedValue
     private UUID id;
