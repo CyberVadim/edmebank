@@ -10,4 +10,5 @@
     <include file="/db/changelog/003-create-account-table.sql"/>
     <include file="/db/changelog/004-create-credit-table.sql"/>
     <include file="/db/changelog/005-create-deposit-table.sql"/>
+    <include file="/db/changelog/006-create-notification-table.sql"/>
 </databaseChangeLog>
