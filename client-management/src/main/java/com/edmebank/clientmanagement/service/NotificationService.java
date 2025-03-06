@@ -27,7 +27,7 @@ public class NotificationService {
         notification.setClientId(request.getClientId()); // если clientId — UUID
         notification.setEmail(request.getEmail());
         notification.setMessage(request.getMessage());
-        notification.setType(Notification.NotificationType.valueOf(request.getType()));
+        notification.setType(request.getType());
         notification.setStatus(Notification.NotificationStatus.PENDING); // Устанавливаем статус по умолчанию
         notification.setTimestamp(Instant.now());
 

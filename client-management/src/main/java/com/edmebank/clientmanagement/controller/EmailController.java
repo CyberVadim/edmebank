@@ -7,6 +7,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
 @Slf4j
 @RestController
 @RequestMapping("/send")
@@ -17,8 +21,42 @@ public class EmailController {
         this.mailSender = mailSender;
     }
 
+    /**
+     * Проверяет доступность сайта, доступного только через VPN.
+     */
+    private boolean isVpnActive() {
+        return isSiteAccessible("https://www.rutracker.org");
+    }
+
+    /**
+     * Проверяет, доступен ли указанный сайт.
+     */
+    private boolean isSiteAccessible(String siteUrl) {
+        try {
+            URL url = new URL(siteUrl);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+            connection.setConnectTimeout(3000); // 3 секунды
+            connection.setReadTimeout(3000);
+            int responseCode = connection.getResponseCode();
+
+            if (responseCode == 200) {
+                log.warn("VPN detected! {} is accessible.", siteUrl);
+                return true; // VPN включен, так как сайт открылся
+            }
+        } catch (IOException e) {
+            log.info("VPN is likely off. {} is not accessible.", siteUrl);
+        }
+        return false;
+    }
+
+
     @GetMapping
     public String sendEmail() {
+        if (isVpnActive()) {
+            log.warn("VPN is active. SMTP may be blocked.");
+            return "Error: Disable VPN and try again.";
+        }
         try {
             SimpleMailMessage message = new SimpleMailMessage();
             message.setFrom("edmebank@mail.ru");

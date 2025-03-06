@@ -1,17 +1,20 @@
 package com.edmebank.clientmanagement.dto;
 
+import com.edmebank.clientmanagement.model.notification.Notification;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.UUID;
 
 @Getter
 @Setter
 public class NotificationRequest {
-    private Long clientId;
+    private UUID clientId;
     private String email;
     private String message;
-    private String type;
+    private Notification.NotificationType type;
 
-    public NotificationRequest(Long clientId, String email, String message, String type) {
+    public NotificationRequest(UUID clientId, String email, String message, Notification.NotificationType type) {
         this.clientId = clientId;
         this.email = email;
         this.message = message;
