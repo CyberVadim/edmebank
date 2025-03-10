@@ -6,6 +6,7 @@ import com.edmebank.clientmanagement.dto.ClientDTO;
 import com.edmebank.clientmanagement.dto.dadata.DadataPassportResponse;
 import com.edmebank.clientmanagement.dto.documenter.TerrorismCheckRequest;
 import com.edmebank.clientmanagement.dto.documenter.TerrorismCheckResponse;
+import com.edmebank.clientmanagement.dto.notification.NotificationSettingsDto;
 import com.edmebank.clientmanagement.exception.ClientAlreadyExistsException;
 import com.edmebank.clientmanagement.exception.ClientNotFoundException;
 import com.edmebank.clientmanagement.exception.InvalidPassportException;

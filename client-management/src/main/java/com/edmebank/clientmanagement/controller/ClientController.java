@@ -2,10 +2,13 @@ package com.edmebank.clientmanagement.controller;
 
 import com.edmebank.clientmanagement.dto.ClientDTO;
 import com.edmebank.clientmanagement.dto.bank_product.ClientProductRequest;
+import com.edmebank.clientmanagement.dto.notification.NotificationSettingsDto;
+import com.edmebank.clientmanagement.model.Client;
 import com.edmebank.clientmanagement.service.ClientService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -47,19 +50,10 @@ public class ClientController {
         }
     }
 
-    //
 //    @GetMapping("/{clientId}/aml-check")
 //    public ResponseEntity<String> checkClientAML(@PathVariable UUID clientId) {
 //        // Логика AML/KYC проверки
 //        return ResponseEntity.ok("AML/KYC проверка завершена");
-//    }
-//
-
-//
-//    @PostMapping("/{clientId}/notifications")
-//    public ResponseEntity<String> sendNotification(@PathVariable UUID clientId, @RequestBody NotificationRequest request) {
-//        // Логика отправки уведомлений
-//        return ResponseEntity.ok("Уведомление отправлено");
 //    }
 }
 

@@ -56,4 +56,10 @@ public class GlobalExceptionHandler {
         response.put("error", ex.getMessage());
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
     }
+
+    @ExceptionHandler(VpnActiveException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public String handleVpnActiveException(VpnActiveException e) {
+        return e.getMessage();
+    }
 }

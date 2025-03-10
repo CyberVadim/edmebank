@@ -1,4 +1,4 @@
-package com.edmebank.clientmanagement.dto;
+package com.edmebank.clientmanagement.dto.notification;
 
 import com.edmebank.clientmanagement.model.notification.Notification;
 import lombok.Getter;

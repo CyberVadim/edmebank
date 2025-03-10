@@ -5,6 +5,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,6 +15,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.time.Period;
 import java.util.UUID;
 
 @Entity
@@ -26,18 +29,19 @@ public class Client {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(nullable = false, updatable = false)
     private UUID id;
 
-    @Column(length = 100)
+    @Column(length = 100, nullable = false)
     private String firstName;
 
-    @Column(length = 100)
+    @Column(length = 100, nullable = false)
     private String lastName;
 
     @Column(length = 100)
     private String middleName;
 
-    @Column(name = "date_of_birth", columnDefinition = "DATE")
+    @Column(name = "date_of_birth", columnDefinition = "DATE", nullable = false)
     private LocalDate dateOfBirth;
 
     @Column(unique = true, nullable = false, length = 10)
@@ -67,7 +71,26 @@ public class Client {
     @Column(length = 14)
     private String snils;
 
-    private boolean amlChecked;
+    @Column(nullable = false)
+    private boolean amlChecked = false;
+
+    @Column(name = "passport_expiry_date", columnDefinition = "DATE")
+    private LocalDate passportExpiryDate;
+
+    @PrePersist
+    @PreUpdate
+    public void calculatePassportExpiryDate() {
+        if (dateOfBirth == null) {
+            return;
+        }
+        int age = Period.between(dateOfBirth, LocalDate.now()).getYears();
+
+        if (age < 20) {
+            passportExpiryDate = dateOfBirth.plusYears(20);
+        } else if (age < 45) {
+            passportExpiryDate = dateOfBirth.plusYears(45);
+        } else {
+            passportExpiryDate = null;
+        }
+    }
 }
-
-

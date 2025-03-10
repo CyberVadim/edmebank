@@ -1,8 +1,11 @@
 package com.edmebank.clientmanagement.controller;
 
+import jakarta.mail.internet.MimeMessage;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,6 +19,8 @@ import java.net.URL;
 @RequestMapping("/send")
 public class EmailController {
     private final JavaMailSender mailSender;
+    @Value("${mail.sender}")
+    private String senderEmail;
 
     public EmailController(JavaMailSender mailSender) {
         this.mailSender = mailSender;
@@ -58,15 +63,17 @@ public class EmailController {
             return "Error: Disable VPN and try again.";
         }
         try {
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom("edmebank@mail.ru");
-            message.setTo("murik311088@yandex.ru");
-            message.setSubject("Simple Subject");
-            message.setText("Simple Text");
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+            helper.setFrom(senderEmail);
+            helper.setTo("murik311088@yandex.ru");
+            helper.setSubject("Simple Subject");
+            helper.setText("Simple Text", true);
             mailSender.send(message);
+            log.info("Email sent to {}", "murik311088@yandex.ru");
             return "Email sent successfully";
         } catch (Exception e) {
-            log.error("Error sending email: {}", e.getMessage(), e);
+            log.error("Failed to send email to {}", "murik311088@yandex.ru", e);
             return e.getMessage();
         }
     }

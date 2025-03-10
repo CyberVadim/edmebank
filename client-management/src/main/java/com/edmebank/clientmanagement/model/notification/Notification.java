@@ -1,42 +1,58 @@
 package com.edmebank.clientmanagement.model.notification;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.Instant;
 import java.util.UUID;
 
-@Entity
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@Entity
 @Table(name = "notifications")
 public class Notification {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private UUID clientId;
+
     private String email;
+
+    @Column(columnDefinition = "TEXT")
     private String message;
+
     @Enumerated(EnumType.STRING)
     private NotificationType type;
-    @Column(name = "timestamp", nullable = false)
-    private Instant timestamp;
+
     @Enumerated(EnumType.STRING)
     private NotificationStatus status;
+    private Instant createdAt;
+    private Instant lastAttemptAt;
+    private int attemptCount;
 
-    public enum NotificationType {
-        INFO,
-        WARNING,
-        ERROR,
-        ALERT
-    }
+    private boolean clientConfirmed;
+    private Instant clientResponseDate;
 
     public enum NotificationStatus {
-        PENDING,
-        SENT,
-        FAILED
+        PENDING, SENT, DELIVERED, READ, FAILED
+    }
+
+    public enum NotificationType {
+        PASSPORT_EXPIRY, PRODUCT_UPDATE, DEPOSIT_INTEREST
     }
 }
-
