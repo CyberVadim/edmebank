@@ -19,7 +19,7 @@ import java.net.URL;
 @RequestMapping("/send")
 public class EmailController {
     private final JavaMailSender mailSender;
-    @Value("${mail.sender}")
+    @Value("${spring.mail.username}")
     private String senderEmail;
 
     public EmailController(JavaMailSender mailSender) {
