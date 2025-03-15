@@ -1,1 +1,47 @@
-spring.application.name=client-management
+server:
+  port: 8081
+spring:
+  main:
+    banner-mode: off
+  application:
+    name: client-management
+  datasource:
+    url: jdbc:postgresql://localhost:5432/cm_db
+    driver-class-name: org.postgresql.Driver
+    username: postgres
+    password: postgres
+    hikari:
+      schema: cm_schema
+      connection-init-sql: create schema if not exists cm_schema
+      connection-timeout: 10000
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 10MB
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        use_sql_comments: true
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.xml
+  mail:
+    host: smtp.mail.ru
+    port: 465
+    username: edmebank@mail.ru
+    password: 4vp3qgL0LHR61yTdpDM9
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.ssl.enable: true
+
+
+dadata:
+  api:
+    url: "https://cleaner.dadata.ru/api/v1/clean/passport"
+    authHeader: "Token 50353c0408a3f1a0c2805bd8e0342a2d11a394f2"
+    secret: "b7d373eed05ca1b9f3d8550913b1ae99f07fae34"
