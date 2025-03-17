@@ -33,7 +33,6 @@ public class SpectrumService {
             "check_person/expired_passport_v2",
             "check_person/credit_history",
             "check_person/inoagent",
-            "check_person/linkasso_manager_for",
             "check_person/person_inn"
     );
 
@@ -115,7 +114,6 @@ public class SpectrumService {
             case "check_person/expired_passport_v2" -> "Просроченный паспорт";
             case "check_person/credit_history" -> "Проблемы с кредитной историей";
             case "check_person/inoagent" -> "Иностранный агент";
-            case "check_person/linkasso_manager_for" -> "Менеджер Linkasso";
             case "check_person/person_inn" -> "ИНН физического лица";
 
             default -> "Неизвестная проверка (" + id + ")";
