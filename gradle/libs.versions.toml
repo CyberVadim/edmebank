@@ -1,0 +1,16 @@
+[versions]
+# Внешние либы, которые не покрывает BOM
+spring-cloud = "4.2.0"
+springdoc = "2.6.0"
+mapstruct = "1.6.3"
+
+[libraries]
+# Spring Cloud
+spring-cloud-openfeign = { module = "org.springframework.cloud:spring-cloud-starter-openfeign", version.ref = "spring-cloud" }
+
+# SpringDoc
+springdoc-openapi = { module = "org.springdoc:springdoc-openapi-starter-webmvc-ui", version.ref = "springdoc" }
+
+# MapStruct
+mapstruct = { module = "org.mapstruct:mapstruct", version.ref = "mapstruct" }
+lombok-mapstruct-binding = { module = "org.projectlombok:lombok-mapstruct-binding", version = "0.2.0" }
