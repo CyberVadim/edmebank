@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS cm_schema.clients
     last_name           VARCHAR(100) NOT NULL,                        -- Фамилия
     middle_name         VARCHAR(100),                                 -- Отчество
     date_of_birth       DATE NOT NULL,                                -- Дата рождения
-    passport_number     VARCHAR(10) UNIQUE NOT NULL,                  -- Номер паспорта
+    passport_number     VARCHAR(6) UNIQUE NOT NULL,                  -- Номер паспорта
     passport_series     VARCHAR(4),                                   -- Серия паспорта
     passport_issued_by  VARCHAR(255),                                 -- Кем выдан паспорт
     passport_issue_date DATE,                                         -- Дата выдачи паспорта
@@ -25,5 +25,5 @@ CREATE TABLE IF NOT EXISTS cm_schema.clients
 -- Добавление тестовых данных
 INSERT INTO cm_schema.clients (id, first_name, last_name, middle_name, date_of_birth, passport_number, passport_series, passport_issued_by, passport_issue_date, address, phone, email, inn, snils, aml_checked, passport_expiry_date)
 VALUES
-    ('10000000-0000-0000-0000-000000000201', 'Семен', 'Корнейчук', 'Дмитриевич', '1995-01-16', '4218127156', '4508', 'ОВД Москвы', '2018-05-30', 'г. Москва, ул. Ленина, д. 10', '+79633751002', 'darggun@gmail.com', '056105627867', '112-233-445 95', TRUE, '2025-04-15'),
-    ('10000000-0000-0000-0000-000000000202', 'Мария', 'Петрова', 'Викторовна', '1990-08-22', '0987654321', '4607', 'ОВД Санкт-Петербурга', '2006-09-12', 'г. Санкт-Петербург, пр. Невский, д. 20', '+79898924747', 'murik311088@yandex.ru', '781234567890', '223-334-556 12', TRUE, '2025-05-22');
+    ('10000000-0000-0000-0000-000000000201', 'Семен', 'Корнейчук', 'Дмитриевич', '1995-01-16', '421812', '4508', 'ОВД Москвы', '2018-05-30', 'г. Москва, ул. Ленина, д. 10', '+79633751002', 'darggun@gmail.com', '056105627867', '112-233-445 95', TRUE, '2025-04-15'),
+    ('10000000-0000-0000-0000-000000000202', 'Мария', 'Петрова', 'Викторовна', '1990-08-22', '098765', '4607', 'ОВД Санкт-Петербурга', '2006-09-12', 'г. Санкт-Петербург, пр. Невский, д. 20', '+79898924747', 'murik311088@yandex.ru', '781234567890', '223-334-556 12', TRUE, '2025-05-22');

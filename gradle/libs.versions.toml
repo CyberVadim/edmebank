@@ -1,7 +1,7 @@
 [versions]
 # Внешние либы, которые не покрывает BOM
 spring-cloud = "4.2.0"
-springdoc = "2.6.0"
+springdoc = "2.8.3"
 mapstruct = "1.6.3"
 
 [libraries]

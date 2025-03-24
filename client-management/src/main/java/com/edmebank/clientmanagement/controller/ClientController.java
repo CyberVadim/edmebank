@@ -5,6 +5,11 @@ import com.edmebank.clientmanagement.dto.bank_product.ClientProductRequest;
 import com.edmebank.clientmanagement.dto.notification.NotificationSettingsDto;
 import com.edmebank.clientmanagement.model.Client;
 import com.edmebank.clientmanagement.service.ClientService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -28,11 +33,30 @@ public class ClientController {
 
     private final ClientService clientService;
 
+    @Operation(summary = "Регистрация клиента")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Клиент успешно зарегистрирован",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = UUID.class))),
+            @ApiResponse(responseCode = "400", description = "Некорректный запрос",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(example = "Неверный формат email"))),
+            @ApiResponse(responseCode = "403", description = "Доступ запрещён",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(example = "Недостаточно прав доступа"))),
+            @ApiResponse(responseCode = "404", description = "Не найдено",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(example = "Клиент не найден"))),
+            @ApiResponse(responseCode = "409", description = "Конфликт данных",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(example = "{ \"error\": \"Клиент с таким email уже существует\" }")))
+    })
     @PostMapping("/register")
     public ResponseEntity<UUID> registerClient(@Valid @RequestBody ClientDTO clientDTO) {
         UUID clientId = clientService.registerClient(clientDTO);
         return ResponseEntity.ok(clientId);
     }
+
 
     @PutMapping("/{clientId}/update")
     public ResponseEntity<Void> updateClient(@PathVariable UUID clientId, @Valid @RequestBody ClientDTO clientDTO) {
