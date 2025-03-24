@@ -1,0 +1,13 @@
+plugins {
+    id("java")
+}
+
+group = 'com.edmebank'
+version = '1.0.0'
+
+dependencies {
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
