@@ -30,7 +30,7 @@ dependencies {
 
     // MapStruct
     implementation libs.mapstruct
-    annotationProcessor libs.mapstruct
+    annotationProcessor libs.mapstruct.processor
     annotationProcessor libs.lombok.mapstruct.binding
 
     // Lombok
