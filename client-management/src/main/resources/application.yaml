@@ -1,5 +1,12 @@
 server:
   port: 8081
+
+logging:
+  level:
+    root: INFO
+    org.springframework.mail: DEBUG
+    jakarta.mail: DEBUG
+
 spring:
   main:
     banner-mode: off
