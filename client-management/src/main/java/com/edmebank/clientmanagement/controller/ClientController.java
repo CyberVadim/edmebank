@@ -61,7 +61,7 @@ public class ClientController {
     @PutMapping("/{clientId}/update")
     public ResponseEntity<Void> updateClient(@PathVariable UUID clientId, @Valid @RequestBody ClientDTO clientDTO) {
         clientService.updateClient(clientId, clientDTO);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/{clientId}/documents")
