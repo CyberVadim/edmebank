@@ -60,7 +60,7 @@ public class ClientService {
         if (isTerrorist) {
             throw new TerroristFoundException("Клиент найден в базе террористов!");
         } else {
-            log.info("Клиент чист.");
+            log.info("Клиент проверен на причастность к терроризму, все ОК.");
         }
 
 
@@ -135,6 +135,7 @@ public class ClientService {
     }
 
     public boolean isClientTerrorist() {
+
         return false;
     }
 }

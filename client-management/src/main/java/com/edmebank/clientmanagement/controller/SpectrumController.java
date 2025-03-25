@@ -1,6 +1,5 @@
 package com.edmebank.clientmanagement.controller;
 
-import com.edmebank.clientmanagement.dto.spectrum.getReport.RegistrationCheckResponseDto;
 import com.edmebank.clientmanagement.dto.spectrum.getReport.ReportData;
 import com.edmebank.clientmanagement.service.SpectrumService;
 import lombok.RequiredArgsConstructor;
@@ -31,22 +30,11 @@ public class SpectrumController {
     }
 
     @GetMapping("/check/{uid}")
-    public String checkClientRegistration(@PathVariable String uid) {
-        //RegistrationCheckResponseDto result = spectrumService.canRegisterClient(uid);
-        String result = spectrumService.canRegisterClient(uid);
-        return result;
-//        return result.isCanRegister()
-//                ? ResponseEntity.ok(result)
-//                : ResponseEntity.status(HttpStatus.FORBIDDEN).body(result);
+    public ResponseEntity<String> checkClientRegistration(@PathVariable String uid) {
+        boolean canRegister = spectrumService.canRegisterClient(uid);
+        return canRegister
+                ? ResponseEntity.ok("Клиент может быть зарегистрирован")
+                : ResponseEntity.status(HttpStatus.FORBIDDEN).body("Клиенту отказано в регистрации");
     }
-
-
-//    @GetMapping("/check/{uid}")
-//    public ResponseEntity<String> checkClientRegistration(@PathVariable String uid) {
-//        boolean canRegister = spectrumService.canRegisterClient(uid);
-//        return canRegister
-//                ? ResponseEntity.ok("Клиент может быть зарегистрирован")
-//                : ResponseEntity.status(HttpStatus.FORBIDDEN).body("Клиенту отказано в регистрации");
-//    }
 }
 
