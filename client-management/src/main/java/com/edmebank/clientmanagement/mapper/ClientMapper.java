@@ -17,7 +17,6 @@ public interface ClientMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "dateOfBirth", ignore = true)
     @Mapping(target = "passportNumber", ignore = true)
-    @Mapping(target = "passportSeries", ignore = true)
     @Mapping(target = "passportIssuedBy", ignore = true)
     @Mapping(target = "passportIssueDate", ignore = true)
     @Mapping(target = "inn", ignore = true)

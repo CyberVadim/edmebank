@@ -33,12 +33,9 @@ public class ClientDTO {
     @Past(message = "Дата рождения должна быть в прошлом")
     private LocalDate dateOfBirth;
 
-    @Schema(description = "Серия паспорта", example = "6606")
-    @Pattern(regexp = "\\d{4}", message = "Серия паспорта должна состоять из 4 цифр")
-    private String passportSeries;
 
-    @Schema(description = "Номер паспорта", example = "304001")
-    @Pattern(regexp = "\\d{6}", message = "Номер паспорта должен состоять из 6 цифр")
+    @Schema(description = "Серия и Номер паспорта", example = "6606304001")
+    @Pattern(regexp = "\\d{10}", message = "Серия и Номер паспорта должен состоять из 10 цифр")
     private String passportNumber;
 
     @Schema(description = "Кем выдан паспорт", example = "УФМС России по г. Москве")

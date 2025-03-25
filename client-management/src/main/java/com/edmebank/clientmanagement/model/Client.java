@@ -47,9 +47,6 @@ public class Client {
     @Column(unique = true, nullable = false, length = 10)
     private String passportNumber;
 
-    @Column(length = 4)
-    private String passportSeries;
-
     @Column(length = 255)
     private String passportIssuedBy;
 

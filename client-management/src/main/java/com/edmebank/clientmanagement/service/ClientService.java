@@ -50,9 +50,8 @@ public class ClientService {
         if (existingClient.isPresent()) {
             throw new ClientAlreadyExistsException("Клиент с таким паспортом уже зарегистрирован");
         }
-        String passportNumber = clientDTO.getPassportSeries() + clientDTO.getPassportNumber();
 
-        if (!isValidPassport(passportNumber)) {
+        if (!isValidPassport(clientDTO.getPassportNumber())) {
             throw new InvalidPassportException("Недействительный паспорт");
         }
 
