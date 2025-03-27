@@ -57,27 +57,24 @@ public class NotificationService {
         resendUnconfirmedNotifications();
     }
 
-    private void createPassportExpiryNotifications() {
-        LocalDate expiryThreshold = LocalDate.now().plusMonths(3);
-        List<Client> clients = clientRepository.findAll();
+    public void createPassportExpiryNotifications() {
+        LocalDate expiryThreshold = LocalDate.now().plusMonths(3).plusDays(1);
+        List<Client> clients = clientRepository.findByPassportExpiryDateBefore(expiryThreshold);
 
         for (Client client : clients) {
-            if (client.getPassportExpiryDate() != null
-                    && client.getPassportExpiryDate().isBefore(expiryThreshold.plusDays(1))) {
-                boolean alreadyNotified = notificationRepository.findByClientId(client.getId()).stream()
-                        .anyMatch(n -> n.getType() == NotificationType.PASSPORT_EXPIRY);
-                if (!alreadyNotified) {
-                    Notification notification = Notification.builder()
-                            .clientId(client.getId())
-                            .email(client.getEmail())
-                            .message("Ваш паспорт скоро истекает. Пожалуйста, обновите его.")
-                            .type(NotificationType.PASSPORT_EXPIRY)
-                            .status(NotificationStatus.PENDING)
-                            .createdAt(Instant.now())
-                            .attemptCount(0)
-                            .build();
-                    notificationRepository.save(notification);
-                }
+            boolean alreadyNotified = notificationRepository.findByClientId(client.getId()).stream()
+                    .anyMatch(n -> n.getType() == NotificationType.PASSPORT_EXPIRY);
+            if (!alreadyNotified) {
+                Notification notification = Notification.builder()
+                        .clientId(client.getId())
+                        .email(client.getEmail())
+                        .message("Ваш паспорт скоро истекает. Пожалуйста, обновите его.")
+                        .type(NotificationType.PASSPORT_EXPIRY)
+                        .status(NotificationStatus.PENDING)
+                        .createdAt(Instant.now())
+                        .attemptCount(0)
+                        .build();
+                notificationRepository.save(notification);
             }
         }
     }
