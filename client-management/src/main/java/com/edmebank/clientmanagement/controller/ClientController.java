@@ -56,6 +56,10 @@ public class ClientController {
         UUID clientId = clientService.registerClient(clientDTO);
         return ResponseEntity.ok(clientId);
     }
+    //        boolean canRegister = spectrumService.canRegisterClient(clientId);
+//        return canRegister
+//                ? ResponseEntity.ok("Клиент может быть зарегистрирован")
+//                : ResponseEntity.status(HttpStatus.FORBIDDEN).body("Клиенту отказано в регистрации");
 
 
     @PutMapping("/{clientId}/update")

@@ -1,15 +1,14 @@
 package com.edmebank.clientmanagement.service;
 
 import com.edmebank.clientmanagement.client.SpectrumClient;
+import com.edmebank.clientmanagement.dto.ClientDTO;
 import com.edmebank.clientmanagement.dto.spectrum.ApplicantData;
 import com.edmebank.clientmanagement.dto.spectrum.ApplicantRequest;
 import com.edmebank.clientmanagement.dto.spectrum.checkUid.ResponseUidData;
 import com.edmebank.clientmanagement.dto.spectrum.getReport.ReportData;
 import com.edmebank.clientmanagement.dto.spectrum.getReport.ResponseData;
 import com.edmebank.clientmanagement.dto.spectrum.getReport.SourceData;
-import com.edmebank.clientmanagement.exception.ClientNotFoundException;
 import com.edmebank.clientmanagement.exception.ReportNotFoundException;
-import com.edmebank.clientmanagement.model.Client;
 import com.edmebank.clientmanagement.repository.ClientRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +16,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.UUID;
 
 import static org.springframework.util.CollectionUtils.isEmpty;
 
@@ -26,7 +24,7 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 @RequiredArgsConstructor
 public class SpectrumService {
     private final SpectrumClient spectrumClient;
-    @Value("${spectrum_data.api.authHeader}")
+    @Value("${spectrum_data.authHeader}")
     private String authHeader;
     private final ClientRepository clientRepository;
     private final List<String> idCheckList = List.of(
@@ -41,19 +39,17 @@ public class SpectrumService {
             "check_person/person_inn"
     );
 
-    public String getUid(UUID clientId) {
-        Client client = clientRepository.findById(clientId)
-                .orElseThrow(() -> new ClientNotFoundException("Клиент с ID " + clientId + " не найден"));
+    public String getUid(ClientDTO clientDTO) {
 
         ApplicantData applicantData = ApplicantData.builder()
-                .lastName(client.getLastName())
-                .firstName(client.getFirstName())
-                .patronymic(client.getMiddleName())
-                .birth(client.getDateOfBirth().toString())
-                .passport(client.getPassportNumber())
-                .passportDate(client.getPassportIssueDate().toString())
-                .phone(client.getPhone())
-                .inn(client.getInn())
+                .lastName(clientDTO.getLastName())
+                .firstName(clientDTO.getFirstName())
+                .patronymic(clientDTO.getMiddleName())
+                .birth(clientDTO.getDateOfBirth().toString())
+                .passport(clientDTO.getPassportNumber())
+                .passportDate(clientDTO.getPassportIssueDate().toString())
+                .phone(clientDTO.getPhone())
+                .inn(clientDTO.getInn())
                 .build();
 
 
@@ -62,19 +58,14 @@ public class SpectrumService {
         String uid = responseUidData.getData().get(0).getUid();
 
         if (uid == null) {
-            throw new ReportNotFoundException("Отчет для клиента с ID " + clientId + " не найден");
+            throw new ReportNotFoundException("Отчет для клиента: %s %s не найден", clientDTO.getLastName(), clientDTO.getFirstName());
         } else {
             return uid;
         }
     }
 
-    public ReportData fetchReport(String uid) {
-
-        ResponseData response = spectrumClient.getReport(uid, false, false, authHeader);
-        return response.getData() != null && response.getData().size() > 0 ? response.getData().get(0) : null;
-    }
-
-    public Boolean canRegisterClient(String uid) {
+    public Boolean canRegisterClient(ClientDTO clientDTO) {
+        String uid = getUid(clientDTO);
         ResponseData response = spectrumClient.getReport(uid, false, false, authHeader);
 
         if (isEmpty(response.getData())) {

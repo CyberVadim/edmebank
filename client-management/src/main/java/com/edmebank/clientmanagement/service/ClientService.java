@@ -3,12 +3,10 @@ package com.edmebank.clientmanagement.service;
 import com.edmebank.clientmanagement.client.DadataFeignClient;
 import com.edmebank.clientmanagement.dto.ClientDTO;
 import com.edmebank.clientmanagement.dto.dadata.DadataPassportResponse;
-import com.edmebank.clientmanagement.dto.documenter.TerrorismCheckRequest;
-import com.edmebank.clientmanagement.dto.documenter.TerrorismCheckResponse;
+import com.edmebank.clientmanagement.exception.AmlCheckedException;
 import com.edmebank.clientmanagement.exception.ClientAlreadyExistsException;
 import com.edmebank.clientmanagement.exception.ClientNotFoundException;
 import com.edmebank.clientmanagement.exception.InvalidPassportException;
-import com.edmebank.clientmanagement.exception.TerroristFoundException;
 import com.edmebank.clientmanagement.mapper.ClientMapper;
 import com.edmebank.clientmanagement.model.Client;
 import com.edmebank.clientmanagement.model.ClientDocument;
@@ -39,6 +37,7 @@ public class ClientService {
     private final ClientDocumentRepository clientDocumentRepository;
     private final ClientMapper clientMapper;
     private final DadataFeignClient dadataFeignClient;
+    private final SpectrumService spectrumService;
     @Value("${dadata.api.authHeader}")
     private String authHeader;
     @Value("${dadata.api.secret}")
@@ -52,22 +51,22 @@ public class ClientService {
         }
 
         if (!isValidPassport(clientDTO.getPassportNumber())) {
-            throw new InvalidPassportException("Недействительный паспорт");
-        }
-
-        boolean isTerrorist = isClientTerrorist();
-        if (isTerrorist) {
-            throw new TerroristFoundException("Клиент найден в базе террористов!");
+            throw new InvalidPassportException("Проверка паспорта не пройдена");
         } else {
-            log.info("Клиент проверен на причастность к терроризму, все ОК.");
+            log.info("Проверка паспорта прошла успешно");
+
+            boolean isAmlChecked = spectrumService.canRegisterClient(clientDTO);
+            if (isAmlChecked) {
+                throw new AmlCheckedException("Клиент не прошел проверку на благонадежность");
+            } else {
+                log.info("Клиент прошел проверку на благонадежность, все ОК.");
+
+                Client client = clientMapper.toEntity(clientDTO);
+                client.setAmlChecked(true);
+                client = clientRepository.save(client);
+                return client.getId();
+            }
         }
-
-
-        Client client = clientMapper.toEntity(clientDTO);
-        client.setAmlChecked(true); // AML проверка выполнена, временная заглушка
-        client = clientRepository.save(client);
-
-        return client.getId();
     }
 
     @Transactional
@@ -131,10 +130,5 @@ public class ClientService {
             throw new InvalidPassportException("Паспорт числится недействительным в базе МВД");
         }
         return qc == 0;
-    }
-
-    public boolean isClientTerrorist() {
-
-        return false;
     }
 }
