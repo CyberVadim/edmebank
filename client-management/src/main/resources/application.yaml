@@ -52,3 +52,7 @@ dadata:
     url: "https://cleaner.dadata.ru/api/v1/clean/passport"
     authHeader: "Token 50353c0408a3f1a0c2805bd8e0342a2d11a394f2"
     secret: "b7d373eed05ca1b9f3d8550913b1ae99f07fae34"
+
+spectrum_data:
+  authHeader: "AR-REST dXNlcl9pbnRlZ3JhdGlvbkBiYWtzZXQ6MTc0MTg1MjgwMDo5OTk5OTk5OTk6MzRKeWpZdXhQWnd6Z0JudThGQi9uQT09"
+

@@ -8,23 +8,28 @@ import com.edmebank.clientmanagement.dto.spectrum.getReport.ReportData;
 import com.edmebank.clientmanagement.dto.spectrum.getReport.ResponseData;
 import com.edmebank.clientmanagement.dto.spectrum.getReport.SourceData;
 import com.edmebank.clientmanagement.exception.ClientNotFoundException;
+import com.edmebank.clientmanagement.exception.ReportNotFoundException;
 import com.edmebank.clientmanagement.model.Client;
 import com.edmebank.clientmanagement.repository.ClientRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
+
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class SpectrumService {
     private final SpectrumClient spectrumClient;
-    private final String authHeader = "AR-REST dXNlcl9pbnRlZ3JhdGlvbkBiYWtzZXQ6MTc0MTg1MjgwMDo5OTk5OTk5OTk6MzRKeWpZdXhQWnd6Z0JudThGQi9uQT09";
+    @Value("${spectrum_data.api.authHeader}")
+    private String authHeader;
     private final ClientRepository clientRepository;
-    private final List<String> idChekList = List.of(
+    private final List<String> idCheckList = List.of(
             "check_person/extremist_list",
             "check_person/executive_proceeding_base",
             "check_person/fsin_wanted",
@@ -55,7 +60,12 @@ public class SpectrumService {
         ApplicantRequest request = new ApplicantRequest("MULTIPART", " ", applicantData);
         ResponseUidData responseUidData = spectrumClient.checkApplicant(authHeader, request);
         String uid = responseUidData.getData().get(0).getUid();
-        return uid;
+
+        if (uid == null) {
+            throw new ReportNotFoundException("Отчет для клиента с ID " + clientId + " не найден");
+        } else {
+            return uid;
+        }
     }
 
     public ReportData fetchReport(String uid) {
@@ -67,7 +77,7 @@ public class SpectrumService {
     public Boolean canRegisterClient(String uid) {
         ResponseData response = spectrumClient.getReport(uid, false, false, authHeader);
 
-        if (response.getData() == null || response.getData().isEmpty()) {
+        if (isEmpty(response.getData())) {
             return false;
         }
 
@@ -75,31 +85,32 @@ public class SpectrumService {
         return processCheckResults(report.getState().getSources());
     }
 
-    public boolean isClientTerrorist() {
-
-        return false;
-    }
 
     private Boolean processCheckResults(List<SourceData> sources) {
+        if (isEmpty(sources)) {
+            return false;
+        }
         StringBuilder resultMessage = new StringBuilder();
-
+        boolean failed = false;
         for (SourceData source : sources) {
             String state = source.getState();
             String id = source.get_id();
 
 
-            if (!"OK".equals(state)) {
-                if (idChekList.contains(id)){
+            if (idCheckList.contains(id)) {
+                if (!"OK".equals(state)) {
                     String reason = (String) source.getData().get("reason");
                     resultMessage.append("state: ").append(state).append("\n")
                             .append("Проверка: ").append(getCheckDescription(id)).append("\n")
                             .append("Ответ: ").append(reason).append("\n\n");
-                    log.info(resultMessage.toString());
-                    return false;
+                    failed = true;
                 }
             }
         }
-
+        if (failed) {
+            log.info(resultMessage.toString());
+            return false;
+        }
         return true;
     }
 
