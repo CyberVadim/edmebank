@@ -1,6 +1,6 @@
 package com.edmebank.clientmanagement.dto.notification;
 
-import com.edmebank.clientmanagement.model.notification.Notification;
+import com.edmebank.clientmanagement.model.Notification;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
