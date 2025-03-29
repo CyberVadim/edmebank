@@ -81,7 +81,7 @@ public class ClientController {
 //        return ResponseEntity.ok("AML/KYC проверка завершена");
 //    }
 
-    @GetMapping("/disableNotification/{clientId}")
+    @GetMapping("/{clientId}/disableNotification")
     public ResponseEntity<String> disableNotification(@PathVariable UUID clientId) {
         clientService.disableNotification(clientId);
         return ResponseEntity.ok("Вы отписались от уведомлений");

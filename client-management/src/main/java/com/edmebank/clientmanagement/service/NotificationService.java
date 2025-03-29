@@ -61,9 +61,9 @@ public class NotificationService {
                 Для подтверждения уведомления перейдите по ссылке:
                 http://localhost:%d/api/v1/notifications/confirm?notificationId=%d.
                 Чтобы отписаться от уведомлений пройдите по ссылке:
-                http://localhost:%d
-                """, client.getPassportExpiryDate(), serverPort, notification.getId(), serverPort);
-                //todo Marchenko есть идеи как применить один параметр дважды? и что думаете насчёт localhost - домена же у нас нет?
+                http://localhost:%d/api/v1/clients/%s/disableNotification
+                """, client.getPassportExpiryDate(), serverPort, notification.getId(), serverPort, client.getId());
+                //todo Marchenko идеи как применить один параметр дважды? что насчёт localhost - домена же нет?
 
                 notification.setMessage(message);
                 notificationRepository.save(notification);
@@ -89,7 +89,7 @@ public class NotificationService {
                 NotificationStatus.SENT, lastAttemptBefore, maxAttempt);
 
         for (Notification notification : notifications) {
-            senders.forEach(sender -> sender.send(notification));
+            senders.forEach(sender -> executorService.submit(() -> sender.send(notification)));
             notification.setLastAttemptAt(Instant.now());
             notification.setAttemptCount(notification.getAttemptCount() + 1);
             notificationRepository.save(notification);
