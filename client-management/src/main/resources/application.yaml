@@ -13,7 +13,7 @@ spring:
   application:
     name: client-management
   datasource:
-    url: jdbc:postgresql://localhost:5432/cm_db
+    url: jdbc:postgresql://localhost:5435/cm_db
     driver-class-name: org.postgresql.Driver
     username: postgres
     password: postgres
@@ -45,7 +45,12 @@ spring:
     properties:
       mail.smtp.auth: true
       mail.smtp.ssl.enable: true
+    test_vpn_url: "https://www.rutracker.org"
 
+notification:
+  max_attempt: 3
+  passport_expire:
+    before_months: 3
 
 dadata:
   api:
