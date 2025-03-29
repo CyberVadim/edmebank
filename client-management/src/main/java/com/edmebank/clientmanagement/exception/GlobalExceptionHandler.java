@@ -1,5 +1,6 @@
 package com.edmebank.clientmanagement.exception;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ClientNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public String handleClientNotFoundException(ClientNotFoundException ex) {
+        return ex.getMessage();
+    }
+    @ExceptionHandler(EntityNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public String handler(EntityNotFoundException ex) {
         return ex.getMessage();
     }
 
