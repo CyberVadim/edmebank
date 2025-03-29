@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import static com.edmebank.clientmanagement.model.Notification.NotificationType.PASSPORT_EXPIRY;
 
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/send")

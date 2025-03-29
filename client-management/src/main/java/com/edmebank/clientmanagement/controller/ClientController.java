@@ -5,6 +5,7 @@ import com.edmebank.clientmanagement.dto.bank_product.ClientProductRequest;
 import com.edmebank.clientmanagement.dto.notification.NotificationSettingsDto;
 import com.edmebank.clientmanagement.model.Client;
 import com.edmebank.clientmanagement.service.ClientService;
+import com.edmebank.clientmanagement.service.NotificationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -33,6 +34,7 @@ import java.util.UUID;
 public class ClientController {
 
     private final ClientService clientService;
+    private final NotificationService notificationService;
 
     @Operation(summary = "Регистрация клиента")
     @ApiResponses(value = {
@@ -84,6 +86,7 @@ public class ClientController {
     @GetMapping("/{clientId}/disableNotification")
     public ResponseEntity<String> disableNotification(@PathVariable UUID clientId) {
         clientService.disableNotification(clientId);
+        notificationService.disableNotification(clientId);
         return ResponseEntity.ok("Вы отписались от уведомлений");
     }
 }

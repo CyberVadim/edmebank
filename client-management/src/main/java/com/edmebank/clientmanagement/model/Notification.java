@@ -47,7 +47,7 @@ public class Notification {
     private Instant clientResponseDate;
 
     public enum NotificationStatus {
-        PENDING, SENT, DELIVERED
+        PENDING, SENT, DELIVERED, DISABLE
     }
 
     public enum NotificationType {

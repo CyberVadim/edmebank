@@ -29,8 +29,6 @@ public class MailSenderImpl implements Sender {
 
     @Value("${spring.mail.username}")
     private String senderEmail;
-    @Value("${spring.mail.test_vpn_url}")
-    private String testVpnUrl;
 
     private static Map<Notification.NotificationType, String > typeStringMap = new HashMap<>();
     static {
@@ -46,10 +44,6 @@ public class MailSenderImpl implements Sender {
     }
 
     public void sendEmail(String to, String subject, String text, boolean isHtml) {
-        if (isVpnActive()) {
-            log.warn("Ошибка: Отключите VPN и попробуйте снова.");
-            throw new VpnActiveException();
-        }
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
@@ -62,23 +56,5 @@ public class MailSenderImpl implements Sender {
         } catch (Exception e) {
             log.error("Failed to send email to {}", to, e);
         }
-    }
-
-    private boolean isVpnActive() {
-        try {
-            URL url = new URL(testVpnUrl);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("GET");
-            connection.setConnectTimeout(3000); // 3 секунды
-            connection.setReadTimeout(3000);
-            int responseCode = connection.getResponseCode();
-            if (responseCode == 200) {
-                log.warn("VPN detected! {} is accessible.", testVpnUrl);
-                return true; // VPN включен, так как сайт открылся
-            }
-        } catch (IOException e) {
-            log.info("VPN is likely off. {} is not accessible.", testVpnUrl);
-        }
-        return false;
     }
 }

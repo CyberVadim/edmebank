@@ -45,7 +45,6 @@ spring:
     properties:
       mail.smtp.auth: true
       mail.smtp.ssl.enable: true
-    test_vpn_url: "https://www.rutracker.org"
 
 notification:
   max_attempt: 3
