@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -69,7 +70,7 @@ public class ClientController {
         try {
             clientService.uploadDocuments(clientId, files);
             return ResponseEntity.ok("Документы загружены");
-        } catch (Exception e) {
+        } catch (Exception e) { // todo это не должно быть в GlobalExceptionHandler?
             return ResponseEntity.badRequest().body("Ошибка загрузки документов");
         }
     }
@@ -79,5 +80,10 @@ public class ClientController {
 //        // Логика AML/KYC проверки
 //        return ResponseEntity.ok("AML/KYC проверка завершена");
 //    }
-}
 
+    @GetMapping("/disableNotification/{clientId}")
+    public ResponseEntity<String> disableNotification(@PathVariable UUID clientId) {
+        clientService.disableNotification(clientId);
+        return ResponseEntity.ok("Вы отписались от уведомлений");
+    }
+}

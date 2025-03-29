@@ -14,6 +14,7 @@ import com.edmebank.clientmanagement.model.Client;
 import com.edmebank.clientmanagement.model.ClientDocument;
 import com.edmebank.clientmanagement.repository.ClientDocumentRepository;
 import com.edmebank.clientmanagement.repository.ClientRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -50,23 +51,18 @@ public class ClientService {
         if (existingClient.isPresent()) {
             throw new ClientAlreadyExistsException("Клиент с таким паспортом уже зарегистрирован");
         }
-
         if (!isValidPassport(clientDTO.getPassportNumber())) {
             throw new InvalidPassportException("Недействительный паспорт");
         }
-
         boolean isTerrorist = isClientTerrorist();
         if (isTerrorist) {
             throw new TerroristFoundException("Клиент найден в базе террористов!");
         } else {
             log.info("Клиент проверен на причастность к терроризму, все ОК.");
         }
-
-
         Client client = clientMapper.toEntity(clientDTO);
         client.setAmlChecked(true); // AML проверка выполнена, временная заглушка
         client = clientRepository.save(client);
-
         return client.getId();
     }
 
@@ -76,10 +72,16 @@ public class ClientService {
                 .orElseThrow(() -> new ClientNotFoundException("Клиент с ID " + clientId + " не найден"));
 
         clientMapper.updateClientFromDto(clientDTO, client);
-
         clientRepository.save(client);
     }
 
+    @Transactional
+    public void disableNotification(UUID clientId) {
+        Client client = clientRepository.findById(clientId)
+                .orElseThrow(() -> new EntityNotFoundException("Клиент с ID " + clientId + " не найден"));
+        client.setEnableNotifications(false);
+        clientRepository.save(client);
+    }
 
     public void uploadDocuments(UUID clientId, List<MultipartFile> documents) {
         String uploadDir = "D:/EDMEData/documents/";
@@ -113,7 +115,6 @@ public class ClientService {
 
     public boolean isValidPassport(String passportNumber) {
 
-
         List<DadataPassportResponse> response = dadataFeignClient.cleanPassport(
                 Collections.singletonList(passportNumber),
                 authHeader,
@@ -122,7 +123,6 @@ public class ClientService {
         if (response.isEmpty()) {
             return false;
         }
-
         int qc = response.get(0).getQc();
         if (qc == 1) {
             throw new InvalidPassportException("Неправильный формат серии или номера паспорта");
@@ -134,7 +134,6 @@ public class ClientService {
     }
 
     public boolean isClientTerrorist() {
-
         return false;
     }
 }
