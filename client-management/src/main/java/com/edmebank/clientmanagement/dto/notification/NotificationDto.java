@@ -19,12 +19,4 @@ public class NotificationDto {
     private Notification.NotificationType type;
     private String status;
     private Instant timestamp;
-
-    public NotificationDto(UUID clientId, String email, String message, Notification.NotificationType type) {
-        this.clientId = clientId;
-        this.email = email;
-        this.message = message;
-        this.type = type;
-
-    }
 }
