@@ -73,6 +73,7 @@ public class Client {
 
     @Column(name = "passport_expiry_date", columnDefinition = "DATE")
     private LocalDate passportExpiryDate;
+    private boolean enableNotifications;
 
     @PrePersist
     @PreUpdate
