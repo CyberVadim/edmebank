@@ -118,7 +118,8 @@ public class NotificationService {
 
     @Transactional
     public void disableNotification(UUID clientId) {
-        List<Notification> notifications = notificationRepository.findByClientId(clientId);
+        List<Notification> notifications =
+                notificationRepository.findByClientIdAndStatusIn(clientId, List.of(PENDING, SENT));
         for (Notification notification: notifications) {
             notification.setStatus(DISABLE);
         }
