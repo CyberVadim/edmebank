@@ -57,7 +57,7 @@ public class NotificationService {
                 Notification notification = Notification.builder()
                         .clientId(client.getId())
                         .email(client.getEmail())
-                        .message("NotNull")  // todo Marchenko есть другие идеи?
+                        .message("NotNull")  // todo gennady есть другие идеи?
                         .type(NotificationType.PASSPORT_EXPIRY)
                         .status(PENDING)
                         .createdAt(Instant.now())
@@ -72,7 +72,7 @@ public class NotificationService {
                 Чтобы отписаться от уведомлений пройдите по ссылке:
                 http://localhost:%d/api/v1/clients/%s/disableNotification""",
                         client.getPassportExpiryDate(), serverPort, notification.getId(), serverPort, client.getId());
-                //todo Marchenko идеи как применить один параметр дважды? что насчёт localhost - домена же нет?
+                //todo gennady идеи как применить один параметр дважды? что насчёт localhost - домена же нет?
 
                 notification.setMessage(message);
                 notificationRepository.save(notification);
