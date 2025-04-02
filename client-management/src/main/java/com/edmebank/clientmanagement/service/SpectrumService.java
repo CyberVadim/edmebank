@@ -9,13 +9,14 @@ import com.edmebank.clientmanagement.dto.spectrum.getReport.ReportData;
 import com.edmebank.clientmanagement.dto.spectrum.getReport.ResponseData;
 import com.edmebank.clientmanagement.dto.spectrum.getReport.SourceData;
 import com.edmebank.clientmanagement.exception.ReportNotFoundException;
-import com.edmebank.clientmanagement.repository.ClientRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.springframework.util.CollectionUtils.isEmpty;
 
@@ -24,23 +25,25 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 @RequiredArgsConstructor
 public class SpectrumService {
     private final SpectrumClient spectrumClient;
+
     @Value("${spectrum_data.authHeader}")
     private String authHeader;
-    private final ClientRepository clientRepository;
-    private final List<String> idCheckList = List.of(
-            "check_person/extremist_list",
-            "check_person/executive_proceeding_base",
-            "check_person/fsin_wanted",
-            "check_person/acc_stop",
-            "check_person/wanted_criminal",
-            "check_person/expired_passport_v2",
-            "check_person/credit_history",
-            "check_person/inoagent",
-            "check_person/person_inn"
-    );
+
+    private static final Map<String, String> idCheckMap = new HashMap<>();
+
+    static {
+        idCheckMap.put("check_person/extremist_list", "Экстремистский список");
+        idCheckMap.put("check_person/executive_proceeding_base", "Исполнительные производства");
+        idCheckMap.put("check_person/fsin_wanted", "Розыск ФСИН");
+        idCheckMap.put("check_person/acc_stop", "Заблокированные счета");
+        idCheckMap.put("check_person/wanted_criminal", "Розыск МВД");
+        idCheckMap.put("check_person/expired_passport_v2", "Просроченный паспорт");
+        idCheckMap.put("check_person/credit_history", "Проблемы с кредитной историей");
+        idCheckMap.put("check_person/inoagent", "Иностранный агент");
+        idCheckMap.put("check_person/person_inn", "ИНН физического лица");
+    }
 
     public String getUid(ClientDTO clientDTO) {
-
         ApplicantData applicantData = ApplicantData.builder()
                 .lastName(clientDTO.getLastName())
                 .firstName(clientDTO.getFirstName())
@@ -52,19 +55,19 @@ public class SpectrumService {
                 .inn(clientDTO.getInn())
                 .build();
 
-
         ApplicantRequest request = new ApplicantRequest("MULTIPART", " ", applicantData);
         ResponseUidData responseUidData = spectrumClient.checkApplicant(authHeader, request);
         String uid = responseUidData.getData().get(0).getUid();
 
         if (uid == null) {
-            throw new ReportNotFoundException("Отчет для клиента: %s %s не найден", clientDTO.getLastName(), clientDTO.getFirstName());
+            throw new ReportNotFoundException("Отчет для клиента: " + applicantData.getLastName() + " "
+                    + applicantData.getFirstName() + " не найден");
         } else {
             return uid;
         }
     }
 
-    public Boolean canRegisterClient(ClientDTO clientDTO) {
+    public boolean canRegisterClient(ClientDTO clientDTO) {
         String uid = getUid(clientDTO);
         ResponseData response = spectrumClient.getReport(uid, false, false, authHeader);
 
@@ -76,50 +79,43 @@ public class SpectrumService {
         return processCheckResults(report.getState().getSources());
     }
 
-
-    private Boolean processCheckResults(List<SourceData> sources) {
+    private boolean processCheckResults(List<SourceData> sources) {
         if (isEmpty(sources)) {
             return false;
         }
         StringBuilder resultMessage = new StringBuilder();
         boolean failed = false;
+
         for (SourceData source : sources) {
             String state = source.getState();
             String id = source.get_id();
 
-
-            if (idCheckList.contains(id)) {
+            if (idCheckMap.containsKey(id)) {
                 if (!"OK".equals(state)) {
-                    String reason = (String) source.getData().get("reason");
+                    Map<String, Object> data = source.getData();
+                    if (data == null) {
+                        resultMessage.append("Проверка: ").append(idCheckMap.getOrDefault(id, id)).append("\n")
+                                .append("Ошибка: отсутствуют данные по источнику\n\n");
+                        failed = true;
+                        continue;
+                    }
+
+                    String reason = (String) data.get("reason");
                     resultMessage.append("state: ").append(state).append("\n")
-                            .append("Проверка: ").append(getCheckDescription(id)).append("\n")
+                            .append("Проверка: ").append(idCheckMap.getOrDefault(id, id)).append("\n")
                             .append("Ответ: ").append(reason).append("\n\n");
                     failed = true;
+
                 }
             }
         }
+
         if (failed) {
             log.info(resultMessage.toString());
             return false;
         }
         return true;
     }
-
-    // Метод для получения описания проверки
-    private String getCheckDescription(String id) {
-        return switch (id) {
-            case "check_person/extremist_list" -> "Экстремистский список";
-            case "check_person/executive_proceeding_base" -> "Исполнительные производства";
-            case "check_person/fsin_wanted" -> "Розыск ФСИН";
-            case "check_person/acc_stop" -> "Заблокированные счета";
-            case "check_person/wanted_criminal" -> "Розыск МВД";
-            case "check_person/expired_passport_v2" -> "Просроченный паспорт";
-            case "check_person/credit_history" -> "Проблемы с кредитной историей";
-            case "check_person/inoagent" -> "Иностранный агент";
-            case "check_person/person_inn" -> "ИНН физического лица";
-
-            default -> "Неизвестная проверка (" + id + ")";
-        };
-    }
 }
+
 

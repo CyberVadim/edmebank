@@ -51,7 +51,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(AmlCheckedException.class)
-    public ResponseEntity<Map<String, String>> handleTerroristFoundException(AmlCheckedException ex) {
+    public ResponseEntity<Map<String, String>> handleAmlCheckedException(AmlCheckedException ex) {
         Map<String, String> response = new HashMap<>();
         response.put("error", ex.getMessage());
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
