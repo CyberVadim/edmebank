@@ -7,6 +7,7 @@ import com.edmebank.clientmanagement.model.Notification.NotificationType;
 import com.edmebank.clientmanagement.repository.ClientRepository;
 import com.edmebank.clientmanagement.repository.NotificationRepository;
 import com.edmebank.clientmanagement.service.sending.Sender;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,6 +39,7 @@ public class NotificationService {
 
     @Value("${notification.passport_expire.before_months}")
     private int notificationBeforeMonths;
+    @Getter
     @Value("${notification.max_attempt}")
     private int maxAttempt;
     @Value("${server.port}")
@@ -68,8 +70,8 @@ public class NotificationService {
                 Для подтверждения уведомления перейдите по ссылке:
                 http://localhost:%d/api/v1/notifications/confirm?notificationId=%d.
                 Чтобы отписаться от уведомлений пройдите по ссылке:
-                http://localhost:%d/api/v1/clients/%s/disableNotification
-                """, client.getPassportExpiryDate(), serverPort, notification.getId(), serverPort, client.getId());
+                http://localhost:%d/api/v1/clients/%s/disableNotification""",
+                        client.getPassportExpiryDate(), serverPort, notification.getId(), serverPort, client.getId());
                 //todo Marchenko идеи как применить один параметр дважды? что насчёт localhost - домена же нет?
 
                 notification.setMessage(message);

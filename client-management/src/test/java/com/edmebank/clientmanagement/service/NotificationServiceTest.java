@@ -1,28 +1,22 @@
 package com.edmebank.clientmanagement.service;
 
+import com.edmebank.clientmanagement.model.Client;
 import com.edmebank.clientmanagement.model.Notification;
 import com.edmebank.clientmanagement.model.Notification.NotificationStatus;
 import com.edmebank.clientmanagement.model.Notification.NotificationType;
 import com.edmebank.clientmanagement.repository.ClientRepository;
 import com.edmebank.clientmanagement.repository.NotificationRepository;
-import com.edmebank.clientmanagement.service.sending.MailSenderImpl;
-import com.edmebank.clientmanagement.service.sending.Sender;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.context.bean.override.mockito.MockitoBeans;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.any;
@@ -31,26 +25,49 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest(classes = NotificationService.class)
-@TestPropertySource(properties = {
-        "notification.passport_expire.before_months=3",
-        "notification.max_attempt=3",
-        "server.port=8081"
-})
-@MockitoBeans({
-        @MockitoBean(types = MailSenderImpl.class),
-        @MockitoBean(types = NotificationRepository.class),
-        @MockitoBean(types = ClientRepository.class),
-        @MockitoBean(types = ExecutorService.class)
-})
+@SpringBootTest
 class NotificationServiceTest {
 
+    @MockitoBean
+    NotificationRepository notificationRepository;
+    @MockitoBean
+    ClientRepository clientRepository;
     @Autowired
     private NotificationService notificationService;
 
-    /* @BeforeEach // todo Marchenko нет смысла перед каждым тестом, но @BeforeAll требует static - идеи?
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
+    @Test
+    void createPassportExpiryNotificationsTest() {
+        UUID uuid = UUID.fromString("10000000-0000-0000-0000-000000000201");
+        Client client = Client.builder()
+                .id(uuid)
+                .email("Relect@bk.ru")
+                .passportExpiryDate(LocalDate.of(2025, 4, 2))
+                .build();
+        when(clientRepository.findByPassportExpiryDateBefore(any(LocalDate.class)))
+                .thenReturn(List.of(client));
+        when(notificationRepository.findFirstByClientIdAndType(uuid, NotificationType.PASSPORT_EXPIRY))
+                .thenReturn(Optional.empty());
+        AtomicReference<Notification> result = new AtomicReference<>();
+        when(notificationRepository.save(any(Notification.class)))
+                .thenAnswer(invocation -> {
+                    Notification notification = invocation.getArgument(0);
+                    notification.setId(1L);
+                    result.set(notification);
+                    return notification;
+                }).thenAnswer(invocation -> invocation.getArgument(0));
+        // Action
+        notificationService.createPassportExpiryNotifications();
+        // Assert
+        verify(notificationRepository, times(2)).save(any(Notification.class));
+        String expectedMessage = """
+                Ваш паспорт истекает 2025-04-02. Пожалуйста, обновите его.
+                Для подтверждения уведомления перейдите по ссылке:
+                http://localhost:8081/api/v1/notifications/confirm?notificationId=1.
+                Чтобы отписаться от уведомлений пройдите по ссылке:
+                http://localhost:8081/api/v1/clients/10000000-0000-0000-0000-000000000201/disableNotification""";
+        assertEquals(expectedMessage, result.get().getMessage());
+        assertEquals(NotificationStatus.PENDING, result.get().getStatus());
+        assertEquals(NotificationType.PASSPORT_EXPIRY, result.get().getType());
     }
 
     @Test
@@ -59,7 +76,7 @@ class NotificationServiceTest {
         Notification notification = Notification.builder()
                 .id(1L)
                 .clientId(UUID.randomUUID())
-                .email("murik311088@yandex.ru")
+                .email("Relect@bk.ru")
                 .message("Reminder")
                 .type(NotificationType.PASSPORT_EXPIRY)
                 .status(NotificationStatus.SENT)
@@ -68,12 +85,12 @@ class NotificationServiceTest {
                 .build();
 
         when(notificationRepository.findByStatusAndLastAttemptAtBeforeAndAttemptCountLessThan(
-                eq(NotificationStatus.SENT), any(), eq(3)))
+                eq(NotificationStatus.SENT), any(), eq(notificationService.getMaxAttempt())))
                 .thenReturn(List.of(notification));
-        // Act
+        // Action
         notificationService.resendUnconfirmedNotifications();
         // Assert
-        // verify(notificationRepository, times(1)).save(any(Notification.class));
+        verify(notificationRepository, times(1)).save(any(Notification.class));
         assertEquals(3, notification.getAttemptCount());
     }
 
@@ -93,14 +110,11 @@ class NotificationServiceTest {
 
         when(notificationRepository.findByStatus(NotificationStatus.PENDING))
                 .thenReturn(List.of(notification));
-        // Act
+        // Action
         notificationService.sendNotification();
         // Assert
         assertEquals(NotificationStatus.SENT, notification.getStatus());
         assertEquals(1, notification.getAttemptCount());
         verify(notificationRepository, times(1)).save(any(Notification.class));
     }
-
-     */
 }
-
