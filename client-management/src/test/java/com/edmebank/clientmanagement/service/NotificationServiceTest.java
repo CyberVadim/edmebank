@@ -16,6 +16,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -25,10 +26,11 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest
+@SpringBootTest(classes = NotificationService.class)
 class NotificationServiceTest {
-    // todo gennady нужен запуск тестов без подключения к БД - предложения?
 
+    @MockitoBean
+    ExecutorService executorService;
     @MockitoBean
     NotificationRepository notificationRepository;
     @MockitoBean
