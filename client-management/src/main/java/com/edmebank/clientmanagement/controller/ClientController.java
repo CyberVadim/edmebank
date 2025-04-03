@@ -1,9 +1,6 @@
 package com.edmebank.clientmanagement.controller;
 
 import com.edmebank.clientmanagement.dto.ClientDTO;
-import com.edmebank.clientmanagement.dto.bank_product.ClientProductRequest;
-import com.edmebank.clientmanagement.dto.notification.NotificationSettingsDto;
-import com.edmebank.clientmanagement.model.Client;
 import com.edmebank.clientmanagement.service.ClientService;
 import com.edmebank.clientmanagement.service.NotificationService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -72,16 +69,11 @@ public class ClientController {
         try {
             clientService.uploadDocuments(clientId, files);
             return ResponseEntity.ok("Документы загружены");
-        } catch (Exception e) { // todo это не должно быть в GlobalExceptionHandler?
+        } catch (Exception e) {
             return ResponseEntity.badRequest().body("Ошибка загрузки документов");
         }
     }
-
-//    @GetMapping("/{clientId}/aml-check")
-//    public ResponseEntity<String> checkClientAML(@PathVariable UUID clientId) {
-//        // Логика AML/KYC проверки
-//        return ResponseEntity.ok("AML/KYC проверка завершена");
-//    }
+}
 
     @GetMapping("/{clientId}/disableNotification")
     public ResponseEntity<String> disableNotification(@PathVariable UUID clientId) {
