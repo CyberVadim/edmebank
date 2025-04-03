@@ -1,7 +1,9 @@
 package com.edmebank.clientmanagement.controller;
 
 import com.edmebank.clientmanagement.dto.ClientDTO;
+import com.edmebank.clientmanagement.dto.spectrum.getReport.ReportData;
 import com.edmebank.clientmanagement.service.ClientService;
+import com.edmebank.clientmanagement.service.SpectrumService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -22,6 +24,7 @@ import java.util.UUID;
 public class ClientController {
 
     private final ClientService clientService;
+    private final SpectrumService spectrumService;
 
     @Operation(summary = "Регистрация клиента")
     @ApiResponses(value = {
@@ -63,5 +66,9 @@ public class ClientController {
             return ResponseEntity.badRequest().body("Ошибка загрузки документов");
         }
     }
-}
 
+    @GetMapping("/report")
+    public ReportData fetchReport(@Valid @RequestBody ClientDTO clientDTO) {
+        return spectrumService.fetchReport(clientDTO);
+    }
+}
