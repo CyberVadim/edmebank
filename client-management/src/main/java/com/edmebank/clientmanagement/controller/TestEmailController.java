@@ -23,7 +23,7 @@ public class TestEmailController { // todo вынести в тесты
                 .type(PASSPORT_EXPIRY)
                 .message("Simple message")
                 .build();
-        mailSender.send(notification);
+        mailSender.sendNotification(notification);
         return "Email sent successfully";
     }
 }

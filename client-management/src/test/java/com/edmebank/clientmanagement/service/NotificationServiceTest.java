@@ -27,6 +27,7 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest
 class NotificationServiceTest {
+    // todo gennady нужен запуск тестов без подключения к БД - предложения?
 
     @MockitoBean
     NotificationRepository notificationRepository;
@@ -59,15 +60,20 @@ class NotificationServiceTest {
         notificationService.createPassportExpiryNotifications();
         // Assert
         verify(notificationRepository, times(2)).save(any(Notification.class));
-        String expectedMessage = """
-                Ваш паспорт истекает 2025-04-02. Пожалуйста, обновите его.
-                Для подтверждения уведомления перейдите по ссылке:
-                http://localhost:8081/api/v1/notifications/confirm?notificationId=1.
-                Чтобы отписаться от уведомлений пройдите по ссылке:
-                http://localhost:8081/api/v1/clients/10000000-0000-0000-0000-000000000201/disableNotification""";
+        String expectedMessage = getMessage();
         assertEquals(expectedMessage, result.get().getMessage());
         assertEquals(NotificationStatus.PENDING, result.get().getStatus());
         assertEquals(NotificationType.PASSPORT_EXPIRY, result.get().getType());
+    }
+
+    private String getMessage() {
+        return String.format("""
+                Ваш паспорт истекает 2025-04-02. Пожалуйста, обновите его.
+                Для подтверждения уведомления перейдите по ссылке:
+                http://localhost:%S/api/v1/notifications/confirm?notificationId=1.
+                Чтобы отписаться от уведомлений пройдите по ссылке:
+                http://localhost:%s/api/v1/clients/10000000-0000-0000-0000-000000000201/disableNotification""",
+                notificationService.getServerPort(), notificationService.getServerPort());
     }
 
     @Test

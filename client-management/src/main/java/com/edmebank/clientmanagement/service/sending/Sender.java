@@ -4,5 +4,5 @@ import com.edmebank.clientmanagement.model.Notification;
 
 public interface Sender {
 
-    void send(Notification notification);
+    void sendNotification(Notification notification);
 }

@@ -27,9 +27,10 @@ import static com.edmebank.clientmanagement.model.Notification.NotificationStatu
 import static com.edmebank.clientmanagement.model.Notification.NotificationStatus.PENDING;
 import static com.edmebank.clientmanagement.model.Notification.NotificationStatus.SENT;
 
-@Service
+
 @Slf4j
 @RequiredArgsConstructor
+@Service
 public class NotificationService {
 
     private final List<Sender> senders;
@@ -42,6 +43,7 @@ public class NotificationService {
     @Getter
     @Value("${notification.max_attempt}")
     private int maxAttempt;
+    @Getter
     @Value("${server.port}")
     private int serverPort;
 
@@ -65,26 +67,29 @@ public class NotificationService {
                         .build();
                 notification = notificationRepository.save(notification);
 
-                String message = String.format("""
-                Ваш паспорт истекает %s. Пожалуйста, обновите его.
-                Для подтверждения уведомления перейдите по ссылке:
-                http://localhost:%d/api/v1/notifications/confirm?notificationId=%d.
-                Чтобы отписаться от уведомлений пройдите по ссылке:
-                http://localhost:%d/api/v1/clients/%s/disableNotification""",
-                        client.getPassportExpiryDate(), serverPort, notification.getId(), serverPort, client.getId());
-                //todo gennady идеи как применить один параметр дважды? что насчёт localhost - домена же нет?
-
+                String message = getMessage(client, notification.getId());
                 notification.setMessage(message);
                 notificationRepository.save(notification);
             }
         }
     }
 
+    private String getMessage(Client client, Long notificationId) {
+        return String.format("""
+                Ваш паспорт истекает %s. Пожалуйста, обновите его.
+                Для подтверждения уведомления перейдите по ссылке:
+                http://localhost:%d/api/v1/notifications/confirm?notificationId=%d.
+                Чтобы отписаться от уведомлений пройдите по ссылке:
+                http://localhost:%d/api/v1/clients/%s/disableNotification""",
+                client.getPassportExpiryDate(), serverPort, notificationId, serverPort, client.getId());
+        //todo gennady что насчёт localhost - домена же нет?
+    }
+
     @Transactional
     public void sendNotification() {
         List<Notification> notifications = notificationRepository.findByStatus(PENDING);
         for (Notification notification : notifications) {
-            senders.forEach(sender -> executorService.submit(() -> sender.send(notification)));
+            senders.forEach(sender -> executorService.submit(() -> sender.sendNotification(notification)));
             notification.setStatus(SENT);
             notification.setLastAttemptAt(Instant.now());
             notification.setAttemptCount(notification.getAttemptCount() + 1);
@@ -100,7 +105,7 @@ public class NotificationService {
                 SENT, lastAttemptBefore, maxAttempt);
 
         for (Notification notification : notifications) {
-            senders.forEach(sender -> executorService.submit(() -> sender.send(notification)));
+            senders.forEach(sender -> executorService.submit(() -> sender.sendNotification(notification)));
             notification.setLastAttemptAt(Instant.now());
             notification.setAttemptCount(notification.getAttemptCount() + 1);
             notificationRepository.save(notification);

@@ -12,6 +12,7 @@ import com.edmebank.clientmanagement.model.Client;
 import com.edmebank.clientmanagement.model.ClientDocument;
 import com.edmebank.clientmanagement.repository.ClientDocumentRepository;
 import com.edmebank.clientmanagement.repository.ClientRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,8 +30,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
-@Service
 @RequiredArgsConstructor
+@Service
 public class ClientService {
 
     private final ClientRepository clientRepository;

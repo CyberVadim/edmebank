@@ -20,11 +20,11 @@ public class NotificationController {
         this.notificationService = notificationService;
     }
 
-//    @PostMapping("/send")
-//    public ResponseEntity<String> sendNotification(@RequestBody NotificationDto request) {
-//        notificationService.sendNotification(request);
-//        return ResponseEntity.ok("Notification sent successfully");
-//    }
+    @PostMapping("/send")
+    public ResponseEntity<String> sendNotification() {
+        notificationService.sendNotification();
+        return ResponseEntity.ok("Notification sent successfully");
+    }
 
     @GetMapping("/history/{clientId}")
     public ResponseEntity<List<Notification>> getNotificationHistory(@PathVariable UUID clientId) {

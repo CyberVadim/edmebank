@@ -12,7 +12,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -25,9 +24,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 import java.util.UUID;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/clients")
-@RequiredArgsConstructor
 public class ClientController {
 
     private final ClientService clientService;
@@ -73,7 +72,6 @@ public class ClientController {
             return ResponseEntity.badRequest().body("Ошибка загрузки документов");
         }
     }
-}
 
     @GetMapping("/{clientId}/disableNotification")
     public ResponseEntity<String> disableNotification(@PathVariable UUID clientId) {

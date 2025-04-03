@@ -21,8 +21,8 @@ import static com.edmebank.clientmanagement.model.Notification.NotificationType.
 import static com.edmebank.clientmanagement.model.Notification.NotificationType.PRODUCT_UPDATE;
 
 @Slf4j
-@Service
 @RequiredArgsConstructor
+@Service
 public class MailSenderImpl implements Sender {
 
     private final JavaMailSender mailSender;
@@ -30,15 +30,13 @@ public class MailSenderImpl implements Sender {
     @Value("${spring.mail.username}")
     private String senderEmail;
 
-    private static Map<Notification.NotificationType, String > typeStringMap = new HashMap<>();
-    static {
-        typeStringMap.put(PASSPORT_EXPIRY, "Требуется замена паспорта");
-        typeStringMap.put(PRODUCT_UPDATE, "Изменение условий обслуживания");
-        typeStringMap.put(DEPOSIT_INTEREST, "Начисление процентов по депозиту");
-    }
+    private static final Map<Notification.NotificationType, String > typeStringMap = Map.of(
+        PASSPORT_EXPIRY, "Требуется замена паспорта",
+        PRODUCT_UPDATE, "Изменение условий обслуживания",
+        DEPOSIT_INTEREST, "Начисление процентов по депозиту");
 
     @Override
-    public void send(Notification notification) {
+    public void sendNotification(Notification notification) {
         sendEmail(notification.getEmail(), typeStringMap.get(notification.getType()),
                 notification.getMessage(), true);
     }
