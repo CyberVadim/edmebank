@@ -47,7 +47,7 @@ public class Client {
     @Column(unique = true, nullable = false, length = 10)
     private String passportNumber;
 
-    @Column(length = 255)
+    @Column
     private String passportIssuedBy;
 
     @Column(name = "passport_issue_date", columnDefinition = "DATE")
@@ -59,7 +59,7 @@ public class Client {
     @Column(length = 20)
     private String phone;
 
-    @Column(unique = true, nullable = false, length = 255)
+    @Column(unique = true, nullable = false)
     private String email;
 
     @Column(length = 12)
@@ -73,6 +73,7 @@ public class Client {
 
     @Column(name = "passport_expiry_date", columnDefinition = "DATE")
     private LocalDate passportExpiryDate;
+    private boolean enableNotifications;
 
     @PrePersist
     @PreUpdate
