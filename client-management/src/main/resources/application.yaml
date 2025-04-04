@@ -46,6 +46,10 @@ spring:
       mail.smtp.auth: true
       mail.smtp.ssl.enable: true
 
+notification:
+  max_attempt: 3
+  passport_expire:
+    before_months: 3
 
 dadata:
   api:

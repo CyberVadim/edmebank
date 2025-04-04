@@ -1,4 +1,4 @@
-package com.edmebank.clientmanagement.model.notification;
+package com.edmebank.clientmanagement.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -44,12 +44,10 @@ public class Notification {
     private Instant createdAt;
     private Instant lastAttemptAt;
     private int attemptCount;
-
-    private boolean clientConfirmed;
     private Instant clientResponseDate;
 
     public enum NotificationStatus {
-        PENDING, SENT, DELIVERED, READ, FAILED
+        PENDING, SENT, DELIVERED, DISABLE
     }
 
     public enum NotificationType {
