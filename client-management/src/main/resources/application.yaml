@@ -38,13 +38,13 @@ spring:
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.xml
   mail:
-    host: smtp.mail.ru
-    port: 465
-    username: edmebank@mail.ru
-    password: 4vp3qgL0LHR61yTdpDM9
+    host: mail.edme.pro
+    port: 587
+    username: edme_bank_sender@edme.pro
+    password: b5wWzrqUqY2pLFYpmA3v
     properties:
       mail.smtp.auth: true
-      mail.smtp.ssl.enable: true
+      mail.smtp.ssl.enable: false
 
 notification:
   max_attempt: 3
