@@ -41,7 +41,7 @@ spring:
     host: mail.edme.pro
     port: 587
     username: edme_bank_sender@edme.pro
-    password: b5wWzrqUqY2pLFYpmA3v
+    password: b5wWzrqUqY2pLFYpmA3v # todo предлагайте шифрование в репе - ansible?
     properties:
       mail.smtp.auth: true
       mail.smtp.ssl.enable: false
