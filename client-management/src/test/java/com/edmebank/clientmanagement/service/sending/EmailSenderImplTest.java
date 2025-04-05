@@ -8,17 +8,18 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import static com.edmebank.clientmanagement.model.Notification.NotificationType.PASSPORT_EXPIRY;
 
-@Disabled("ручной тест для отправки на email который вы укажите")
+@Disabled("Ручной тест для отправки на email, который вы укажете")
 // для запуска закоментируйте @Disabled, проверте работу и раскомментируйте @Disable обратно.
 @SpringBootTest
 public class EmailSenderImplTest {
 
+    private String emailForSend = "edmebank@mail.ru";
     @Autowired
     private MailSenderImpl mailSender;
     @Test
-    public void sendEmail() {
+    public void shouldSendEmailNotification() {
         Notification notification = Notification.builder()
-                .email("edmebank@mail.ru")
+                .email(emailForSend)
                 .type(PASSPORT_EXPIRY)
                 .message("Simple message")
                 .build();
