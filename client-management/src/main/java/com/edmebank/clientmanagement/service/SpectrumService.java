@@ -68,14 +68,7 @@ public class SpectrumService {
     }
 
     public boolean canRegisterClient(ClientDTO clientDTO) {
-        String uid = getUid(clientDTO);
-        ResponseData response = spectrumClient.getReport(uid, false, false, authHeader);
-
-        if (isEmpty(response.getData())) {
-            return false;
-        }
-
-        ReportData report = response.getData().get(0);
+         ReportData report = fetchReport(clientDTO);
         return processCheckResults(report.getState().getSources());
     }
 
@@ -115,6 +108,12 @@ public class SpectrumService {
             return false;
         }
         return true;
+    }
+
+    public ReportData fetchReport(ClientDTO clientDTO) {
+        String uid = getUid(clientDTO);
+        ResponseData response = spectrumClient.getReport(uid, false, false, authHeader);
+        return response.getData() != null && response.getData().size() > 0 ? response.getData().get(0) : null;
     }
 }
 

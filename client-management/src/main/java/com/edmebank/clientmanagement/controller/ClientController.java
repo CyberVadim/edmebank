@@ -1,7 +1,9 @@
 package com.edmebank.clientmanagement.controller;
 
 import com.edmebank.clientmanagement.dto.ClientDTO;
+import com.edmebank.clientmanagement.dto.spectrum.getReport.ReportData;
 import com.edmebank.clientmanagement.service.ClientService;
+import com.edmebank.clientmanagement.service.SpectrumService;
 import com.edmebank.clientmanagement.service.NotificationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -30,6 +32,7 @@ import java.util.UUID;
 public class ClientController {
 
     private final ClientService clientService;
+    private final SpectrumService spectrumService;
     private final NotificationService notificationService;
 
     @Operation(summary = "Регистрация клиента")
@@ -71,6 +74,11 @@ public class ClientController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Ошибка загрузки документов");
         }
+    }
+
+    @GetMapping("/report")
+    public ReportData fetchReport(@Valid @RequestBody ClientDTO clientDTO) {
+        return spectrumService.fetchReport(clientDTO);
     }
 
     @GetMapping("/{clientId}/disableNotification")
