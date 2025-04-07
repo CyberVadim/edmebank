@@ -43,7 +43,7 @@ class NotificationServiceTest {
         UUID uuid = UUID.fromString("10000000-0000-0000-0000-000000000201");
         Client client = Client.builder()
                 .id(uuid)
-                .email("edmebank@mail.ru")
+                .email("edme_bank_acceptor@edme.pro")
                 .passportExpiryDate(LocalDate.of(2025, 4, 2))
                 .build();
         when(clientRepository.findByPassportExpiryDateBefore(any(LocalDate.class)))
@@ -84,7 +84,7 @@ class NotificationServiceTest {
         Notification notification = Notification.builder()
                 .id(1L)
                 .clientId(UUID.randomUUID())
-                .email("edmebank@mail.ru")
+                .email("edme_bank_acceptor@edme.pro")
                 .message("Reminder")
                 .type(NotificationType.PASSPORT_EXPIRY)
                 .status(NotificationStatus.SENT)
@@ -108,7 +108,7 @@ class NotificationServiceTest {
         Notification notification = Notification.builder()
                 .id(3L)
                 .clientId(UUID.randomUUID())
-                .email("edmebank@mail.ru")
+                .email("edme_bank_acceptor@edme.pro")
                 .message("New update")
                 .type(NotificationType.PRODUCT_UPDATE)
                 .status(NotificationStatus.PENDING)
