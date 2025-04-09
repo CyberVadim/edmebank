@@ -2,7 +2,6 @@ package com.edmebank.clientmanagement.service;
 
 import com.edmebank.clientmanagement.client.DadataFeignClient;
 import com.edmebank.clientmanagement.dto.ClientDTO;
-import com.edmebank.clientmanagement.dto.dadata.DadataPassportResponse;
 import com.edmebank.clientmanagement.exception.AmlCheckedException;
 import com.edmebank.clientmanagement.exception.ClientAlreadyExistsException;
 import com.edmebank.clientmanagement.exception.ClientNotFoundException;
@@ -24,7 +23,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -39,6 +37,7 @@ public class ClientService {
     private final ClientMapper clientMapper;
     private final DadataFeignClient dadataFeignClient;
     private final SpectrumService spectrumService;
+    private final PassportValidationService passportValidationService;
     @Value("${dadata.api.authHeader}")
     private String authHeader;
     @Value("${dadata.api.secret}")
@@ -50,21 +49,19 @@ public class ClientService {
         if (existingClient.isPresent()) {
             throw new ClientAlreadyExistsException("Клиент с таким паспортом уже зарегистрирован");
         }
-        if (!isValidPassport(clientDTO.getPassportNumber())) {
+        if (!passportValidationService.isValid(clientDTO.getPassportNumber())) {
             throw new InvalidPassportException("Проверка паспорта не пройдена");
         } else {
             log.info("Проверка паспорта прошла успешно");
-
             boolean isAmlChecked = spectrumService.canRegisterClient(clientDTO);
             if (isAmlChecked) {
-                throw new AmlCheckedException("Клиент не прошел проверку на благонадежность");
-            } else {
                 log.info("Клиент прошел проверку на благонадежность, все ОК.");
-
                 Client client = clientMapper.toEntity(clientDTO);
                 client.setAmlChecked(true);
                 client = clientRepository.save(client);
                 return client.getId();
+            } else {
+                throw new AmlCheckedException("Клиент не прошел проверку на благонадежность");
             }
         }
     }
@@ -114,25 +111,5 @@ public class ClientService {
                 throw new RuntimeException("Ошибка при сохранении файла", e);
             }
         }
-    }
-
-    public boolean isValidPassport(String passportNumber) {
-
-        List<DadataPassportResponse> response = dadataFeignClient.cleanPassport(
-                Collections.singletonList(passportNumber),
-                authHeader,
-                secret);
-
-        if (response.isEmpty()) {
-            return false;
-        }
-        int qc = response.get(0).getQc();
-        if (qc == 1) {
-            throw new InvalidPassportException("Неправильный формат серии или номера паспорта");
-        }
-        if (qc == 10) {
-            throw new InvalidPassportException("Паспорт числится недействительным в базе МВД");
-        }
-        return qc == 0;
     }
 }
