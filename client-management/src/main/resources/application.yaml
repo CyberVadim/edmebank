@@ -51,6 +51,9 @@ notification:
   passport_expire:
     before_months: 3
 
+file:
+  upload-dir: ./uploads
+
 dadata:
   api:
     authHeader: "Token 50353c0408a3f1a0c2805bd8e0342a2d11a394f2"
