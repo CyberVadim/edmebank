@@ -12,8 +12,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -60,9 +62,27 @@ public class ClientController {
     }
 
 
-    @PutMapping("/{clientId}/update")
-    public ResponseEntity<Void> updateClient(@PathVariable UUID clientId, @Valid @RequestBody ClientDTO clientDTO) {
+    @PutMapping(value = "/{clientId}/update",
+                headers = {
+                    "Content-Type=application/json",  // Ожидается JSON
+                    "SystemId",                     // Должен присутствовать (любое значение)
+                    "Content-Length"                 // Должен присутствовать
+                })
+    public ResponseEntity<Void> updateClient(@PathVariable UUID clientId,
+                                             @Valid @RequestBody ClientDTO clientDTO) {
         clientService.updateClient(clientId, clientDTO);
+        return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping(value = "/{clientId}/patch",
+            headers = {
+                    "Content-Type=application/json",  // Ожидается JSON
+                    "SystemId",                     // Должен присутствовать (любое значение)
+                    "Content-Length"                 // Должен присутствовать
+            })
+    public ResponseEntity<Void> patchClient(@PathVariable UUID clientId,
+                                            @Valid @RequestBody ClientDTO clientDTO) {
+        clientService.patchClient(clientId, clientDTO);
         return ResponseEntity.ok().build();
     }
 
