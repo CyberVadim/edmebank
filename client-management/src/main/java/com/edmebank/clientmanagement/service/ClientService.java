@@ -8,8 +8,8 @@ import com.edmebank.clientmanagement.exception.ClientNotFoundException;
 import com.edmebank.clientmanagement.exception.InvalidPassportException;
 import com.edmebank.clientmanagement.mapper.ClientMapper;
 import com.edmebank.clientmanagement.model.Client;
-import com.edmebank.clientmanagement.model.ClientDocument;
-import com.edmebank.clientmanagement.repository.ClientDocumentRepository;
+//import com.edmebank.clientmanagement.model.ClientDocument;
+import com.edmebank.clientmanagement.repository.PassportRepository;
 import com.edmebank.clientmanagement.repository.ClientRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +33,7 @@ import java.util.UUID;
 public class ClientService {
 
     private final ClientRepository clientRepository;
-    private final ClientDocumentRepository clientDocumentRepository;
+    private final PassportRepository passportRepository;
     private final ClientMapper clientMapper;
     private final DadataFeignClient dadataFeignClient;
     private final SpectrumService spectrumService;
@@ -83,33 +83,33 @@ public class ClientService {
         clientRepository.save(client);
     }
 
-    public void uploadDocuments(UUID clientId, List<MultipartFile> documents) {
-        String uploadDir = "D:/EDMEData/documents/";
-
-        Client client = clientRepository.findById(clientId)
-                .orElseThrow(() -> new ClientNotFoundException("Клиент с ID " + clientId + " не найден"));
-
-        for (MultipartFile document : documents) {
-            try {
-                // Создаем директорию, если ее нет
-                Files.createDirectories(Paths.get(uploadDir));
-
-                // Генерируем уникальное имя файла
-                String filename = clientId + "_" + document.getOriginalFilename();
-                Path filePath = Paths.get(uploadDir + filename);
-
-                // Сохраняем файл
-                Files.write(filePath, document.getBytes());
-
-                // Сохраняем путь в БД
-                ClientDocument clientDocument = new ClientDocument();
-                clientDocument.setClient(client);
-                clientDocument.setDocumentPath(filePath.toString());
-                clientDocumentRepository.save(clientDocument);
-
-            } catch (IOException e) {
-                throw new RuntimeException("Ошибка при сохранении файла", e);
-            }
-        }
-    }
+//    public void uploadDocuments(UUID clientId, List<MultipartFile> documents) {
+//        String uploadDir = "D:/EDMEData/documents/";
+//
+//        Client client = clientRepository.findById(clientId)
+//                .orElseThrow(() -> new ClientNotFoundException("Клиент с ID " + clientId + " не найден"));
+//
+//        for (MultipartFile document : documents) {
+//            try {
+//                // Создаем директорию, если ее нет
+//                Files.createDirectories(Paths.get(uploadDir));
+//
+//                // Генерируем уникальное имя файла
+//                String filename = clientId + "_" + document.getOriginalFilename();
+//                Path filePath = Paths.get(uploadDir + filename);
+//
+//                // Сохраняем файл
+//                Files.write(filePath, document.getBytes());
+//
+//                // Сохраняем путь в БД
+//                ClientDocument clientDocument = new ClientDocument();
+//                clientDocument.setClient(client);
+//                clientDocument.setDocumentPath(filePath.toString());
+//                passportRepository.save(clientDocument);
+//
+//            } catch (IOException e) {
+//                throw new RuntimeException("Ошибка при сохранении файла", e);
+//            }
+//        }
+//    }
 }

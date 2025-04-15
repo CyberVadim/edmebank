@@ -3,8 +3,10 @@ package com.edmebank.clientmanagement.controller;
 import com.edmebank.clientmanagement.dto.ClientDTO;
 import com.edmebank.clientmanagement.dto.spectrum.getReport.ReportData;
 import com.edmebank.clientmanagement.service.ClientService;
+import com.edmebank.clientmanagement.service.PassportService;
 import com.edmebank.clientmanagement.service.SpectrumService;
 import com.edmebank.clientmanagement.service.NotificationService;
+import com.edmebank.clientmanagement.service.impl.PassportServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -34,6 +36,7 @@ public class ClientController {
     private final ClientService clientService;
     private final SpectrumService spectrumService;
     private final NotificationService notificationService;
+    private final PassportServiceImpl passportService;
 
     @Operation(summary = "Регистрация клиента")
     @ApiResponses(value = {
@@ -67,9 +70,10 @@ public class ClientController {
     }
 
     @PostMapping("/{clientId}/documents")
-    public ResponseEntity<String> uploadDocuments(@PathVariable UUID clientId, @RequestParam("files") List<MultipartFile> files) {
+    public ResponseEntity<String> uploadDocuments(@PathVariable UUID clientId, @RequestParam("files") MultipartFile files) {
         try {
-            clientService.uploadDocuments(clientId, files);
+//            clientService.uploadDocuments(clientId, files);
+            passportService.uploadPassport(clientId, files);
             return ResponseEntity.ok("Документы загружены");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Ошибка загрузки документов");
