@@ -4,7 +4,7 @@ import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
+import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.awt.image.RescaleOp;
 import java.io.File;
@@ -18,7 +18,11 @@ public class PassportImageProcessor {
 
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 
-    public static PassportOcrResult extractPassportData(File imageFile, Tesseract tesseract) throws IOException, TesseractException {
+    public static PassportOcrResult extractPassportData(File imageFile) throws IOException, TesseractException {
+
+        Tesseract tesseract = new Tesseract();
+        tesseract.setDatapath("client-management/tessdata");
+        tesseract.setLanguage("rus");
         // 1. Обрабатываем основное изображение
         File processed = preprocess(imageFile);
         String text = tesseract.doOCR(processed);
@@ -36,7 +40,6 @@ public class PassportImageProcessor {
 
         // 4. Возвращаем результат
         PassportOcrResult result = new PassportOcrResult();
-        result.rawText = text + "\n---NUMERIC ZONE---\n" + numberText;
         result.issueDate = issueDate;
         result.passportNumber = passportNumber;
         return result;

@@ -4,7 +4,6 @@ import com.edmebank.clientmanagement.service.OcrService;
 import com.edmebank.clientmanagement.util.PassportImageProcessor;
 import com.edmebank.clientmanagement.util.PassportOcrResult;
 import lombok.extern.slf4j.Slf4j;
-import net.sourceforge.tess4j.Tesseract;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -13,30 +12,19 @@ import java.io.File;
 @Slf4j
 public class OcrServiceImpl implements OcrService {
 
-    private final Tesseract tesseract;
-
-    public OcrServiceImpl() {
-        this.tesseract = new Tesseract();
-        this.tesseract.setDatapath("E:\\MyApp\\EDME\\edmebank\\client-management\\tessdata"); // путь до папки с языковыми файлами
-        this.tesseract.setLanguage("rus"); // для русского текста
-    }
-
     @Override
     public PassportOcrResult extractText(File imageFile) {
         try {
             PassportOcrResult result =
-                    PassportImageProcessor.extractPassportData(imageFile, tesseract);
+                    PassportImageProcessor.extractPassportData(imageFile);
 
-            log.info("Номер паспорта: {}", result.passportNumber);
-            log.info("Дата выдачи: {}", result.issueDate);
-            log.info("Распознанный текст:\n{}", result.rawText);
-
+            log.info("📄 Номер паспорта: {}", result.passportNumber);
+            log.info("📅 Дата выдачи: {}", result.issueDate);
             return result;
 
         } catch (Exception e) {
+            log.error("❌ Ошибка OCR: {}", e.getMessage(), e);
             throw new RuntimeException("OCR ошибка: " + e.getMessage(), e);
         }
     }
-
 }
-

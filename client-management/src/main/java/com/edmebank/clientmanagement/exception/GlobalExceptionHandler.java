@@ -19,6 +19,7 @@ public class GlobalExceptionHandler {
     public String handleClientNotFoundException(ClientNotFoundException ex) {
         return ex.getMessage();
     }
+
     @ExceptionHandler(EntityNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public String handler(EntityNotFoundException ex) {
@@ -67,5 +68,15 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public String handleVpnActiveException(VpnActiveException e) {
         return e.getMessage();
+    }
+
+    @ExceptionHandler(PassportOcrException.class)
+    public ResponseEntity<String> handlePassportOcrException(PassportOcrException ex) {
+        return ResponseEntity.badRequest().body(ex.getMessage());
+    }
+
+    @ExceptionHandler(PassportStorageException.class)
+    public ResponseEntity<String> handlePassportOcrException(PassportStorageException ex) {
+        return ResponseEntity.badRequest().body(ex.getMessage());
     }
 }
