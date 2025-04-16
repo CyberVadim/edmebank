@@ -53,6 +53,8 @@ notification:
 
 file:
   upload-dir: ./uploads
+ocr:
+  tessdata-path: client-management/tessdata
 
 dadata:
   api:
