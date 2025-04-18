@@ -1,7 +1,10 @@
 package com.edmebank.clientmanagement.service;
 
 import com.edmebank.clientmanagement.client.DadataFeignClient;
+import com.edmebank.clientmanagement.client.SpectrumCourtAndSanctionClient;
 import com.edmebank.clientmanagement.dto.ClientDTO;
+import com.edmebank.clientmanagement.dto.spectrum.CourtAndSanctionRequest;
+import com.edmebank.clientmanagement.dto.spectrum.SpectrumDataResponse;
 import com.edmebank.clientmanagement.exception.AmlCheckedException;
 import com.edmebank.clientmanagement.exception.ClientAlreadyExistsException;
 import com.edmebank.clientmanagement.exception.ClientNotFoundException;
@@ -23,6 +26,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -38,6 +42,7 @@ public class ClientService {
     private final DadataFeignClient dadataFeignClient;
     private final SpectrumService spectrumService;
     private final PassportValidationService passportValidationService;
+    private final SpectrumCourtAndSanctionClient spectrumCourtAndSanctionClient;
     @Value("${dadata.api.authHeader}")
     private String authHeader;
     @Value("${dadata.api.secret}")
@@ -49,20 +54,33 @@ public class ClientService {
         if (existingClient.isPresent()) {
             throw new ClientAlreadyExistsException("Клиент с таким паспортом уже зарегистрирован");
         }
+        checkClient(clientDTO);
+
+        Client client = clientMapper.toEntity(clientDTO);
+        client.setAmlChecked(true);
+        client = clientRepository.save(client);
+        return client.getId();
+    }
+
+    private void checkClient(ClientDTO clientDTO) {
         if (!passportValidationService.isValid(clientDTO.getPassportNumber())) {
             throw new InvalidPassportException("Проверка паспорта не пройдена");
+        }
+        log.info("Проверка паспорта прошла успешно");
+        boolean isAmlChecked = spectrumService.canRegisterClient(clientDTO);
+
+        CourtAndSanctionRequest request = CourtAndSanctionRequest.builder()
+                .firstName(clientDTO.getFirstName())
+                .lastName(clientDTO.getLastName())
+                .middleName(clientDTO.getMiddleName())
+                .birthDate(clientDTO.getDateOfBirth().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")))
+                .build();
+        SpectrumDataResponse response = spectrumCourtAndSanctionClient.verifyCourtAndSanction(request);
+
+        if (isAmlChecked && "OK".equals(response.getState())) {
+            log.info("Клиент прошел проверку на благонадежность, все ОК.");
         } else {
-            log.info("Проверка паспорта прошла успешно");
-            boolean isAmlChecked = spectrumService.canRegisterClient(clientDTO);
-            if (isAmlChecked) {
-                log.info("Клиент прошел проверку на благонадежность, все ОК.");
-                Client client = clientMapper.toEntity(clientDTO);
-                client.setAmlChecked(true);
-                client = clientRepository.save(client);
-                return client.getId();
-            } else {
-                throw new AmlCheckedException("Клиент не прошел проверку на благонадежность");
-            }
+            throw new AmlCheckedException("Клиент не прошел проверку на благонадежность");
         }
     }
 
@@ -70,6 +88,8 @@ public class ClientService {
     public void updateClient(UUID clientId, ClientDTO clientDTO) {
         Client client = clientRepository.findById(clientId)
                 .orElseThrow(() -> new ClientNotFoundException("Клиент с ID " + clientId + " не найден"));
+
+        checkClient(clientDTO);
 
         clientMapper.updateClientFromDto(clientDTO, client);
         clientRepository.save(client);
