@@ -76,6 +76,58 @@ public class ClientService {
     }
 
     @Transactional
+    public void patchClient(UUID clientId, ClientDTO clientDTO) {
+        Client client = clientRepository.findById(clientId)
+                .orElseThrow(() -> new EntityNotFoundException("Клиент с ID " + clientId + " не найден"));
+        if (clientDTO.getFirstName() != null) {
+            client.setFirstName(clientDTO.getFirstName());
+        }
+        if (clientDTO.getLastName() != null) {
+            client.setLastName(clientDTO.getLastName());
+        }
+        if (clientDTO.getMiddleName() != null) {
+            client.setMiddleName(clientDTO.getMiddleName());
+        }
+        if (clientDTO.getAddress() != null) {
+            client.setAddress(clientDTO.getAddress());
+        }
+        if (clientDTO.getPhone() != null) {
+            client.setPhone(clientDTO.getPhone());
+        }
+        if (clientDTO.getEmail() != null) {
+            client.setEmail(clientDTO.getEmail());
+        }
+        if (clientDTO.getPassportIssuedBy() != null) {
+            client.setPassportIssuedBy(clientDTO.getPassportIssuedBy());
+        }
+        if (clientDTO.getPassportIssueDate() != null) {
+            client.setPassportIssueDate(clientDTO.getPassportIssueDate());
+        }
+        if (clientDTO.getDateOfBirth() != null) {
+            client.setDateOfBirth(clientDTO.getDateOfBirth());
+            client.calculatePassportExpiryDate();
+        }
+        if (clientDTO.getPassportNumber() != null) {
+            Optional<Client> existingClient = clientRepository.findByPassportNumber(clientDTO.getPassportNumber());
+            if (existingClient.isPresent()) {
+                throw new ClientAlreadyExistsException("Клиент с таким паспортом уже зарегистрирован");
+            }
+            if (!passportValidationService.isValid(clientDTO.getPassportNumber())) {
+                throw new InvalidPassportException("Проверка паспорта не пройдена");
+            } else {
+                log.info("Проверка паспорта прошла успешно");
+                boolean isAmlChecked = spectrumService.canRegisterClient(clientDTO);
+                if (isAmlChecked) {
+                    client.setPassportNumber(clientDTO.getPassportNumber());
+                } else {
+                    throw new AmlCheckedException("Клиент не прошел проверку на благонадежность");
+                }
+            }
+        }
+        clientRepository.save(client);
+    }
+
+    @Transactional
     public void disableNotification(UUID clientId) {
         Client client = clientRepository.findById(clientId)
                 .orElseThrow(() -> new EntityNotFoundException("Клиент с ID " + clientId + " не найден"));

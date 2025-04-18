@@ -1,5 +1,6 @@
 package com.edmebank.clientmanagement.controller;
 
+import com.edmebank.clientmanagement.commons.Constants;
 import com.edmebank.clientmanagement.dto.ClientDTO;
 import com.edmebank.clientmanagement.dto.PassportDto;
 import com.edmebank.clientmanagement.dto.spectrum.getReport.ReportData;
@@ -16,8 +17,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -32,7 +35,8 @@ import java.util.UUID;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/v1/clients")
+@RequestMapping(value = "/api/v1/clients",
+            headers = {Constants.CONTENT_LENGTH, Constants.CONTENT_TYPE})
 public class ClientController {
 
     private final ClientService clientService;
@@ -65,9 +69,19 @@ public class ClientController {
     }
 
 
-    @PutMapping("/{clientId}/update")
-    public ResponseEntity<Void> updateClient(@PathVariable UUID clientId, @Valid @RequestBody ClientDTO clientDTO) {
+    @PutMapping(value = "/{clientId}",
+            headers = {"SystemId"})
+    public ResponseEntity<Void> updateClient(@PathVariable UUID clientId,
+                                             @Valid @RequestBody ClientDTO clientDTO) {
         clientService.updateClient(clientId, clientDTO);
+        return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping(value = "/{clientId}",
+            headers = {"SystemId"})
+    public ResponseEntity<Void> patchClient(@PathVariable UUID clientId,
+                                            @Valid @RequestBody ClientDTO clientDTO) {
+        clientService.patchClient(clientId, clientDTO);
         return ResponseEntity.ok().build();
     }
 
