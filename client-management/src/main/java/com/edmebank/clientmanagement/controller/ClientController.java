@@ -1,10 +1,13 @@
 package com.edmebank.clientmanagement.controller;
 
 import com.edmebank.clientmanagement.dto.ClientDTO;
+import com.edmebank.clientmanagement.dto.PassportDto;
 import com.edmebank.clientmanagement.dto.spectrum.getReport.ReportData;
 import com.edmebank.clientmanagement.service.ClientService;
+import com.edmebank.clientmanagement.service.PassportService;
 import com.edmebank.clientmanagement.service.SpectrumService;
 import com.edmebank.clientmanagement.service.NotificationService;
+import com.edmebank.clientmanagement.service.impl.PassportServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -12,6 +15,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,6 +40,7 @@ public class ClientController {
     private final ClientService clientService;
     private final SpectrumService spectrumService;
     private final NotificationService notificationService;
+    private final PassportServiceImpl passportService;
 
     @Operation(summary = "Регистрация клиента")
     @ApiResponses(value = {
@@ -86,14 +91,13 @@ public class ClientController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/{clientId}/documents")
-    public ResponseEntity<String> uploadDocuments(@PathVariable UUID clientId, @RequestParam("files") List<MultipartFile> files) {
-        try {
-            clientService.uploadDocuments(clientId, files);
-            return ResponseEntity.ok("Документы загружены");
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Ошибка загрузки документов");
-        }
+    @PostMapping(
+            path = "/{clientId}/documents",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<PassportDto> uploadDocuments(@PathVariable UUID clientId, @RequestParam("file") MultipartFile file) {
+        return ResponseEntity.ok(passportService.uploadPassport(clientId, file));
     }
 
     @GetMapping("/report")
