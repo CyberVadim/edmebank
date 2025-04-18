@@ -1,5 +1,6 @@
 package com.edmebank.clientmanagement.controller;
 
+import com.edmebank.clientmanagement.commons.Constants;
 import com.edmebank.clientmanagement.dto.ClientDTO;
 import com.edmebank.clientmanagement.dto.PassportDto;
 import com.edmebank.clientmanagement.dto.spectrum.getReport.ReportData;
@@ -34,7 +35,8 @@ import java.util.UUID;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/v1/clients")
+@RequestMapping(value = "/api/v1/clients",
+            headers = {Constants.CONTENT_LENGTH, Constants.CONTENT_TYPE})
 public class ClientController {
 
     private final ClientService clientService;
@@ -67,24 +69,16 @@ public class ClientController {
     }
 
 
-    @PutMapping(value = "/{clientId}/update",
-                headers = {
-                    "Content-Type=application/json",  // Ожидается JSON
-                    "SystemId",                     // Должен присутствовать (любое значение)
-                    "Content-Length"                 // Должен присутствовать
-                })
+    @PutMapping(value = "/{clientId}",
+            headers = {"SystemId"})
     public ResponseEntity<Void> updateClient(@PathVariable UUID clientId,
                                              @Valid @RequestBody ClientDTO clientDTO) {
         clientService.updateClient(clientId, clientDTO);
         return ResponseEntity.ok().build();
     }
 
-    @PatchMapping(value = "/{clientId}/patch",
-            headers = {
-                    "Content-Type=application/json",  // Ожидается JSON
-                    "SystemId",                     // Должен присутствовать (любое значение)
-                    "Content-Length"                 // Должен присутствовать
-            })
+    @PatchMapping(value = "/{clientId}",
+            headers = {"SystemId"})
     public ResponseEntity<Void> patchClient(@PathVariable UUID clientId,
                                             @Valid @RequestBody ClientDTO clientDTO) {
         clientService.patchClient(clientId, clientDTO);
