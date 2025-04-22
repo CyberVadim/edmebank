@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot'
     id 'io.spring.dependency-management'
+    id 'jacoco'
 }
 
 group = 'com.edmebank'
@@ -39,6 +40,26 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
 }
 
-tasks.named('test') {
+jacoco {
+    toolVersion = "0.8.12"
+}
+
+tasks.withType(Test){
     useJUnitPlatform()
+}
+
+test.finalizedBy jacocoTestReport
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        csv.required = true
+        csv.destination file("${layout.buildDirectory.get()}/jacocoCsv")
+    }
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: ['com/edmebank/clientmanagement/model/**',
+                                        'com/edmebank/clientmanagement/dto/**'])
+        }))
+    }
 }
