@@ -54,12 +54,14 @@ jacocoTestReport {
     dependsOn test
     reports {
         csv.required = true
-        csv.destination file("${layout.buildDirectory.get()}/jacocoCsv")
+        html.required = true
+        csv.outputLocation = layout.buildDirectory.file("reports/jacoco/csv/report.csv")
+        html.outputLocation = layout.buildDirectory.dir("reports/jacoco/html")
     }
-    afterEvaluate {
-        classDirectories.setFrom(files(classDirectories.files.collect {
-            fileTree(dir: it, exclude: ['com/edmebank/clientmanagement/model/**',
-                                        'com/edmebank/clientmanagement/dto/**'])
-        }))
-    }
+    classDirectories.setFrom(
+            fileTree(dir: "${layout.buildDirectory.get()}/classes/java/main").exclude([
+                    'com/edmebank/clientmanagement/model/**',
+                    'com/edmebank/clientmanagement/dto/**'
+            ])
+    )
 }
