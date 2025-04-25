@@ -21,7 +21,7 @@ public class PassportImageProcessor {
     public static PassportOcrResult extractPassportData(File imageFile) throws IOException, TesseractException {
 
         Tesseract tesseract = new Tesseract();
-        tesseract.setDatapath("client-management/tessdata");
+        tesseract.setDatapath("tessdata");
         tesseract.setLanguage("rus");
         // 1. Обрабатываем основное изображение
         File processed = preprocess(imageFile);
