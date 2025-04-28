@@ -2,32 +2,23 @@ package com.edmebank.clientmanagement.service;
 
 import com.edmebank.clientmanagement.client.DadataFeignClient;
 import com.edmebank.clientmanagement.client.SpectrumCourtAndSanctionClient;
+import com.edmebank.clientmanagement.dto.AddressValidationResultDto;
 import com.edmebank.clientmanagement.dto.ClientDTO;
 import com.edmebank.clientmanagement.dto.spectrum.CourtAndSanctionRequest;
 import com.edmebank.clientmanagement.dto.spectrum.SpectrumDataResponse;
-import com.edmebank.clientmanagement.exception.AmlCheckedException;
-import com.edmebank.clientmanagement.exception.ClientAlreadyExistsException;
-import com.edmebank.clientmanagement.exception.ClientNotFoundException;
-import com.edmebank.clientmanagement.exception.InvalidPassportException;
+import com.edmebank.clientmanagement.exception.*;
 import com.edmebank.clientmanagement.mapper.ClientMapper;
 import com.edmebank.clientmanagement.model.Client;
-//import com.edmebank.clientmanagement.model.ClientDocument;
-import com.edmebank.clientmanagement.repository.PassportRepository;
 import com.edmebank.clientmanagement.repository.ClientRepository;
+import com.edmebank.clientmanagement.repository.PassportRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -43,6 +34,7 @@ public class ClientService {
     private final SpectrumService spectrumService;
     private final PassportValidationService passportValidationService;
     private final SpectrumCourtAndSanctionClient spectrumCourtAndSanctionClient;
+    private final AddressValidationService addressValidationService;
     @Value("${dadata.api.authHeader}")
     private String authHeader;
     @Value("${dadata.api.secret}")
@@ -63,6 +55,12 @@ public class ClientService {
     }
 
     private void checkClient(ClientDTO clientDTO) {
+        AddressValidationResultDto resultDto =addressValidationService.validate(clientDTO.getAddress());
+        if (resultDto.getConfidence() < 80) {
+            throw new InvalidAddressException("Проверка адреса не пройдена: " + resultDto.getError());
+        }
+        log.info("Проверка адреса прошла успешно: {}, error message: {}", resultDto.getFullAddress(), resultDto.getError());
+        
         if (!passportValidationService.isValid(clientDTO.getPassportNumber())) {
             throw new InvalidPassportException("Проверка паспорта не пройдена");
         }

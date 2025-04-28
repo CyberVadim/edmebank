@@ -37,6 +37,9 @@ dependencies {
     // Lombok
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
+
+    // Pullenti
+    implementation files('./libs/pullenti-1.0.0.jar')
 }
 
 tasks.named('test') {

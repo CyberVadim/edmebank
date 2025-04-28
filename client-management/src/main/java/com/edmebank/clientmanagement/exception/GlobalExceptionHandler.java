@@ -79,4 +79,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handlePassportOcrException(PassportStorageException ex) {
         return ResponseEntity.badRequest().body(ex.getMessage());
     }
+    
+    @ExceptionHandler(InvalidAddressException.class)
+    public ResponseEntity<String> handleInvalidAddressException(InvalidAddressException ex) {
+        return ResponseEntity.badRequest().body(ex.getMessage());
+    }
 }
