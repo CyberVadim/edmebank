@@ -40,7 +40,7 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
 
     // Pullenti
-    implementation files('./libs/pullenti-1.0.0.jar')
+    implementation files('./libs/pullenti-address-1.0.0.jar')
 }
 
 jacoco {
