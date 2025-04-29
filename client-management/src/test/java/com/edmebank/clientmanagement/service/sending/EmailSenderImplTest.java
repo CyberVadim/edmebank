@@ -9,7 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static com.edmebank.clientmanagement.model.Notification.NotificationType.PASSPORT_EXPIRY;
 
-//@Disabled("Ручной тест для отправки на email, который вы укажете")
+@Disabled("Ручной тест для отправки на email, который вы укажете")
 // для запуска закоментируйте @Disabled, проверте работу и раскомментируйте @Disable обратно.
 @SpringBootTest
 public class EmailSenderImplTest {

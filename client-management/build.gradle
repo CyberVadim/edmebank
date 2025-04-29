@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot'
     id 'io.spring.dependency-management'
+    id 'jacoco'
 }
 
 group = 'com.edmebank'
@@ -42,6 +43,28 @@ dependencies {
     implementation files('./libs/pullenti-1.0.0.jar')
 }
 
-tasks.named('test') {
+jacoco {
+    toolVersion = "0.8.12"
+}
+
+tasks.withType(Test){
     useJUnitPlatform()
+}
+
+test.finalizedBy jacocoTestReport
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        csv.required = true
+        html.required = true
+        csv.outputLocation = layout.buildDirectory.file("reports/jacoco/csv/report.csv")
+        html.outputLocation = layout.buildDirectory.dir("reports/jacoco/html")
+    }
+    classDirectories.setFrom(
+            fileTree(dir: "${layout.buildDirectory.get()}/classes/java/main").exclude([
+                    'com/edmebank/clientmanagement/model/**',
+                    'com/edmebank/clientmanagement/dto/**'
+            ])
+    )
 }
