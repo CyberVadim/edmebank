@@ -64,3 +64,8 @@ dadata:
 spectrum_data:
   authHeader: "AR-REST dXNlcl9pbnRlZ3JhdGlvbkBiYWtzZXQ6MTc0MTg1MjgwMDo5OTk5OTk5OTk6MzRKeWpZdXhQWnd6Z0JudThGQi9uQT09"
 
+pullenti:
+  gar:
+    download:
+      enabled: false
+
