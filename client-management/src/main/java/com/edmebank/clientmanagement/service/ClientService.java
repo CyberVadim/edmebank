@@ -34,7 +34,7 @@ public class ClientService {
     private final SpectrumService spectrumService;
     private final PassportValidationService passportValidationService;
     private final SpectrumCourtAndSanctionClient spectrumCourtAndSanctionClient;
-    private final AddressValidationService addressValidationService;
+    private final AddressValidationServiceImpl addressValidationService;
     @Value("${dadata.api.authHeader}")
     private String authHeader;
     @Value("${dadata.api.secret}")
@@ -57,6 +57,7 @@ public class ClientService {
     private void checkClient(ClientDTO clientDTO) {
         AddressValidationResultDto resultDto =addressValidationService.validate(clientDTO.getAddress());
         if (resultDto.getConfidence() < 80) {
+            log.error("Address validation failed: {}", resultDto.getError());
             throw new InvalidAddressException("Проверка адреса не пройдена: " + resultDto.getError());
         }
         log.info("Проверка адреса прошла успешно: {}, error message: {}", resultDto.getFullAddress(), resultDto.getError());

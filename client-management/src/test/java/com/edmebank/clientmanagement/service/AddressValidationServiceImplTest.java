@@ -7,12 +7,12 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class AddressValidationServiceTest {
+public class AddressValidationServiceImplTest {
     
     @BeforeAll
     static void initPullenti() throws Exception {
         AddressService.initialize();
-        String garIndexPath = AddressValidationServiceTest.class
+        String garIndexPath = AddressValidationServiceImplTest.class
                 .getClassLoader()
                 .getResource("Pullenti/Gar77")
                 .getPath();
@@ -21,7 +21,7 @@ public class AddressValidationServiceTest {
     
     @Test
     void shouldValidateAndNormalizeAddress() {
-        AddressValidationService addressValidationService = new AddressValidationService();
+        AddressValidationServiceImpl addressValidationService = new AddressValidationServiceImpl();
         String address = "улица Вавилова, 39А, Москва";
         // When
         AddressValidationResultDto result = addressValidationService.validate(address);
