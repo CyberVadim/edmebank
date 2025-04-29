@@ -44,7 +44,7 @@ public class AddressValidationServiceImpl implements AddressValidationService{
         GarObject deepest = null;
         for (AddrObject item : parsed.items) {
             if (item.gars != null && !item.gars.isEmpty()) {
-                GarObject gar = item.gars.getFirst();
+                GarObject gar = item.gars.get(0);
                 if (deepest == null || gar.level.value() > deepest.level.value()) {
                     deepest = gar;
                 }
@@ -55,7 +55,7 @@ public class AddressValidationServiceImpl implements AddressValidationService{
         for (AddrObject item : parsed.items) {
             if (item.gars == null || item.gars.isEmpty()) continue;
             
-            GarObject gar = item.gars.getFirst();
+            GarObject gar = item.gars.get(0);
             garGuids.add(gar.guid);
             levelMap.putIfAbsent(gar.level.toString(), gar.toString());
             
