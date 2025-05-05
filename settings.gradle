@@ -12,6 +12,3 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = 'edmebank'
-
-include 'common'
-include 'client-management'
