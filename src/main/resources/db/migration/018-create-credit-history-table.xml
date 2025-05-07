@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="018" author="Elena_Yankovskaya">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="credit_history"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="credit_history" remarks="Кредитная история">
+            <column name="id" type="UUID" remarks="Ссылка на продукт клиента">
+                <constraints primaryKey="true" primaryKeyName="credit_history_pkey" nullable="false"/>
+            </column>
+            <column name="payment_date" type="DATETIME" remarks="Дата платежа">
+                <constraints nullable="false"/>
+            </column>
+            <column name="scheduled_amount" type="DECIMAL(15,2)" remarks="Ожидаемая сумма">
+                <constraints nullable="false" checkConstraint="scheduled_amount >= 0"/>
+            </column>
+            <column name="paid_amount" type="DECIMAL(15,2)" remarks="Фактически оплаченная сумма">
+                <constraints nullable="false" checkConstraint="paid_amount >= 0"/>
+            </column>
+            <column name="delinquency_days" type="INTEGER" defaultValue="0" remarks="Дни просрочки">
+                <constraints nullable="false" checkConstraint="delinquency_days >= 0"/>
+            </column>
+            <column name="payment_method" type="varchar(30)" remarks="Способ оплаты"/>
+        </createTable>
+
+        <addForeignKeyConstraint
+                baseTableName="credit_history"
+                baseColumnNames="id"
+                constraintName="fk_credit_history_client_product"
+                referencedTableName="client_products"
+                referencedColumnNames="id"/>
+    </changeSet>
+</databaseChangeLog>
