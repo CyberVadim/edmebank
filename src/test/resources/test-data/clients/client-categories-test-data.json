@@ -1,0 +1,20 @@
+[
+  {
+    "id": "3f5c9f78-0c9a-4c1e-940d-17a2b7e232b1",
+    "category": "VIP",
+    "loyalty_points": 1500,
+    "last_category_update": "2023-11-01"
+  },
+  {
+    "id": "3d8f9a2b-9e52-4b4f-bfa9-6ad38b27a541",
+    "category": "STUDENT",
+    "loyalty_points": 500,
+    "last_category_update": "2023-10-15"
+  },
+  {
+    "id": "d591b8c4-e46a-47d5-b364-df8e7b9b69f2",
+    "category": "STANDARD",
+    "loyalty_points": 4,
+    "last_category_update": "2023-03-17"
+  }
+]
