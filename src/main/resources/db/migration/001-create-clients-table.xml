@@ -1,0 +1,47 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                       https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+    <changeSet id="001" author="Timoshenko_AS">
+        <createTable schemaName="client_data" tableName="clients">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="first_name" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_name" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="middle_name" type="VARCHAR(100)"/>
+            <column name="birth_date" type="DATE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="gender" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="marital_status_id" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="employment_id" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP"/>
+            <column name="inn" type="VARCHAR(12)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="snils" type="VARCHAR(14)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="security_checked" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="security_date" type="TIMESTAMP"/>
+            <column name="security_comment" type="VARCHAR(500)"/>
+            <column name="monthly_income" type="INTEGER"/>
+            <column name="has_marriage_contract" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

@@ -1,0 +1,25 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                       https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+    <changeSet id="002" author="Timoshenko_AS">
+        <insert schemaName="client_data" tableName="clients">
+            <column name="id" value="3f5c9f78-0c9a-4c1e-940d-17a2b7e232b1"/>
+            <column name="first_name" value="Иван"/>
+            <column name="last_name" value="Петров"/>
+            <column name="middle_name" value="Александрович"/>
+            <column name="birth_date" value="1985-03-12"/>
+            <column name="gender" value="MALE"/>
+            <column name="marital_status_id" valueNumeric="1"/>
+            <column name="employment_id" valueNumeric="2"/>
+            <column name="created_at" valueDate="2024-01-01T00:00:00"/>
+            <column name="inn" value="123456789012"/>
+            <column name="snils" value="123-456-789 00"/>
+            <column name="security_checked" valueBoolean="true"/>
+            <column name="security_date" valueDate="2024-01-01T00:00:00"/>
+            <column name="security_comment" value="Верифицирован"/>
+            <column name="monthly_income" valueNumeric="85000"/>
+            <column name="has_marriage_contract" valueBoolean="true"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>
