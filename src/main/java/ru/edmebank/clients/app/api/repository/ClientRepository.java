@@ -5,5 +5,5 @@ import ru.edmebank.clients.domain.entity.Client;
 
 import java.util.UUID;
 
-public abstract class ClientRepository implements JpaRepository<Client, UUID> {
+public interface ClientRepository extends JpaRepository<Client, UUID> {
 }
