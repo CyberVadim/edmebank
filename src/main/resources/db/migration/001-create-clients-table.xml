@@ -2,46 +2,62 @@
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
     <changeSet id="001" author="Timoshenko_AS">
-        <createTable schemaName="client_data" tableName="clients">
-            <column name="id" type="UUID">
-                <constraints primaryKey="true" nullable="false"/>
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="clients"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="clients" remarks="Основная таблица клиентов">
+            <column name="id" type="UUID" remarks="Идентификатор клиента">
+                <constraints primaryKey="true" primaryKeyName="client_pkey" nullable="false"/>
             </column>
-            <column name="first_name" type="VARCHAR(100)">
+            <column name="first_name" type="VARCHAR(100)" remarks="Имя клиента">
                 <constraints nullable="false"/>
             </column>
-            <column name="last_name" type="VARCHAR(100)">
+            <column name="last_name" type="VARCHAR(100)" remarks="Фамилия клиента">
                 <constraints nullable="false"/>
             </column>
-            <column name="middle_name" type="VARCHAR(100)"/>
-            <column name="birth_date" type="DATE">
+            <column name="middle_name" type="VARCHAR(100)" remarks="Отчество клиента"/>
+            <column name="birth_date" type="DATE" remarks="Дата рождения клиента">
                 <constraints nullable="false"/>
             </column>
-            <column name="gender" type="VARCHAR(20)">
+            <column name="gender" type="VARCHAR(20)" remarks="Пол клиента">
                 <constraints nullable="false"/>
             </column>
-            <column name="marital_status_id" type="INTEGER">
+            <column name="marital_status" type="VARCHAR(30)" remarks="Семейное положение">
                 <constraints nullable="false"/>
             </column>
-            <column name="employment_id" type="INTEGER">
+            <column name="employment_type" type="VARCHAR(30)" remarks="Тип занятости">
                 <constraints nullable="false"/>
             </column>
-            <column name="created_at" type="TIMESTAMP"/>
-            <column name="inn" type="VARCHAR(12)">
+            <column name="created_at" type="TIMESTAMP" remarks="Дата создания записи">
                 <constraints nullable="false"/>
             </column>
-            <column name="snils" type="VARCHAR(14)">
+            <column name="inn" type="VARCHAR(12)" remarks="ИНН клиента">
                 <constraints nullable="false"/>
             </column>
-            <column name="security_checked" type="BOOLEAN">
+            <column name="snils" type="VARCHAR(14)" remarks="СНИЛС клиента">
                 <constraints nullable="false"/>
             </column>
-            <column name="security_date" type="TIMESTAMP"/>
-            <column name="security_comment" type="VARCHAR(500)"/>
-            <column name="monthly_income" type="INTEGER"/>
-            <column name="has_marriage_contract" type="BOOLEAN">
+            <column name="monthly_income" type="INTEGER" remarks="Ежемесячный доход клиента"/>
+            <column name="has_marriage_contract" type="BOOLEAN" remarks="Наличие брачного контракта">
                 <constraints nullable="false"/>
             </column>
         </createTable>
     </changeSet>
+
+    <changeSet id="002" author="Timoshenko_AS">
+        <sql>
+            INSERT INTO clients (id, first_name, last_name, middle_name, birth_date,
+                                 gender, marital_status, employment_type, created_at,
+                                 inn, snils, monthly_income, has_marriage_contract)
+            VALUES ('3f5c9f78-0c9a-4c1e-940d-17a2b7e232b1', 'Иван', 'Петров', 'Александрович',
+                    '1985-03-12', 'MALE', 'MARRIED', 'EMPLOYED', '2024-01-01T00:00:00',
+                    '123456789012', '123-456-789 00', 85000, true);
+        </sql>
+    </changeSet>
+
 </databaseChangeLog>
