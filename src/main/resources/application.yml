@@ -17,6 +17,8 @@ spring:
   liquibase:
     change-log: classpath:/db/master-changelog.xml
     enabled: true
+    default-schema: client_data
+    liquibase-schema: public
 
 server:
   port: 8080
