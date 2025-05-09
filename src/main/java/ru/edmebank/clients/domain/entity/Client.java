@@ -1,5 +1,6 @@
 package ru.edmebank.clients.domain.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -7,9 +8,12 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
+import ru.edmebank.contracts.enums.EmploymentType;
 import ru.edmebank.contracts.enums.Gender;
+import ru.edmebank.contracts.enums.MaritalStatus;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -41,24 +45,25 @@ public class Client {
     @Column(nullable = false)
     private Gender gender;
 
-    private Integer maritalStatusId;
-    private Integer employmentId;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private MaritalStatus maritalStatus;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private EmploymentType employmentType;
+
+    @Column(nullable = false)
     private LocalDateTime createdAt;
 
-    @Column(nullable = false, length = 12)
+    @Column(nullable = false, length = 12, unique = true)
     private String inn;
 
-    @Column(nullable = false, length = 14)
+    @Column(nullable = false, length = 14, unique = true)
     private String snils;
-    
-    @Column(nullable = false)
-    private Boolean securityChecked;
 
-    private LocalDateTime securityDate;
-
-    @Column(length = 500)
-    private String securityComment;
+    @OneToOne(mappedBy = "client", cascade = CascadeType.ALL)
+    private ClientSecurityInfo securityInfo;
 
     @Column(precision = 20, scale = 2)
     private BigDecimal monthlyIncome;
