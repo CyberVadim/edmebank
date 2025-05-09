@@ -6,7 +6,7 @@
             http://www.liquibase.org/xml/ns/dbchangelog
             https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
 
-    <changeSet id="003" author="Timoshenko_AS">
+    <changeSet id="001" author="Timoshenko_AS">
         <preConditions onFail="MARK_RAN">
             <not>
                 <tableExists tableName="client_security_info"/>
@@ -14,9 +14,8 @@
         </preConditions>
 
         <createTable tableName="client_security_info" remarks="Информация от службы безопасности">
-            <column name="id" type="UUID" remarks="ID клиента = PK и FK">
-                <constraints primaryKey="true" nullable="false" foreignKeyName="fk_client_security_client"
-                             references="clients(id)"/>
+            <column name="id" type="UUID" remarks="Идентификатор записи">
+                <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="security_checked" type="BOOLEAN" remarks="Проверен службой безопасности">
                 <constraints nullable="false"/>
@@ -24,17 +23,6 @@
             <column name="security_date" type="TIMESTAMP" remarks="Дата проверки"/>
             <column name="security_comment" type="VARCHAR(500)" remarks="Комментарий СБ"/>
         </createTable>
-    </changeSet>
-
-    <changeSet id="004" author="Timoshenko_AS">
-
-        <sql>
-            INSERT INTO client_security_info (
-                id, security_checked, security_date, security_comment
-            ) VALUES (
-                         '3f5c9f78-0c9a-4c1e-940d-17a2b7e232b1', true, '2024-01-01T00:00:00', 'Верифицирован'
-                     );
-        </sql>
     </changeSet>
 
 </databaseChangeLog>

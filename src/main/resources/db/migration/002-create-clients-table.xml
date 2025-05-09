@@ -3,7 +3,7 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
 
-    <changeSet id="001" author="Timoshenko_AS">
+    <changeSet id="002" author="Timoshenko_AS">
         <preConditions onFail="MARK_RAN">
             <not>
                 <tableExists tableName="clients"/>
@@ -46,10 +46,17 @@
             <column name="has_marriage_contract" type="BOOLEAN" remarks="Наличие брачного контракта">
                 <constraints nullable="false"/>
             </column>
+            <column name="client_security_info_id" type="UUID"/>
         </createTable>
+        <addForeignKeyConstraint
+                baseTableName="clients"
+                baseColumnNames="client_security_info_id"
+                referencedTableName="client_security_info"
+                referencedColumnNames="id"
+                constraintName="fk_clients_security_info"/>
     </changeSet>
 
-    <changeSet id="002" author="Timoshenko_AS">
+    <changeSet id="003" author="Timoshenko_AS">
         <sql>
             INSERT INTO clients (id, first_name, last_name, middle_name, birth_date,
                                  gender, marital_status, employment_type, created_at,

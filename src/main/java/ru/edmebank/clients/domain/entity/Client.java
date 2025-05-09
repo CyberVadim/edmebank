@@ -1,6 +1,5 @@
 package ru.edmebank.clients.domain.entity;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -8,6 +7,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
@@ -62,7 +62,8 @@ public class Client {
     @Column(nullable = false, length = 14, unique = true)
     private String snils;
 
-    @OneToOne(mappedBy = "client", cascade = CascadeType.ALL)
+    @OneToOne
+    @JoinColumn(name = "client_security_info_id", referencedColumnName = "id")
     private ClientSecurityInfo securityInfo;
 
     @Column(precision = 20, scale = 2)
