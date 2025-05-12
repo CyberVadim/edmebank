@@ -1,0 +1,52 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                       https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+    <changeSet id="002" author="Timoshenko_AS">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="clients"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="clients" remarks="Основная таблица клиентов">
+            <column name="id" type="UUID" remarks="Идентификатор клиента">
+                <constraints primaryKey="true" primaryKeyName="client_pkey" nullable="false"/>
+            </column>
+            <column name="first_name" type="VARCHAR(100)" remarks="Имя клиента">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_name" type="VARCHAR(100)" remarks="Фамилия клиента">
+                <constraints nullable="false"/>
+            </column>
+            <column name="middle_name" type="VARCHAR(100)" remarks="Отчество клиента"/>
+            <column name="birth_date" type="DATE" remarks="Дата рождения клиента">
+                <constraints nullable="false"/>
+            </column>
+            <column name="gender" type="VARCHAR(20)" remarks="Пол клиента">
+                <constraints nullable="false"/>
+            </column>
+            <column name="marital_status" type="VARCHAR(30)" remarks="Семейное положение">
+                <constraints nullable="false"/>
+            </column>
+            <column name="employment_type" type="VARCHAR(30)" remarks="Тип занятости">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" remarks="Дата создания записи">
+                <constraints nullable="false"/>
+            </column>
+            <column name="inn" type="VARCHAR(12)" remarks="ИНН клиента">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="snils" type="VARCHAR(14)" remarks="СНИЛС клиента">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="monthly_income" type="DECIMAL(20,2)" remarks="Ежемесячный доход клиента"/>
+            <column name="has_marriage_contract" type="BOOLEAN" remarks="Наличие брачного контракта">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>
