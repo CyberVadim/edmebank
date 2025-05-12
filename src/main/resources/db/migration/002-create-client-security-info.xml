@@ -15,14 +15,23 @@
 
         <createTable tableName="client_security_info" remarks="Информация от службы безопасности">
             <column name="id" type="UUID" remarks="Идентификатор записи">
-                <constraints primaryKey="true" nullable="false"/>
+                <constraints primaryKey="true" primaryKeyName="client_security_info_pkey" nullable="false"/>
             </column>
-            <column name="security_checked" type="BOOLEAN" remarks="Проверен службой безопасности">
+            <column name="checked" type="BOOLEAN" remarks="Проверен службой безопасности">
                 <constraints nullable="false"/>
             </column>
-            <column name="security_date" type="TIMESTAMP" remarks="Дата проверки"/>
-            <column name="security_comment" type="VARCHAR(500)" remarks="Комментарий СБ"/>
+            <column name="date" type="TIMESTAMP" remarks="Дата проверки"/>
+            <column name="comment" type="VARCHAR(500)" remarks="Комментарий СБ"/>
         </createTable>
+        <addForeignKeyConstraint
+                baseTableName="client_security_info"
+                baseColumnNames="id"
+                constraintName="fk_client_security_info_client"
+                referencedTableName="clients"
+                referencedColumnNames="id"
+                baseTableSchemaName="client_data"
+                referencedTableSchemaName="client_data"
+                onDelete="CASCADE"/>
     </changeSet>
 
 </databaseChangeLog>

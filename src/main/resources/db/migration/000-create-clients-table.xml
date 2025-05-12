@@ -37,34 +37,16 @@
                 <constraints nullable="false"/>
             </column>
             <column name="inn" type="VARCHAR(12)" remarks="ИНН клиента">
-                <constraints nullable="false"/>
+                <constraints nullable="false" unique="true"/>
             </column>
             <column name="snils" type="VARCHAR(14)" remarks="СНИЛС клиента">
-                <constraints nullable="false"/>
+                <constraints nullable="false" unique="true"/>
             </column>
-            <column name="monthly_income" type="INTEGER" remarks="Ежемесячный доход клиента"/>
+            <column name="monthly_income" type="DECIMAL(20,2)" remarks="Ежемесячный доход клиента"/>
             <column name="has_marriage_contract" type="BOOLEAN" remarks="Наличие брачного контракта">
                 <constraints nullable="false"/>
             </column>
-            <column name="client_security_info_id" type="UUID"/>
         </createTable>
-        <addForeignKeyConstraint
-                baseTableName="clients"
-                baseColumnNames="client_security_info_id"
-                referencedTableName="client_security_info"
-                referencedColumnNames="id"
-                constraintName="fk_clients_security_info"/>
-    </changeSet>
-
-    <changeSet id="003" author="Timoshenko_AS">
-        <sql>
-            INSERT INTO clients (id, first_name, last_name, middle_name, birth_date,
-                                 gender, marital_status, employment_type, created_at,
-                                 inn, snils, monthly_income, has_marriage_contract)
-            VALUES ('3f5c9f78-0c9a-4c1e-940d-17a2b7e232b1', 'Иван', 'Петров', 'Александрович',
-                    '1985-03-12', 'MALE', 'MARRIED', 'EMPLOYED', '2024-01-01T00:00:00',
-                    '123456789012', '123-456-789 00', 85000, true);
-        </sql>
     </changeSet>
 
 </databaseChangeLog>
