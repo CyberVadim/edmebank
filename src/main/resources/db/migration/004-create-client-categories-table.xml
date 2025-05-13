@@ -30,7 +30,8 @@
             <column
                     name="category"
                     type="VARCHAR(50)"
-                    remarks="Категория">
+                    remarks="Категория"
+                    defaultValue="STANDARD">
                 <constraints
                         nullable="false"/>
             </column>

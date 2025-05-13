@@ -37,9 +37,10 @@ public class ClientCategory {
     @JoinColumn(name = "id")
     private Client client;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(name = "category", nullable = false)
-    private ClientCategoryEnum category;
+    private ClientCategoryEnum category = ClientCategoryEnum.STANDARD;
 
     @Builder.Default
     @Column(name = "loyalty_points", nullable = false)

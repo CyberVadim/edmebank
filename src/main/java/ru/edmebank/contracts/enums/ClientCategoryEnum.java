@@ -2,6 +2,7 @@ package ru.edmebank.contracts.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -12,6 +13,7 @@ import java.util.stream.Stream;
  */
 @AllArgsConstructor
 @Getter
+@Slf4j
 public enum ClientCategoryEnum {
     VIP(1, "VIP"),
     STANDARD(2, "STANDARD"),
@@ -25,6 +27,11 @@ public enum ClientCategoryEnum {
             .collect(Collectors.toMap(ClientCategoryEnum::getCode, e -> e));
 
     public static ClientCategoryEnum fromCode(String code) {
-        return CODE_MAP.get(code.toUpperCase());
+        ClientCategoryEnum clientCategoryEnum = CODE_MAP.get(code.toUpperCase());
+        if (clientCategoryEnum == null) {
+            log.warn("Unknown enum code {}, returning default: STANDARD", code);
+            return STANDARD;
+        }
+        return clientCategoryEnum;
     }
 }
