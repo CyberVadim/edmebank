@@ -13,7 +13,7 @@
             </not>
         </preConditions>
 
-        <createTable tableName="client_products" remarks="Информация от службы безопасности">
+        <createTable tableName="client_products" remarks="Продкуты клиентов">
             <column name="id" type="UUID" remarks="Идентификатор записи">
                 <constraints primaryKey="true" primaryKeyName="client_products_pkey" />
             </column>

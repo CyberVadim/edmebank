@@ -1,12 +1,21 @@
 package ru.edmebank.clients.domain.entity;
 
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import ru.edmebank.contracts.enums.ProductStatus;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.UUID;
 
 @Entity
@@ -14,7 +23,6 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class ClientProducts {
 
     @Id
@@ -24,12 +32,13 @@ public class ClientProducts {
     public UUID clientId;
     public UUID productId;
 
-    public Date startDate;
-    public Date endDate;
+    public LocalDate startDate;
+    public LocalDate endDate;
     @Column(precision = 15, scale = 2)
     public BigDecimal currentBalance;
 
     @Enumerated(value = EnumType.STRING)
+    @Column(length = 20)
     public ProductStatus status;
 
     @Column(columnDefinition = "jsonb")
