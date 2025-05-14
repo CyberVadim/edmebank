@@ -8,14 +8,4 @@
     <include file="db/migration/001-insert-client.sql"/>
     <include file="db/migration/002-create-client-security-info.xml"/>
     <include file="db/migration/003-insert-security-info.sql"/>
-    <include file="db/migration/004-create-table-documents.xml"/>
-    <include file="db/migration/005-insert-into-documents.sql"/>
-    <include file="db/migration/006-create-product_type_enum.xml"/>
-    <include file="db/migration/007-create-financial-products-table.xml"/>
-    <include file="db/migration/008-insert-financial-products.sql"/>
-    <include file="db/migration/009-create-contact_type_enum.xml"/>
-    <include file="db/migration/010-create-contacts-table.xml"/>
-    <include file="db/migration/011-insert-contacts.sql"/>
-    <include file="db/migration/012-create-client-categories-table.xml"/>
-    <include file="db/migration/013-insert-client-categories-table.sql"/>
 </databaseChangeLog>
