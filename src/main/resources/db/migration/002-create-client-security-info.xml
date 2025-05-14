@@ -29,8 +29,6 @@
                 constraintName="fk_client_security_info_client"
                 referencedTableName="clients"
                 referencedColumnNames="id"
-                baseTableSchemaName="client_data"
-                referencedTableSchemaName="client_data"
                 onDelete="CASCADE"/>
     </changeSet>
 
