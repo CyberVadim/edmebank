@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="004" author="Elena_Yankovskaya">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="client_categories"/>
+            </not>
+        </preConditions>
+
+        <createTable
+                tableName="client_categories" remarks="Категории клиентов">
+            <column name="id" type="UUID" remarks="Ссылка на клиента">
+                <constraints primaryKey="true" primaryKeyName="client_categories_pkey" nullable="false"/>
+            </column>
+            <column name="category" type="VARCHAR(50)" remarks="Категория" defaultValue="STANDARD">
+                <constraints nullable="false" checkConstraint="category IN ('VIP', 'STANDARD', 'STUDENT', 'PENSIONER')"/>
+            </column>
+            <column name="loyalty_points" type="INTEGER" remarks="Баллы лояльности" defaultValue="0">
+                <constraints nullable="false" checkConstraint="loyalty_points >= 0"/>
+            </column>
+            <column name="create_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP" remarks="Дата создания категории"/>
+            <column name="update_at" type="TIMESTAMP" remarks="Дата обновления категории"/>
+        </createTable>
+
+        <addForeignKeyConstraint
+                baseTableName="client_categories"
+                baseColumnNames="id"
+                constraintName="fk_client_categories_client_id"
+                referencedTableName="clients"
+                referencedColumnNames="id"
+                onDelete="CASCADE"/>
+    </changeSet>
+</databaseChangeLog>
