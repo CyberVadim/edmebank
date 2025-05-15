@@ -11,7 +11,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Builder
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -23,23 +23,17 @@ public class ClientChildren {
     private UUID id;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "client_id")
     private Client client;
 
-    @Column(name = "full_name")
     private String fullName;
 
-    @Column(name = "birth_date")
     private LocalDate birthDate;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "relation_type")
     private RelationTypeEnum relationType;
 
-    @Column(name = "is_dependent")
     private Boolean isDependent = true;
 
-    @Column(name = "created_at")
     private LocalDateTime createdAt;
 
 }

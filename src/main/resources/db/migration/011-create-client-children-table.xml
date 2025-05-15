@@ -3,7 +3,7 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
 
-    <changeSet id="008" author="Lipskaya_AA">
+    <changeSet id="011" author="Lipskaya_AA">
         <preConditions onFail="MARK_RAN">
             <not>
                 <tableExists tableName="client_children"/>
@@ -23,7 +23,8 @@
                 <constraints nullable="false"/>
             </column>
             <column name="birth_date" type="DATE" remarks="Дата рождения ребенка">
-                <constraints nullable="false"/>
+                <constraints nullable="false"
+                checkConstraint="birth_date >= CURRENT_DATE - INTERVAL '18 years'"/>
             </column>
             <column name="relation_type" type="VARCHAR(50)" remarks="Тип родства с клиентом">
                 <constraints nullable="false"/>
@@ -31,16 +32,10 @@
             <column name="is_dependent" type="BOOLEAN" defaultValueBoolean="true" remarks="Статус иждивенца">
                 <constraints nullable="false"/>
             </column>
-            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"
+            <column name="created_at" type="DATETIME" defaultValueComputed="CURRENT_TIMESTAMP"
                     remarks="Дата создания записи">
                 <constraints nullable="false"/>
             </column>
         </createTable>
-
-        <sql>
-            ALTER TABLE client_children
-                ADD CONSTRAINT chk_child_age_limit
-                    CHECK (birth_date >= CURRENT_DATE - INTERVAL '18 years');
-        </sql>
     </changeSet>
 </databaseChangeLog>
