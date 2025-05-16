@@ -3,7 +3,7 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
 
-    <changeSet id="004" author="Marchenko_AS">
+    <changeSet id="004" author="Marchenko_GV">
         <preConditions onFail="HALT">
             <not>
                 <tableExists tableName="documents"/>
@@ -19,10 +19,10 @@
             <column name="type" type="VARCHAR(30)" remarks="Тип документа">
                 <constraints nullable="false" checkConstraint="type IN ('PASSPORT')"/>
             </column>
-            <column name="storage_url" type="TEXT" defaultValueComputed="CURRENT_TIMESTAMP" remarks="Ссылка на документ">
+            <column name="storage_url" type="TEXT" remarks="Ссылка на документ">
                 <constraints nullable="false"/>
             </column>
-            <column name="uploaded_at" type="TIMESTAMP" remarks="Дата загрузки" />
+            <column name="uploaded_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP" remarks="Дата загрузки" />
         </createTable>
         <addForeignKeyConstraint
                 baseTableName="documents"
