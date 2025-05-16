@@ -19,7 +19,7 @@
             <column name="type" type="VARCHAR(30)" remarks="Тип документа">
                 <constraints nullable="false" checkConstraint="type IN ('PASSPORT')"/>
             </column>
-            <column name="storage_url" type="TEXT" remarks="Ссылка на документ">
+            <column name="storage_url" type="TEXT" defaultValueComputed="CURRENT_TIMESTAMP" remarks="Ссылка на документ">
                 <constraints nullable="false"/>
             </column>
             <column name="uploaded_at" type="TIMESTAMP" remarks="Дата загрузки" />

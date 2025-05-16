@@ -35,10 +35,11 @@ public class Documents {
     public Client client;
 
     @Enumerated(EnumType.STRING)
-    @Column(length = 30)
+    @Column(nullable = false, length = 30)
     public DocumentType type;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(nullable = false, columnDefinition = "TEXT")
     public String storageUrl;
+    @Column()
     public LocalDateTime uploadedAt;
 }
