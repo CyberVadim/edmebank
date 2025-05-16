@@ -17,7 +17,7 @@
             <column name="client_id" type="UUID" remarks="Ссылка на клиента">
             </column>
             <column name="type" type="VARCHAR(30)" remarks="Тип документа">
-                <constraints nullable="false" checkConstraint="status IN ('PASSPORT')"/>
+                <constraints nullable="false" checkConstraint="type IN ('PASSPORT')"/>
             </column>
             <column name="storage_url" type="TEXT" remarks="Ссылка на документ">
                 <constraints nullable="false"/>
