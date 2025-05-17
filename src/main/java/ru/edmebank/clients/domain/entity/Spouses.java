@@ -12,15 +12,16 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
-import jakarta.persistence.Table;
 import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import ru.edmebank.contracts.enums.SocialStatus;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.UUID;
 
 @Data
-@Table(name = "spouses")
 @Entity
 public class Spouses {
 
@@ -62,6 +63,14 @@ public class Spouses {
 
     @Column()
     private Boolean isCurrent = true;
+
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    @Column(nullable = false)
+    private LocalDateTime updatedAt;
 
     @PrePersist
     @PreUpdate

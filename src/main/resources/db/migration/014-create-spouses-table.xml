@@ -45,6 +45,12 @@
             <column name="is_current" type="BOOLEAN" defaultValue="true" remarks="Текущий брак">
                 <constraints nullable="false"/>
             </column>
+            <column name="created_at" type="TIMESTAMP" remarks="Дата создания записи">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" remarks="Дата обновления записи">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
 
         <addUniqueConstraint
