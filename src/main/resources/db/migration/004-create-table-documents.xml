@@ -22,7 +22,8 @@
             <column name="storage_url" type="TEXT" remarks="Ссылка на документ">
                 <constraints nullable="false"/>
             </column>
-            <column name="uploaded_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP" remarks="Дата загрузки" />
+            <column name="create_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP" remarks="Дата загрузки"/>
+            <column name="update_at" type="TIMESTAMP" remarks="Дата обновления"/>
         </createTable>
         <addForeignKeyConstraint
                 baseTableName="documents"

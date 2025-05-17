@@ -12,8 +12,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.annotations.UpdateTimestamp;
 import ru.edmebank.contracts.enums.DocumentType;
 
 import java.time.LocalDateTime;
@@ -22,7 +24,7 @@ import java.util.UUID;
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor
+@NoArgsConstructor(force = true)
 @AllArgsConstructor
 public class Documents {
 
@@ -40,6 +42,11 @@ public class Documents {
 
     @Column(nullable = false, columnDefinition = "TEXT")
     public String storageUrl;
-    @Column()
-    public LocalDateTime uploadedAt;
+
+    @CreationTimestamp
+    @Column(updatable = false)
+    public final LocalDateTime createAt;
+
+    @UpdateTimestamp
+    public LocalDateTime updateAt;
 }
