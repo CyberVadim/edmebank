@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+            http://www.liquibase.org/xml/ns/dbchangelog
+            https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+    <changeSet id="007" author="Koltsov_AE">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="financial_products"/>
+            </not>
+        </preConditions>
+        <createTable tableName="financial_products" remarks="Каталог доступных банковских продуктов.">
+
+            <column name="id" type="UUID" remarks="Идентификатор записи">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="product_type" type="product_type_enum" remarks="Тип продукта">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="name" type="VARCHAR(100)" remarks="Название продукта">
+                <constraints nullable="false" unique="true"/>
+            </column>
+
+            <column name="description" type="TEXT" remarks="Подробное описание продукта">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="min_amount" type="NUMERIC(15,2)" remarks="Минимальная сумма"/>
+
+            <column name="max_amount" type="NUMERIC(15,2)" remarks="Максимальная сумма"/>
+
+            <column name="interest_rate" type="NUMERIC(5,2)" remarks="Процентная ставка"/>
+
+            <column name="term_moths" type="INTEGER" remarks="Срок действия (месяцы)"/>
+
+            <column name="is_active" type="BOOLEAN" defaultValueBoolean="true" remarks="Активен ли продукт"/>
+
+            <column name="created_at" type="TIMESTAMP" remarks="Дата создания записи">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" remarks="Дата обновления записи">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>
