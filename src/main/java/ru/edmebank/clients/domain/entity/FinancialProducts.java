@@ -7,7 +7,10 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import ru.edmebank.contracts.enums.ProductType;
@@ -17,6 +20,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
+@NoArgsConstructor
 @Entity
 public class FinancialProducts {
 
@@ -31,6 +35,9 @@ public class FinancialProducts {
     @Column(length = 100, nullable = false, unique = true)
     private String name;
 
+    @Column(nullable = false)
+    private String description;
+
     @Column(precision = 15, scale = 2)
     private BigDecimal minAmount;
 
@@ -40,12 +47,11 @@ public class FinancialProducts {
     @Column(precision = 5, scale = 2)
     private BigDecimal interestRate;
 
-    @Column()
-    private Integer termMoths;
+    private Integer termMonths;
 
-    @Column()
     private Boolean isActive = true;
 
+    @Setter(AccessLevel.NONE)
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;

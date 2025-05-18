@@ -1,7 +1,8 @@
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
-                       https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
 
     <changeSet id="010" author="Koltsov_AE">
         <preConditions onFail="MARK_RAN">
@@ -38,13 +39,5 @@
                                  referencedColumnNames="id"
                                  constraintName="fk_contacts_client"
                                  onDelete="CASCADE"/>
-
-        <insert tableName="contacts">
-            <column name="client_id" value="3f5c9f78-0c9a-4c1e-940d-17a2b7e232b1"/>
-            <column name="type" value="PHONE"/>
-            <column name="value" value="+79991234567"/>
-            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
-            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
-        </insert>
     </changeSet>
 </databaseChangeLog>
