@@ -1,10 +1,8 @@
 package ru.edmebank.clients.domain.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 import ru.edmebank.contracts.enums.RelationTypeEnum;
 
 import java.time.LocalDate;
@@ -34,6 +32,10 @@ public class ClientChildren {
 
     private Boolean isDependent = true;
 
+    @CreationTimestamp
+    @Column(name = "created_at", nullable = false,
+            columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @Setter(AccessLevel.NONE)
     private LocalDateTime createdAt;
 
 }
