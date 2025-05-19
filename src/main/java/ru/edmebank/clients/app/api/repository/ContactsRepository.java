@@ -6,5 +6,5 @@ import ru.edmebank.clients.domain.entity.Contacts;
 
 import java.util.UUID;
 
-public interface ContactsRepository extends JpaRepository<Contacts, UUID> {
+public interface ContactsRepository extends JpaRepository<Contacts, Contacts.ContactsId> {
 }
