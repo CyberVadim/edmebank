@@ -18,7 +18,7 @@
     <include file="db/migration/011-insert-contacts.sql"/>
     <include file="db/migration/012-create-client-categories-table.xml"/>
     <include file="db/migration/013-insert-client-categories-table.sql"/>
-    <include file="db/migration/012-create_client-products-table.xml"/>
-    <include file="db/migration/013-insert-client-products.sql"/>
+    <include file="db/migration/014-create_client-products-table.xml"/>
+    <include file="db/migration/015-insert-client-products.sql"/>
 
 </databaseChangeLog>
