@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.MapsId;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
@@ -31,10 +32,11 @@ public class ClientCategory {
 
     @MapsId
     @OneToOne
+    @JoinColumn(name = "id")
     private Client client;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = false, length = 50)
     private ClientCategoryEnum category = ClientCategoryEnum.STANDARD;
 
     @Column(nullable = false)
@@ -42,8 +44,8 @@ public class ClientCategory {
 
     @CreationTimestamp
     @Column(updatable = false)
-    public final LocalDateTime createAt;
+    public final LocalDateTime createdAt;
 
     @UpdateTimestamp
-    public LocalDateTime updateAt;
+    public LocalDateTime updatedAt;
 }

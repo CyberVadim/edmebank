@@ -37,6 +37,7 @@ public class ClientChildren {
     private LocalDate birthDate;
 
     @Enumerated(EnumType.STRING)
+    @Column(length = 50)
     private RelationTypeEnum relationType;
 
     private Boolean isDependent = true;
