@@ -1,5 +1,5 @@
 --liquibase formatted sql
---changeset Lipskaya_AA:012
+--changeset Lipskaya_AA:015
 --preconditions onFail:HALT onError:HALT
 --precondition-sql-check expectedResult:0 SELECT COUNT(*) FROM client_children WHERE id = '3f5c9f78-0c9a-4c1e-940d-17a2b7e232b1';
 
@@ -11,7 +11,7 @@ INSERT INTO client_children (
     relation_type,
     is_dependent,
     created_at,
-    update_at
+    updated_at
 ) VALUES (
              '3f5c9f78-0c9a-4c1e-940d-17a2b7e232b1',
              '3f5c9f78-0c9a-4c1e-940d-17a2b7e232b1',

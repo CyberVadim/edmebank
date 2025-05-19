@@ -23,8 +23,8 @@
             <column name="loyalty_points" type="INTEGER" remarks="Баллы лояльности" defaultValue="0">
                 <constraints nullable="false" checkConstraint="loyalty_points >= 0"/>
             </column>
-            <column name="create_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP" remarks="Дата создания категории"/>
-            <column name="update_at" type="TIMESTAMP" remarks="Дата обновления категории"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP" remarks="Дата создания категории"/>
+            <column name="updated_at" type="TIMESTAMP" remarks="Дата обновления категории"/>
         </createTable>
 
         <addForeignKeyConstraint
