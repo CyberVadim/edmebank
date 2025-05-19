@@ -16,4 +16,6 @@
     <include file="db/migration/009-create-contact_type_enum.xml"/>
     <include file="db/migration/010-create-contacts-table.xml"/>
     <include file="db/migration/011-insert-contacts.sql"/>
+    <include file="db/migration/012-create-client-categories-table.xml"/>
+    <include file="db/migration/013-insert-client-categories-table.sql"/>
 </databaseChangeLog>
