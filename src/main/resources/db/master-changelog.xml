@@ -21,4 +21,6 @@
     <include file="db/migration/014-create_client-products-table.xml"/>
     <include file="db/migration/015-insert-client-products.sql"/>
 
+    <include file="db/migration/016-create-client-children-table.xml"/>
+    <include file="db/migration/017-insert-client-children.sql"/>
 </databaseChangeLog>
