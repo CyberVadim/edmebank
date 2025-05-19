@@ -32,7 +32,8 @@
                 <constraints checkConstraint="status IN ('ACTIVE', 'CLOSED', 'FROZEN', 'OVERDUE')"/>
             </column>
             <column name="terms" type="JSONB" remarks="Дополнительные условия в JSON (ставки, гарантии и т.д)" />
-            <column name="last_updated" type="TIMESTAMP" remarks="Время последнего обновления" />
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP" remarks="Дата создания"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP" remarks="Дата обновления"/>
         </createTable>
         <addForeignKeyConstraint
                 baseTableName="client_products"

@@ -11,12 +11,15 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.annotations.UpdateTimestamp;
 import ru.edmebank.contracts.enums.ProductStatus;
 
 import java.math.BigDecimal;
@@ -58,5 +61,12 @@ public class ClientProducts {
     @Column(columnDefinition = "jsonb")
     public String terms;
 
-    public LocalDateTime lastUpdated;
+    @CreationTimestamp
+    @Column(updatable = false)
+    @Setter(AccessLevel.NONE)
+    public LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    @Setter(AccessLevel.NONE)
+    public LocalDateTime updatedAt;
 }

@@ -47,8 +47,9 @@ public class Documents {
     @CreationTimestamp
     @Column(updatable = false)
     @Setter(AccessLevel.NONE)
-    public LocalDateTime createAt;
+    public LocalDateTime createdAt;
 
     @UpdateTimestamp
-    public LocalDateTime updateAt;
+    @Setter(AccessLevel.NONE)
+    public LocalDateTime updatedAt;
 }
