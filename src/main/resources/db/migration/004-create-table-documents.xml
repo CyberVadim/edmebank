@@ -1,0 +1,36 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                       https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+    <changeSet id="004" author="Marchenko_GV">
+        <preConditions onFail="HALT">
+            <not>
+                <tableExists tableName="documents"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="documents" remarks="Документы">
+            <column name="id" type="UUID" remarks="Уникальный идентификатор">
+                <constraints primaryKey="true" primaryKeyName="document_pkey" nullable="false"/>
+            </column>
+            <column name="client_id" type="UUID" remarks="Ссылка на клиента">
+            </column>
+            <column name="type" type="VARCHAR(30)" remarks="Тип документа">
+                <constraints nullable="false" checkConstraint="type IN ('PASSPORT')"/>
+            </column>
+            <column name="storage_url" type="TEXT" remarks="Ссылка на документ">
+                <constraints nullable="false"/>
+            </column>
+            <column name="create_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP" remarks="Дата загрузки"/>
+            <column name="update_at" type="TIMESTAMP" remarks="Дата обновления"/>
+        </createTable>
+        <addForeignKeyConstraint
+                baseTableName="documents"
+                baseColumnNames="client_id"
+                constraintName="fk_documents_client_id"
+                referencedTableName="clients"
+                referencedColumnNames="id"
+                onDelete="CASCADE"/>
+    </changeSet>
+</databaseChangeLog>
