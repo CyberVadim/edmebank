@@ -18,4 +18,6 @@
     <include file="db/migration/011-insert-contacts.sql"/>
     <include file="db/migration/012-create-client-categories-table.xml"/>
     <include file="db/migration/013-insert-client-categories-table.sql"/>
+    <include file="db/migration/016-create-client-children-table.xml"/>
+    <include file="db/migration/017-insert-client-children.sql"/>
 </databaseChangeLog>

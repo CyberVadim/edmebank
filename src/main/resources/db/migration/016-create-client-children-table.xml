@@ -1,0 +1,45 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                       https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+    <changeSet id="016" author="Lipskaya_AA">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="client_children"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="client_children" remarks="Хранит информацию о детях клиентов до 18 лет.">
+            <column name="id" type="UUID" remarks="Уникальный идентификатор">
+                <constraints primaryKey="true" primaryKeyName="client_children_pkey" nullable="false"/>
+            </column>
+            <column name="client_id" type="UUID" remarks="Ссылка на клиента">
+                <constraints nullable="false" foreignKeyName="fk_client_child_client"
+                             referencedTableName="clients" referencedColumnNames="id"
+                             deleteCascade="true"/>
+            </column>
+            <column name="full_name" type="VARCHAR(255)" remarks="Полное имя ребенка">
+                <constraints nullable="false"/>
+            </column>
+            <column name="birth_date" type="DATE" remarks="Дата рождения ребенка">
+                <constraints nullable="false"
+                checkConstraint="birth_date >= CURRENT_DATE - INTERVAL '18 years'"/>
+            </column>
+            <column name="relation_type" type="VARCHAR(50)" remarks="Тип родства с клиентом">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_dependent" type="BOOLEAN" defaultValueBoolean="true" remarks="Статус иждивенца">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="DATETIME" defaultValueComputed="CURRENT_TIMESTAMP"
+                    remarks="Дата создания записи">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="DATETIME" defaultValueComputed="CURRENT_TIMESTAMP"
+                    remarks="Дата обновления записи">
+                    <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>
