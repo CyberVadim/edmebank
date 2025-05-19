@@ -20,4 +20,6 @@
     <include file="db/migration/013-insert-client-categories-table.sql"/>
     <include file="db/migration/014-create-client-children-table.xml"/>
     <include file="db/migration/015-insert-client-children.sql"/>
+    <include file="db/migration/016-create_client-products-table.xml"/>
+    <include file="db/migration/017-insert-client-products.sql"/>
 </databaseChangeLog>

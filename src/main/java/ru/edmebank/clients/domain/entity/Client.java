@@ -42,15 +42,15 @@ public class Client {
     private LocalDate birthDate;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(length = 20, nullable = false)
     private Gender gender;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(length = 30, nullable = false)
     private MaritalStatus maritalStatus;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(length = 30, nullable = false)
     private EmploymentType employmentType;
 
     @Column(nullable = false)

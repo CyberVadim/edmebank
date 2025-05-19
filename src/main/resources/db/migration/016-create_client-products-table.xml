@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+            http://www.liquibase.org/xml/ns/dbchangelog
+            https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+    <changeSet id="016" author="Marchenko_GV">
+        <preConditions onFail="HALT">
+            <not>
+                <tableExists tableName="client_products"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="client_products" remarks="Продкуты клиентов">
+            <column name="id" type="UUID" remarks="Идентификатор записи">
+                <constraints primaryKey="true" primaryKeyName="client_products_pkey" />
+            </column>
+            <column name="client_id" type="UUID" remarks="Ссылка на клиента">
+                <constraints nullable="false"/>
+            </column>
+            <column name="product_id" type="UUID" remarks="Ссылка на продукт">
+                <constraints nullable="false"/>
+            </column>
+            <column name="start_date" type="DATE" remarks="Дата активации">
+                <constraints nullable="false"/>
+            </column>
+            <column name="end_date" type="DATE" remarks="Дата завершения" />
+            <column name="current_balance" type="DECIMAL(15,2)" remarks="Текущий баланс">
+                <constraints checkConstraint="current_balance >= 0"/>
+            </column>
+            <column name="status" type="VARCHAR(20)" defaultValue="ACTIVE" remarks="Статус продукта">
+                <constraints checkConstraint="status IN ('ACTIVE', 'CLOSED', 'FROZEN', 'OVERDUE')"/>
+            </column>
+            <column name="terms" type="JSONB" remarks="Дополнительные условия в JSON (ставки, гарантии и т.д)" />
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP" remarks="Дата создания"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP" remarks="Дата обновления"/>
+        </createTable>
+        <addForeignKeyConstraint
+                baseTableName="client_products"
+                baseColumnNames="client_id"
+                constraintName="fk_client_products_client_id"
+                referencedTableName="clients"
+                referencedColumnNames="id"
+                onDelete="CASCADE"/>
+        <addForeignKeyConstraint
+                baseTableName="client_products"
+                baseColumnNames="product_id"
+                constraintName="fk_client_products_product_id"
+                referencedTableName="financial_products"
+                referencedColumnNames="id"
+                onDelete="CASCADE"/>
+    </changeSet>
+
+</databaseChangeLog>
