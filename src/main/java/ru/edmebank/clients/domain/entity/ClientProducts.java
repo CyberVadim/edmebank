@@ -48,6 +48,7 @@ public class ClientProducts {
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_client_products_product_id"))
     public FinancialProducts product;
 
+    @Column(nullable = false)
     public LocalDate startDate;
     public LocalDate endDate;
 

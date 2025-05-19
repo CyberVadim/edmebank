@@ -6,7 +6,7 @@
             http://www.liquibase.org/xml/ns/dbchangelog
             https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
 
-    <changeSet id="014" author="Marchenko_GV">
+    <changeSet id="016" author="Marchenko_GV">
         <preConditions onFail="HALT">
             <not>
                 <tableExists tableName="client_products"/>
@@ -27,7 +27,9 @@
                 <constraints nullable="false"/>
             </column>
             <column name="end_date" type="DATE" remarks="Дата завершения" />
-            <column name="current_balance" type="NUMERIC(15,2)" remarks="Текущий баланс" />
+            <column name="current_balance" type="DECIMAL(15,2)" remarks="Текущий баланс">
+                <constraints checkConstraint="current_balance >= 0"/>
+            </column>
             <column name="status" type="VARCHAR(20)" defaultValue="ACTIVE" remarks="Статус продукта">
                 <constraints checkConstraint="status IN ('ACTIVE', 'CLOSED', 'FROZEN', 'OVERDUE')"/>
             </column>

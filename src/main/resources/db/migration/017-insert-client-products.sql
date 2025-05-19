@@ -1,5 +1,5 @@
 --liquibase formatted sql
---changeset Marchenko:015
+--changeset Marchenko:017
 --preconditions onFail:HALT onError:HALT
 
 INSERT INTO client_products (id, client_id, product_id, start_date, current_balance)
