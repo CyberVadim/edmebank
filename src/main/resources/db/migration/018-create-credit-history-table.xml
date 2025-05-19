@@ -29,6 +29,8 @@
                 <constraints nullable="false" checkConstraint="delinquency_days >= 0"/>
             </column>
             <column name="payment_method" type="varchar(30)" remarks="Способ оплаты"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP" remarks="Дата создания"/>
+            <column name="updated_at" type="TIMESTAMP" remarks="Дата обновления"/>
         </createTable>
 
         <addForeignKeyConstraint

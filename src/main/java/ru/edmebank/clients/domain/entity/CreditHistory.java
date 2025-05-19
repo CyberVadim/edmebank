@@ -10,6 +10,8 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Min;
 import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -46,4 +48,11 @@ public class CreditHistory {
 
     @Column(length = 30)
     private String paymentMethod;
+
+    @CreationTimestamp
+    @Column(updatable = false)
+    public final LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    public LocalDateTime updatedAt;
 }
