@@ -6,7 +6,7 @@
             http://www.liquibase.org/xml/ns/dbchangelog
             https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
 
-    <changeSet id="010" author="Marchenko_GV">
+    <changeSet id="012" author="Marchenko_GV">
         <preConditions onFail="HALT">
             <not>
                 <tableExists tableName="client_products"/>

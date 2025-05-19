@@ -8,6 +8,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,7 +25,7 @@ import java.util.UUID;
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor(force = true)
+@NoArgsConstructor
 @AllArgsConstructor
 public class Documents {
 
@@ -45,7 +46,8 @@ public class Documents {
 
     @CreationTimestamp
     @Column(updatable = false)
-    public final LocalDateTime createAt;
+    @Setter(AccessLevel.NONE)
+    public LocalDateTime createAt;
 
     @UpdateTimestamp
     public LocalDateTime updateAt;
