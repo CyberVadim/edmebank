@@ -10,7 +10,8 @@ INSERT INTO client_children (
     birth_date,
     relation_type,
     is_dependent,
-    created_at
+    created_at,
+    update_at
 ) VALUES (
              '3f5c9f78-0c9a-4c1e-940d-17a2b7e232b1',
              '3f5c9f78-0c9a-4c1e-940d-17a2b7e232b1',
@@ -18,5 +19,6 @@ INSERT INTO client_children (
              '2010-05-15',
              'BIOLOGICAL',
              true,
-             CURRENT_TIMESTAMP
+            CURRENT_TIMESTAMP,
+                        CURRENT_TIMESTAMP
          );
