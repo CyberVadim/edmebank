@@ -36,6 +36,10 @@
                     remarks="Дата создания записи">
                 <constraints nullable="false"/>
             </column>
+            <column name="updated_at" type="DATETIME" defaultValueComputed="CURRENT_TIMESTAMP"
+                    remarks="Дата обновления записи">
+                    <constraints nullable="false"/>
+            </column>
         </createTable>
     </changeSet>
 </databaseChangeLog>
