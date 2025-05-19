@@ -1,50 +1,44 @@
 package ru.edmebank.clients.domain.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
+import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import ru.edmebank.clients.utils.validation.AtLeastOneNotNull;
 import ru.edmebank.contracts.enums.SocialStatus;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.UUID;
 
 @Data
+@NoArgsConstructor
 @Entity
+@AtLeastOneNotNull(fields = {"spouseClientId", "fullName"})
 public class Spouses {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(
             name = "client_id",
             referencedColumnName = "id",
-            insertable = false
+            insertable = false,
+            updatable = false
     )
     private Client client;
 
-    @Column(unique = true , nullable = false)
-    private UUID clientId;
-
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(
             name = "spouse_client_id",
             referencedColumnName = "id",
-            insertable = false
+            insertable = false,
+            updatable = false
     )
     private Client spouseClientId;
 
@@ -52,18 +46,17 @@ public class Spouses {
     private String fullName;
 
     @Column(nullable = false)
-    private Date marriageDate;
+    private LocalDate marriageDate;
 
-    @Column()
     private Boolean marriageContractExists = false;
 
     @Enumerated(EnumType.STRING)
     @Column(length = 50)
     private SocialStatus socialStatus;
 
-    @Column()
     private Boolean isCurrent = true;
 
+    @Setter(AccessLevel.NONE)
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -71,14 +64,4 @@ public class Spouses {
     @UpdateTimestamp
     @Column(nullable = false)
     private LocalDateTime updatedAt;
-
-    @PrePersist
-    @PreUpdate
-    private void validateSpouseInfo() {
-        if (spouseClientId == null && fullName == null) {
-            throw new IllegalStateException("Необходимо указать либо spouseClientId, либо fullName.");
-        }
-    }
 }
-
-

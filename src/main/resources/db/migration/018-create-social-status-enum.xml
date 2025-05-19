@@ -6,9 +6,14 @@
             http://www.liquibase.org/xml/ns/dbchangelog
             https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
 
-    <changeSet id="013" author="Koltsov_AE">
+    <changeSet id="018" author="Koltsov_AE">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM pg_type WHERE typname = 'social_status_enum';
+            </sqlCheck>
+        </preConditions>
         <sql>
-            CREATE TYPE IF NOT EXISTS social_status_enum AS ENUM ('WORKING','UNEMPLOYED','PENSIONER','STUDENT');
+            CREATE TYPE social_status_enum AS ENUM ('WORKING','UNEMPLOYED','PENSIONER','STUDENT');
         </sql>
     </changeSet>
 </databaseChangeLog>

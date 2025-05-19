@@ -3,7 +3,7 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
 
-    <changeSet id="014" author="Koltsov_AE">
+    <changeSet id="019" author="Koltsov_AE">
         <preConditions onFail="MARK_RAN">
             <not>
                 <tableExists tableName="spouses"/>
@@ -25,8 +25,7 @@
                              referencedColumnNames="id"/>
             </column>
             <column name="spouse_client_id" type="UUID" remarks="ID супруга как клиента (если есть)">
-                <constraints nullable="true"
-                             foreignKeyName="fk_spouses_spouse_client"
+                <constraints foreignKeyName="fk_spouses_spouse_client"
                              referencedTableName="clients"
                              referencedColumnNames="id"/>
             </column>
