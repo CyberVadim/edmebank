@@ -1,6 +1,6 @@
 --liquibase formatted sql
 --preconditions onFail:HALT onError:HALT
---changeset Koltsov_AE:019
+--changeset Koltsov_AE:022
 
 INSERT INTO spouses (id, client_id, spouse_client_id, full_name, marriage_date, marriage_contract_exists, social_status,
                      is_current, created_at, updated_at)
