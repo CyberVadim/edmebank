@@ -31,7 +31,6 @@ import java.util.UUID;
 public class Passport {
 
     @Id
-    @Column(nullable = false)
     private UUID clientId;
 
     @MapsId
