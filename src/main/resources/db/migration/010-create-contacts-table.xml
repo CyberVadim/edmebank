@@ -16,7 +16,7 @@
                 <constraints nullable="false"/>
             </column>
             <column name="type" type="contact_type_enum" remarks="Тип контакта">
-                <constraints nullable="false"/>
+                <constraints nullable="false" checkConstraint = "type IN ('PHONE','EMAIL')"/>
             </column>
             <column name="value" type="VARCHAR(100)" remarks="Значение контакта">
                 <constraints nullable="false"/>

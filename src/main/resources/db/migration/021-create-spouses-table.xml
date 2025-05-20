@@ -39,7 +39,8 @@
                 <constraints nullable="false"/>
             </column>
             <column name="social_status" type="VARCHAR(30)" remarks="Социальный статус">
-                <constraints nullable="true"/>
+                <constraints nullable="true"
+                             checkConstraint="type IN ('EMPLOYED','UNEMPLOYED','RETIRED','STUDENT','SELF_EMPLOYED','OTHER')"/>
             </column>
             <column name="is_current" type="BOOLEAN" defaultValue="true" remarks="Текущий брак">
                 <constraints nullable="false"/>
