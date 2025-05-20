@@ -32,6 +32,8 @@
             <column name="department_code" type="VARCHAR(7)" remarks="Код подразделения">
                 <constraints nullable="false"/>
             </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP" remarks="Дата создания"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP" remarks="Дата обновления"/>
         </createTable>
 
         <addForeignKeyConstraint
@@ -41,5 +43,9 @@
                 referencedTableName="clients"
                 referencedColumnNames="id"
                 onDelete="CASCADE"/>
+        <addUniqueConstraint
+                tableName="passports"
+                columnNames="series, number"
+                constraintName="uk_series_number"/>
     </changeSet>
 </databaseChangeLog>
