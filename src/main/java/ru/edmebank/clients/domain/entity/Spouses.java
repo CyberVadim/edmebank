@@ -8,7 +8,7 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import ru.edmebank.clients.utils.validation.AtLeastOneNotNull;
-import ru.edmebank.contracts.enums.SocialStatus;
+import ru.edmebank.contracts.enums.EmploymentType;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -32,7 +32,7 @@ public class Spouses {
     )
     private Client client;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(
             name = "spouse_client_id",
             referencedColumnName = "id",
@@ -50,7 +50,7 @@ public class Spouses {
 
     @Enumerated(EnumType.STRING)
     @Column(length = 50)
-    private SocialStatus socialStatus;
+    private EmploymentType socialStatus;
 
     private Boolean isCurrent = true;
 
