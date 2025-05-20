@@ -1,6 +1,6 @@
 --liquibase formatted sql
 --preconditions onFail:HALT onError:HALT
---changeset Timoshenko_AS:022
+--changeset Timoshenko_AS:024
 
 INSERT INTO client_data.passports (
     client_id,
