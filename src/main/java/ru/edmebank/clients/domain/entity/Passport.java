@@ -7,13 +7,24 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.MapsId;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Table(name = "passports")
+@Table(name = "passports",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "uk_series_number",
+                        columnNames = {"series", "number"}
+                )
+        })
 @Entity
 @Getter
 @Setter
@@ -42,5 +53,13 @@ public class Passport {
 
     @Column(nullable = false, length = 7)
     private String departmentCode;
+
+    @Setter(AccessLevel.NONE)
+    @CreationTimestamp
+    @Column(updatable = false)
+    public LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    public LocalDateTime updatedAt;
 
 }
