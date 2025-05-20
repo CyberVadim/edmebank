@@ -10,6 +10,7 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Min;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -18,10 +19,11 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
+@NoArgsConstructor(force = true)
 @Entity
 @Table(
         name = "credit_history",
-        indexes = @Index(name = "payment_date_id", columnList = "payment_date"))
+        indexes = @Index(name = "idx_payment_date", columnList = "payment_date"))
 public class CreditHistory {
     @Id
     private UUID id;

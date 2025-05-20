@@ -8,11 +8,11 @@
     <changeSet id="019" author="Elena_Yankovskaya">
         <preConditions onFail="MARK_RAN">
             <not>
-                <indexExists indexName="payment_date_id" tableName="credit_history"/>
+                <indexExists indexName="idx_payment_date" tableName="credit_history"/>
             </not>
         </preConditions>
 
-        <createIndex indexName="payment_date_id" tableName="credit_history">
+        <createIndex indexName="idx_payment_date" tableName="credit_history">
             <column name="payment_date"/>
         </createIndex>
     </changeSet>
