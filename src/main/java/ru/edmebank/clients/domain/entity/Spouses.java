@@ -21,19 +21,18 @@ import java.util.UUID;
 public class Spouses {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @MapsId
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(
             name = "client_id",
             referencedColumnName = "id",
-            insertable = false,
-            updatable = false
+            nullable = false
     )
     private Client client;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
             name = "spouse_client_id",
             referencedColumnName = "id",
@@ -42,7 +41,6 @@ public class Spouses {
     )
     private Client spouseClientId;
 
-    @Column(length = 255)
     private String fullName;
 
     @Column(nullable = false)
