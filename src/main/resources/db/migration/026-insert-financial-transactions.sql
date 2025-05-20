@@ -1,6 +1,6 @@
 --liquibase formatted sql
 --preconditions onFail:HALT onError:HALT
---changeset Koltsov_AE:025
+--changeset Koltsov_AE:026
 
 INSERT INTO financial_transactions (id, client_id, product_id, amount, currency, transaction_type, counterparty_info,
                                     created_at, updated_at)

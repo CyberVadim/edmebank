@@ -52,7 +52,6 @@ public class FinancialTransactions {
     @Column(nullable = false, length = 50)
     private String transactionType;
 
-    @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb")
     private String counterpartyInfo;
 
