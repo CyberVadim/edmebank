@@ -25,6 +25,10 @@
     <include file="db/migration/018-create-credit-history-table.xml"/>
     <include file="db/migration/019-create-index-in-credit-history-table.xml"/>
     <include file="db/migration/020-insert-credit-history-table.sql"/>
+    <include file="/db/migration/021-create-spouses-table.xml"/>
+    <include file="/db/migration/022-insert-spouses.sql"/>
+    <include file="db/migration/023-create_passport-table.xml"/>
+    <include file="/db/migration/024-insert-passport-table.sql"/>
     <include file="db/migration/021-create-spouses-table.xml"/>
     <include file="db/migration/022-insert-spouses.sql"/>
     <include file="db/migration/023-create_passport-table.xml"/>
