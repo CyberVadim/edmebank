@@ -1,0 +1,63 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                       https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+    <changeSet id="021" author="Koltsov_AE">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="spouses"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="spouses" remarks="Таблица о супругах клиентов">
+            <column name="id" type="UUID" remarks="Идентификатор супруга">
+                <constraints primaryKey="true"
+                             primaryKeyName="spouses_pkey"
+                             nullable="false"/>
+            </column>
+            <column name="client_id" type="UUID" remarks="ID клиента">
+                <constraints nullable="false"
+                             unique="true"
+                             uniqueConstraintName="uk_spouses_client"
+                             foreignKeyName="fk_spouses_client"
+                             referencedTableName="clients"
+                             referencedColumnNames="id"/>
+            </column>
+            <column name="spouse_client_id" type="UUID" remarks="ID супруга как клиента (если есть)">
+                <constraints foreignKeyName="fk_spouses_spouse_client"
+                             referencedTableName="clients"
+                             referencedColumnNames="id"/>
+            </column>
+            <column name="full_name" type="VARCHAR(255)" remarks="Полное имя супруга (если не клиент)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="marriage_date" type="DATE" remarks="Дата заключения брака">
+                <constraints nullable="false"/>
+            </column>
+            <column name="marriage_contract_exists" type="BOOLEAN" defaultValue="false" remarks="Наличие брачного договора">
+                <constraints nullable="false"/>
+            </column>
+            <column name="social_status" type="VARCHAR(30)" remarks="Социальный статус">
+                <constraints nullable="true"/>
+            </column>
+            <column name="is_current" type="BOOLEAN" defaultValue="true" remarks="Текущий брак">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" remarks="Дата создания записи">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" remarks="Дата обновления записи">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addUniqueConstraint
+                tableName="spouses"
+                columnNames="client_id, spouse_client_id"
+                constraintName="uk_spouses_client_spouse"
+                deferrable="false"
+                disabled="false"
+                initiallyDeferred="false"/>
+    </changeSet>
+</databaseChangeLog>
