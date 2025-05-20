@@ -31,25 +31,25 @@ public class Documents {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    public UUID id;
+    private UUID id;
 
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
-    public Client client;
+    private Client client;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 30)
-    public DocumentType type;
+    private DocumentType type;
 
     @Column(nullable = false, columnDefinition = "TEXT")
-    public String storageUrl;
+    private String storageUrl;
 
     @CreationTimestamp
     @Column(updatable = false)
     @Setter(AccessLevel.NONE)
-    public LocalDateTime createdAt;
+    private LocalDateTime createdAt;
 
     @UpdateTimestamp
     @Setter(AccessLevel.NONE)
-    public LocalDateTime updatedAt;
+    private LocalDateTime updatedAt;
 }

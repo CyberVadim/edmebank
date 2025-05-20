@@ -41,33 +41,33 @@ public class ClientProducts {
     @ManyToOne
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_client_products_client_id"))
     @OnDelete(action = OnDeleteAction.CASCADE)
-    public Client client;
+    private Client client;
 
     @OneToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_client_products_product_id"))
-    public FinancialProducts product;
+    private FinancialProducts product;
 
     @Column(nullable = false)
-    public LocalDate startDate;
-    public LocalDate endDate;
+    private LocalDate startDate;
+    private LocalDate endDate;
 
     @Column(precision = 15, scale = 2)
-    public BigDecimal currentBalance;
+    private BigDecimal currentBalance;
 
     @Enumerated(value = EnumType.STRING)
     @Column(length = 20)
-    public ProductStatus status;
+    private ProductStatus status;
 
     @Column(columnDefinition = "jsonb")
-    public String terms;
+    private String terms;
 
     @CreationTimestamp
     @Column(updatable = false)
     @Setter(AccessLevel.NONE)
-    public LocalDateTime createdAt;
+    private LocalDateTime createdAt;
 
     @UpdateTimestamp
     @Setter(AccessLevel.NONE)
-    public LocalDateTime updatedAt;
+    private LocalDateTime updatedAt;
 }
