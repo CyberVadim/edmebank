@@ -43,8 +43,7 @@ public class ClientProducts {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Client client;
 
-    @OneToOne
-    @OnDelete(action = OnDeleteAction.CASCADE)
+    @ManyToOne
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_client_products_product_id"))
     private FinancialProducts product;
 
