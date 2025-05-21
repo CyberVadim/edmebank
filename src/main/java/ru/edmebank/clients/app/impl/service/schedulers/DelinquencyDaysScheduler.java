@@ -10,7 +10,7 @@ import ru.edmebank.clients.app.api.repository.CreditHistoryRepository;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@ConditionalOnProperty(name = "jobs", havingValue = "true")
+@ConditionalOnProperty(prefix = "schedulers", name = "enable", havingValue = "true")
 public class DelinquencyDaysScheduler {
 
     private final CreditHistoryRepository creditHistoryRepository;
