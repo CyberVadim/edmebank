@@ -18,6 +18,13 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+@Table(name = "passports",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "uk_series_number",
+                        columnNames = {"series", "number"}
+                )
+        })
 @Entity
 @Getter
 @Setter
