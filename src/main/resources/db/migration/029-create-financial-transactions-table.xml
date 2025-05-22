@@ -3,7 +3,7 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
 
-    <changeSet id="025" author="Koltsov_AE">
+    <changeSet id="029" author="Koltsov_AE">
         <preConditions onFail="HALT">
             <not>
                 <tableExists tableName="financial_transactions"/>

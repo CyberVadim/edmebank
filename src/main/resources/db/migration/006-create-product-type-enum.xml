@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+            http://www.liquibase.org/xml/ns/dbchangelog
+            https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+    <changeSet id="006" author="Koltsov_AE">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*)
+                FROM pg_type
+                WHERE typname = 'product_type_enum';
+            </sqlCheck>
+        </preConditions>
+        <sql>
+            CREATE TYPE product_type_enum AS ENUM ('CREDIT','DEPOSIT','CURRENT_ACCOUNT','INSURANCE','INVESTMENT','PAYMENT_SERVICE');
+        </sql>
+    </changeSet>
+</databaseChangeLog>

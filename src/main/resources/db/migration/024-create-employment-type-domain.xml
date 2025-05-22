@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+            http://www.liquibase.org/xml/ns/dbchangelog
+            https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+    <changeSet id="024" author="Koltsov_AE">
+        <preConditions>
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*)
+                FROM pg_type
+                WHERE typname = 'employment_type_domain'
+            </sqlCheck>
+        </preConditions>
+
+        <sql>
+            CREATE DOMAIN employment_type_domain AS employment_type_enum
+                CONSTRAINT valid_product_type CHECK (VALUE IS NOT NULL);
+            COMMENT
+            ON DOMAIN employment_type_domain IS 'Тип занятости на основе ENUM';
+        </sql>
+    </changeSet>
+</databaseChangeLog>

@@ -4,7 +4,7 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
 
-    <changeSet id="010" author="Koltsov_AE">
+    <changeSet id="012" author="Koltsov_AE">
         <preConditions onFail="MARK_RAN">
             <not>
                 <tableExists tableName="contacts"/>
@@ -16,7 +16,7 @@
                 <constraints nullable="false"/>
             </column>
             <column name="type" type="contact_type_enum" remarks="Тип контакта">
-                <constraints nullable="false"/>
+                <constraints nullable="false" checkConstraint = "type IN ('PHONE','EMAIL')"/>
             </column>
             <column name="value" type="VARCHAR(100)" remarks="Значение контакта">
                 <constraints nullable="false"/>

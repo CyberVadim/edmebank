@@ -3,7 +3,7 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
 
-    <changeSet id="021" author="Koltsov_AE">
+    <changeSet id="025" author="Koltsov_AE">
         <preConditions onFail="MARK_RAN">
             <not>
                 <tableExists tableName="spouses"/>
@@ -38,8 +38,9 @@
             <column name="marriage_contract_exists" type="BOOLEAN" defaultValue="false" remarks="Наличие брачного договора">
                 <constraints nullable="false"/>
             </column>
-            <column name="social_status" type="VARCHAR(30)" remarks="Социальный статус">
-                <constraints nullable="true"/>
+            <column name="social_status" type="employment_type_domain" remarks="Социальный статус">
+                <constraints nullable="true"
+                             checkConstraint="social_status IN ('EMPLOYED','UNEMPLOYED','RETIRED','STUDENT','SELF_EMPLOYED','OTHER')"/>
             </column>
             <column name="is_current" type="BOOLEAN" defaultValue="true" remarks="Текущий брак">
                 <constraints nullable="false"/>
