@@ -6,14 +6,20 @@
             http://www.liquibase.org/xml/ns/dbchangelog
             https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
 
-    <changeSet id="009" author="Koltsov_AE">
-        <preConditions onFail="MARK_RAN">
+    <changeSet id="011" author="Koltsov_AE">
+        <preConditions>
             <sqlCheck expectedResult="0">
-                SELECT COUNT(*) FROM pg_type WHERE typname = 'contact_type_enum';
+                SELECT COUNT(*)
+                FROM pg_type
+                WHERE typname = 'contact_type_domain'
             </sqlCheck>
         </preConditions>
+
         <sql>
-            CREATE TYPE contact_type_enum AS ENUM ('PHONE', 'EMAIL');
+            CREATE DOMAIN contact_type_domain AS contact_type_enum
+                CONSTRAINT valid_product_type CHECK (VALUE IS NOT NULL);
+            COMMENT
+            ON DOMAIN contact_type_domain IS 'Тип контакта на основе ENUM';
         </sql>
     </changeSet>
 </databaseChangeLog>

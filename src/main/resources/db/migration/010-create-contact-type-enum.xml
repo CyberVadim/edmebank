@@ -6,14 +6,14 @@
             http://www.liquibase.org/xml/ns/dbchangelog
             https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
 
-    <changeSet id="006" author="Koltsov_AE">
+    <changeSet id="010" author="Koltsov_AE">
         <preConditions onFail="MARK_RAN">
             <sqlCheck expectedResult="0">
-                SELECT COUNT(*) FROM pg_type WHERE typname = 'product_type_enum';
+                SELECT COUNT(*) FROM pg_type WHERE typname = 'contact_type_enum';
             </sqlCheck>
         </preConditions>
         <sql>
-            CREATE TYPE product_type_enum AS ENUM ('CREDIT','DEPOSIT','CURRENT_ACCOUNT','INSURANCE','INVESTMENT','PAYMENT_SERVICE');
+            CREATE TYPE contact_type_enum AS ENUM ('PHONE', 'EMAIL');
         </sql>
     </changeSet>
 </databaseChangeLog>

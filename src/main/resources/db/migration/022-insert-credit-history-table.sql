@@ -1,6 +1,6 @@
 --liquibase formatted sql
 --preconditions onFail:HALT onError:HALT
---changeset Elena_Yankovskaya:020
+--changeset Elena_Yankovskaya:022
 
 INSERT INTO credit_history (id, payment_date, scheduled_amount, paid_amount, delinquency_days, payment_method,
     created_at, updated_at)
