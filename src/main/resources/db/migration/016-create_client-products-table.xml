@@ -49,8 +49,7 @@
                 baseColumnNames="product_id"
                 constraintName="fk_client_products_product_id"
                 referencedTableName="financial_products"
-                referencedColumnNames="id"
-                onDelete="CASCADE"/>
+                referencedColumnNames="id"/>
     </changeSet>
 
 </databaseChangeLog>
