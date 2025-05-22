@@ -22,7 +22,9 @@
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="product_type" type="product_type_domain" remarks="Тип продукта">
-                <constraints nullable="false"/>
+                <constraints nullable="false"
+                             checkConstraint = "product_type IN ('CREDIT','DEPOSIT','CURRENT_ACCOUNT',
+                             'INSURANCE','INVESTMENT','PAYMENT_SERVICE')"/>
             </column>
             <column name="name" type="VARCHAR(100)" remarks="Название продукта">
                 <constraints nullable="false" unique="true"/>

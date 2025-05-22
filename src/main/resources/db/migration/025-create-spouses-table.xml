@@ -39,7 +39,8 @@
                 <constraints nullable="false"/>
             </column>
             <column name="social_status" type="employment_type_domain" remarks="Социальный статус">
-                <constraints nullable="true"/>
+                <constraints nullable="true"
+                             checkConstraint="social_status IN ('EMPLOYED','UNEMPLOYED','RETIRED','STUDENT','SELF_EMPLOYED','OTHER')"/>
             </column>
             <column name="is_current" type="BOOLEAN" defaultValue="true" remarks="Текущий брак">
                 <constraints nullable="false"/>
