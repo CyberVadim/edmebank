@@ -1,108 +1,93 @@
 package ru.edmebank.clients.utils.currency;
 
+import com.github.petrovich4j.Gender;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import ru.edmebank.contracts.enums.Currency;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class RussianNumeralUtilsTest {
 
-    private final Currency rub = Currency.RUB;
-    private final Currency usd = Currency.USD;
+    @Nested
+    @DisplayName("declension() tests")
+    class DeclensionTests {
 
-    @Test
-    void rubleFor1() {
-        assertEquals("рубль",
-                RussianNumeralUtils.declension(1, rub.wholeText, rub.wholeForms));
+        static Stream<Arguments> declensionData() {
+            String[] forms = {"рубля", "рублей"};
+            String formZero = "рубль";
+
+            return Stream.of(
+                    arg(0, formZero, forms, "рублей"),
+                    arg(5, formZero, forms, "рублей"),
+                    arg(11, formZero, forms, "рублей"),
+                    arg(19, formZero, forms, "рублей"),
+                    arg(100, formZero, forms, "рублей"),
+
+                    arg(1, formZero, forms, "рубль"),
+                    arg(21, formZero, forms, "рубль"),
+                    arg(101, formZero, forms, "рубль"),
+
+                    arg(2, formZero, forms, "рубля"),
+                    arg(3, formZero, forms, "рубля"),
+                    arg(4, formZero, forms, "рубля"),
+                    arg(22, formZero, forms, "рубля"),
+
+                    arg(-1, formZero, forms, "рубль"),
+                    arg(-2, formZero, forms, "рубля"),
+                    arg(-11, formZero, forms, "рублей")
+            );
+        }
+
+        @ParameterizedTest(name = "declension({0}) → {3}")
+        @MethodSource("declensionData")
+        void testDeclension(int number, String formZero, String[] forms, String expected) {
+            String result = RussianNumeralUtils.declension(number, formZero, forms);
+            assertEquals(expected, result);
+        }
+
+        private static org.junit.jupiter.params.provider.Arguments arg(int n, String f0, String[] f, String expected) {
+            return org.junit.jupiter.params.provider.Arguments.of(n, f0, f, expected);
+        }
     }
+
+    @Nested
+    @DisplayName("correctGender() tests")
+    class CorrectGenderTests {
 
         @Test
-    void rubleFor2() {
-        assertEquals("рубля",
-                RussianNumeralUtils.declension(2, rub.wholeText, rub.wholeForms));
-    }
+        void testMaleGenderUnchanged() {
+            assertEquals("один", RussianNumeralUtils.correctGender("один", Gender.Male));
+            assertEquals("два", RussianNumeralUtils.correctGender("два", Gender.Male));
+            assertEquals("три", RussianNumeralUtils.correctGender("три", Gender.Male));
+        }
 
-    @Test
-    void rubleFor5() {
-        assertEquals("рублей",
-                RussianNumeralUtils.declension(5, rub.wholeText, rub.wholeForms));
-    }
+        @Test
+        void testFemaleGenderConversion() {
+            assertEquals("одна", RussianNumeralUtils.correctGender("один", Gender.Female));
+            assertEquals("две", RussianNumeralUtils.correctGender("два", Gender.Female));
+        }
 
-    @Test
-    void rubleFor11() {
-        assertEquals("рублей",
-                RussianNumeralUtils.declension(11, rub.wholeText, rub.wholeForms));
-    }
+        @Test
+        void testFemaleGenderDoesNotAffectOthers() {
+            assertEquals("три", RussianNumeralUtils.correctGender("три", Gender.Female));
+        }
 
-    @Test
-    void rubleFor21() {
-        assertEquals("рубль",
-                RussianNumeralUtils.declension(21, rub.wholeText, rub.wholeForms));
-    }
+        @Test
+        void testExactWordBoundaryReplacement() {
+            assertEquals("только одна", RussianNumeralUtils.correctGender("только один", Gender.Female));
+            assertEquals("всего две", RussianNumeralUtils.correctGender("всего два", Gender.Female));
+        }
 
-    @Test
-    void kopeykaFor1() {
-        assertEquals("копейка",
-                RussianNumeralUtils.declension(1, rub.fractionalText, rub.fractionalForms));
-    }
-
-    @Test
-    void kopeykaFor3() {
-        assertEquals("копейки",
-                RussianNumeralUtils.declension(3, rub.fractionalText, rub.fractionalForms));
-    }
-
-    @Test
-    void kopeykaFor10() {
-        assertEquals("копеек",
-                RussianNumeralUtils.declension(10, rub.fractionalText, rub.fractionalForms));
-    }
-
-    @Test
-    void dollarFor1() {
-        assertEquals("доллар",
-                RussianNumeralUtils.declension(1, usd.wholeText, usd.wholeForms));
-    }
-
-    @Test
-    void dollarFor4() {
-        assertEquals("доллара",
-                RussianNumeralUtils.declension(4, usd.wholeText, usd.wholeForms));
-    }
-
-    @Test
-    void dollarFor7() {
-        assertEquals("долларов",
-                RussianNumeralUtils.declension(7, usd.wholeText, usd.wholeForms));
-    }
-
-    @Test
-    void dollarFor11() {
-        assertEquals("долларов",
-                RussianNumeralUtils.declension(11, usd.wholeText, usd.wholeForms));
-    }
-
-    @Test
-    void dollarFor21() {
-        assertEquals("доллар",
-                RussianNumeralUtils.declension(21, usd.wholeText, usd.wholeForms));
-    }
-
-    @Test
-    void centFor1() {
-        assertEquals("цент",
-                RussianNumeralUtils.declension(1, usd.fractionalText, usd.fractionalForms));
-    }
-
-    @Test
-    void centFor2() {
-        assertEquals("цента",
-                RussianNumeralUtils.declension(2, usd.fractionalText, usd.fractionalForms));
-    }
-
-    @Test
-    void centFor10() {
-        assertEquals("центов",
-                RussianNumeralUtils.declension(10, usd.fractionalText, usd.fractionalForms));
+        @Test
+        void testPartialMatchShouldNotReplace() {
+            assertEquals("одинокий", RussianNumeralUtils.correctGender("одинокий", Gender.Female));
+            assertEquals("дважды", RussianNumeralUtils.correctGender("дважды", Gender.Female));
+        }
     }
 }
