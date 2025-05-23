@@ -79,17 +79,6 @@ class CurrencyTextFormatterImplTest {
         }
     }
 
-    private static class TestCase {
-        final BigDecimal amount;
-        final Currency currency;
-        final String expected;
-        final boolean exactMatch;
-
-        TestCase(BigDecimal amount, Currency currency, String expected, boolean exactMatch) {
-            this.amount = amount;
-            this.currency = currency;
-            this.expected = expected;
-            this.exactMatch = exactMatch;
-        }
+    private record TestCase(BigDecimal amount, Currency currency, String expected, boolean exactMatch) {
     }
 }
