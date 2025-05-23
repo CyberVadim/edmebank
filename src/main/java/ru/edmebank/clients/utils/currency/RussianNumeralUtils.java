@@ -17,11 +17,8 @@ public class RussianNumeralUtils {
     }
 
     public static String correctGender(String input, Gender gender) {
-        if (gender == Gender.Female) {
-            return input
-                    .replaceAll("\\bодин\\b$", "одна")
-                    .replaceAll("\\bдва\\b$", "две");
-        }
-        return input;
+        return (gender == Gender.Female) ?
+                input.replaceAll("\\bодин\\b$", "одна").replaceAll("\\bдва\\b$", "две") :
+                input;
     }
 }
