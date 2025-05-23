@@ -5,6 +5,7 @@ import com.github.petrovich4j.Gender;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.stream.Stream;
@@ -63,8 +64,8 @@ class NameFormatterUtilsTest {
             );
         }
 
-        private static org.junit.jupiter.params.provider.Arguments arg(Object... args) {
-            return org.junit.jupiter.params.provider.Arguments.of(args);
+        private static Arguments arg(Object... args) {
+            return Arguments.of(args);
         }
     }
 }

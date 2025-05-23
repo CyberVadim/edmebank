@@ -2,6 +2,7 @@ package ru.edmebank.clients.utils.currency;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.math.BigDecimal;
@@ -52,7 +53,7 @@ class AmountPartsTest {
         assertEquals("AmountParts[sign=, whole=42, fractional=58]", original.toString());
     }
 
-    private static org.junit.jupiter.params.provider.Arguments arg(String input, String sign, int whole, int fractional) {
-        return org.junit.jupiter.params.provider.Arguments.of(new BigDecimal(input), sign, whole, fractional);
+    private static Arguments arg(String input, String sign, int whole, int fractional) {
+        return Arguments.of(new BigDecimal(input), sign, whole, fractional);
     }
 }
