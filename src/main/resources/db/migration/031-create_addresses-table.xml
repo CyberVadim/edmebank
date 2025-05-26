@@ -14,8 +14,8 @@
         </preConditions>
 
         <createTable tableName="addresses">
-            <column name="client_id" type="UUID" remarks="Идентификатор записи">
-                <constraints primaryKey="true" primaryKeyName="addresses_pkey" nullable="false"/>
+            <column name="client_id" type="UUID" remarks="Идентификатор клиента">
+                <constraints nullable="false"/>
             </column>
             <column name="type" type="VARCHAR" remarks="Тип адреса"/>
             <column name="postal_code" type="VARCHAR(6)" remarks="Почтовый индекс"/>
@@ -31,6 +31,11 @@
             <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP" remarks="Дата создания"/>
             <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP" remarks="Дата обновления"/>
         </createTable>
+
+        <addPrimaryKey
+                tableName="addresses"
+                columnNames="client_id, type"
+                constraintName="pk_addresses"/>
 
         <addForeignKeyConstraint
                 baseTableName="addresses"

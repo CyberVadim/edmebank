@@ -9,6 +9,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import ru.edmebank.contracts.enums.AddressType;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -18,17 +19,13 @@ import java.util.UUID;
 @Setter
 public class Address {
 
-    @Id
-    private UUID clientId;
+    @EmbeddedId
+    private AddressId id;
 
-    @MapsId
-    @OneToOne
+    @MapsId("clientId")
+    @ManyToOne
     @JoinColumn(name = "client_id")
     private Client client;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private AddressType type;
 
     @Column(length = 6)
     private String postalCode;
@@ -55,4 +52,12 @@ public class Address {
 
     @UpdateTimestamp
     public LocalDateTime updatedAt;
+
+    @Embeddable
+    public record AddressId(
+            UUID clientId,
+
+            @Enumerated(EnumType.STRING)
+            AddressType type
+    ) implements Serializable {}
 }
