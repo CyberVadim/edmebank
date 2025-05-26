@@ -1,11 +1,14 @@
 package ru.edmebank.clients.utils.currency;
 
 import com.ibm.icu.text.RuleBasedNumberFormat;
+import lombok.experimental.UtilityClass;
 
 import java.util.Locale;
 
-public class RussianNumberFormatter {
+import static com.ibm.icu.text.RuleBasedNumberFormat.SPELLOUT;
 
+@UtilityClass
+public class RussianNumberFormatter {
     public static final Locale RUSSIAN = new Locale("ru");
-    public static final RuleBasedNumberFormat SPELL_OUT = new RuleBasedNumberFormat(RUSSIAN, RuleBasedNumberFormat.SPELLOUT);
+    public static final RuleBasedNumberFormat SPELL_OUT = new RuleBasedNumberFormat(RUSSIAN, SPELLOUT);
 }

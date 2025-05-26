@@ -6,7 +6,6 @@ import ru.edmebank.contracts.enums.FormatType;
 import java.math.BigDecimal;
 
 public class CurrencyTextFormatterImpl implements CurrencyTextFormatter {
-
     @Override
     public String toFullForm(BigDecimal amount, Currency currency) {
         return format(amount, currency, FormatType.FULL);

@@ -10,6 +10,9 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static ru.edmebank.contracts.enums.FormatType.FULL;
+import static ru.edmebank.contracts.enums.FormatType.SHORT;
+import static ru.edmebank.contracts.enums.FormatType.STANDARD;
 
 class FormatTypeTest {
 
@@ -30,7 +33,7 @@ class FormatTypeTest {
         @ParameterizedTest(name = "{index}: parts={0} → expected contains \"{1}\"")
         @MethodSource("fullCases")
         void testFullFormat(TestCase testCase) {
-            String actual = FormatType.FULL.format(testCase.parts, TEST_CURRENCY);
+            String actual = FULL.formatter(testCase.parts, TEST_CURRENCY);
             assertTrue(actual.contains(testCase.expectedSnippet),
                     () -> "Ожидали подстроку: " + testCase.expectedSnippet + ", но было: " + actual);
         }
@@ -51,7 +54,7 @@ class FormatTypeTest {
         @ParameterizedTest(name = "{index}: parts={0} → expected: \"{1}\"")
         @MethodSource("standardCases")
         void testStandardFormat(TestCase testCase) {
-            String actual = FormatType.STANDARD.format(testCase.parts, TEST_CURRENCY);
+            String actual = STANDARD.formatter(testCase.parts, TEST_CURRENCY);
             assertEquals(testCase.expectedSnippet, actual);
         }
     }
@@ -71,7 +74,7 @@ class FormatTypeTest {
         @ParameterizedTest(name = "{index}: parts={0} → expected: \"{1}\"")
         @MethodSource("shortCases")
         void testShortFormat(TestCase testCase) {
-            String actual = FormatType.SHORT.format(testCase.parts, TEST_CURRENCY);
+            String actual = SHORT.formatter(testCase.parts, TEST_CURRENCY);
             assertEquals(testCase.expectedSnippet, actual);
         }
     }
