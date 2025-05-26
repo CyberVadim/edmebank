@@ -1,16 +1,8 @@
 package ru.edmebank.clients.domain.entity;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
-import lombok.Data;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 import ru.edmebank.contracts.enums.EmploymentType;
 import ru.edmebank.contracts.enums.Gender;
 import ru.edmebank.contracts.enums.MaritalStatus;
@@ -22,7 +14,8 @@ import java.util.UUID;
 
 @Table(name = "clients")
 @Entity
-@Data
+@Getter
+@Setter
 public class Client {
 
     @Id

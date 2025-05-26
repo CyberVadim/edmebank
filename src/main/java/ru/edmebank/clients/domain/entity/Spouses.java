@@ -1,10 +1,7 @@
 package ru.edmebank.clients.domain.entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import ru.edmebank.clients.utils.validation.AtLeastOneNotNull;
@@ -14,9 +11,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Data
-@NoArgsConstructor
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
 @AtLeastOneNotNull(fields = {"spouseClientId", "fullName"})
 public class Spouses {
 
