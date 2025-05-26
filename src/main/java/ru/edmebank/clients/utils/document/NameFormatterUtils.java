@@ -2,14 +2,17 @@ package ru.edmebank.clients.utils.document;
 
 import com.github.petrovich4j.Case;
 import com.github.petrovich4j.Gender;
+import com.github.petrovich4j.NameType;
 import com.github.petrovich4j.Petrovich;
 import lombok.experimental.UtilityClass;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.Optional;
 
 import static com.github.petrovich4j.NameType.FirstName;
 import static com.github.petrovich4j.NameType.LastName;
 import static com.github.petrovich4j.NameType.PatronymicName;
 import static java.lang.String.format;
-import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
 
 @UtilityClass
@@ -26,38 +29,42 @@ public class NameFormatterUtils {
 
     public static String declineFullName(String lastName, String firstName, String middleName,
                                          Gender gender, Case nameCase) {
-        lastName = defaultIfNull(lastName, "");
-        firstName = defaultIfNull(firstName, "");
-        middleName = defaultIfNull(middleName, "");
+        lastName = getFormattedName(lastName, LastName, gender, nameCase);
+        firstName = getFormattedName(firstName, FirstName, gender, nameCase);
+        middleName = getFormattedName(middleName, PatronymicName, gender, nameCase);
 
-        if (lastName.isEmpty() || firstName.isEmpty() || gender == null || nameCase == null) {
-            return "";
-        }
-
-        String last = petrovich.say(lastName, LastName, gender, nameCase);
-        String first = petrovich.say(firstName, FirstName, gender, nameCase);
-        String middle = isNotEmpty(middleName)
-                ? petrovich.say(middleName, PatronymicName, gender, nameCase)
-                : null;
-
-        return format("%s %s%s", last, first, isNotEmpty(middle) ? " " + middle : "").trim();
+        return (lastName.isEmpty() || firstName.isEmpty())
+                ? ""
+                : format("%s %s %s", lastName, firstName, middleName).trim();
     }
 
     private static String formatName(String lastName, String firstName, String middleName, boolean isShort) {
-        lastName = defaultIfNull(lastName, "");
-        firstName = defaultIfNull(firstName, "");
+        lastName = cleanString(lastName);
+        firstName = cleanString(firstName);
+        middleName = cleanString(middleName);
 
-        if (lastName.isEmpty() || firstName.isEmpty()) {
-            return "";
-        }
-
-        if (isNotEmpty(middleName)) {
-            return isShort
-                    ? format("%s %s.%s.", lastName, firstName.charAt(0), middleName.charAt(0)).trim()
-                    : format("%s %s %s", lastName, firstName, middleName).trim();
-        }
-        return isShort
+        return (lastName.isEmpty() || firstName.isEmpty())
+                ? ""
+                : isNotEmpty(middleName)
+                ? (isShort
+                ? format("%s %s.%s.", lastName, firstName.charAt(0), middleName.charAt(0)).trim()
+                : format("%s %s %s", lastName, firstName, middleName).trim())
+                : (isShort
                 ? format("%s %s.", lastName, firstName.charAt(0)).trim()
-                : format("%s %s", lastName, firstName).trim();
+                : format("%s %s", lastName, firstName).trim());
+    }
+
+    private static String getFormattedName(String name, NameType nameType, Gender gender, Case nameCase) {
+        return Optional
+                .ofNullable(name)
+                .filter(StringUtils::isNotEmpty)
+                .map(n -> petrovich.say(n, nameType, gender, nameCase))
+                .orElse("");
+    }
+
+    private static String cleanString(String input) {
+        return Optional.ofNullable(input)
+                .filter(StringUtils::isNotEmpty)
+                .orElse("");
     }
 }

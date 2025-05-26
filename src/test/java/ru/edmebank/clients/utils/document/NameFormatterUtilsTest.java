@@ -79,6 +79,7 @@ class NameFormatterUtilsTest {
         @Test
         void handlesNullValuesGracefully() {
             assertEquals("", declineFullName(null, null, null, null, null));
+            assertEquals("", declineFullName(null, null, "Сергеевич", Male, Genitive));
             assertEquals("Иванова Ивана", declineFullName("Иванов", "Иван", null, Male, Genitive));
         }
     }
