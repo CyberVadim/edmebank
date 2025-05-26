@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+            http://www.liquibase.org/xml/ns/dbchangelog
+            https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+    <changeSet id="031" author="Timoshenko_AS">
+        <preConditions onFail="HALT">
+            <not>
+                <tableExists tableName="addresses"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="addresses">
+            <column name="client_id" type="UUID" remarks="Идентификатор записи">
+                <constraints primaryKey="true" primaryKeyName="addresses_pkey" nullable="false"/>
+            </column>
+            <column name="type" type="VARCHAR" remarks="Тип адреса"/>
+            <column name="postal_code" type="VARCHAR(6)" remarks="Почтовый индекс"/>
+            <column name="region" type="VARCHAR(100)" remarks="Регион"/>
+            <column name="city" type="VARCHAR(100)" remarks="Город">
+                <constraints nullable="false"/>
+            </column>
+            <column name="street" type="VARCHAR(100)" remarks="Улица"/>
+            <column name="house" type="VARCHAR(10)" remarks="Дом">
+                <constraints nullable="false"/>
+            </column>
+            <column name="apartment" type="VARCHAR(10)" remarks="Квартира"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP" remarks="Дата создания"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP" remarks="Дата обновления"/>
+        </createTable>
+
+        <addForeignKeyConstraint
+                baseTableName="addresses"
+                baseColumnNames="client_id"
+                constraintName="fk_addresses_client"
+                referencedTableName="clients"
+                referencedColumnNames="id"
+                onDelete="CASCADE"/>
+    </changeSet>
+</databaseChangeLog>
