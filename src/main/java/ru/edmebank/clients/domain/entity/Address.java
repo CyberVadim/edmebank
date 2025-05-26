@@ -6,6 +6,8 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.UpdateTimestamp;
 import ru.edmebank.contracts.enums.AddressType;
 
@@ -25,6 +27,7 @@ public class Address {
     @MapsId("clientId")
     @ManyToOne
     @JoinColumn(name = "client_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Client client;
 
     @Column(length = 6)
