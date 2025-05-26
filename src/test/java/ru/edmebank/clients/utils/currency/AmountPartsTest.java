@@ -9,19 +9,20 @@ import java.math.BigDecimal;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.params.provider.Arguments.of;
+import static ru.edmebank.clients.utils.currency.AmountParts.from;
 
 class AmountPartsTest {
-
     @ParameterizedTest(name = "[{index}] {0} → sign: \"{1}\", whole: {2}, fractional: {3}")
     @MethodSource("validAmounts")
     void testFrom(BigDecimal input, String expectedSign, int expectedWhole, int expectedFractional) {
-        AmountParts result = AmountParts.from(input);
+        AmountParts result = from(input);
         assertEquals(expectedSign, result.sign());
         assertEquals(expectedWhole, result.whole());
         assertEquals(expectedFractional, result.fractional());
     }
 
-    static Stream<org.junit.jupiter.params.provider.Arguments> validAmounts() {
+    static Stream<Arguments> validAmounts() {
         return Stream.of(
                 arg("0", "", 0, 0),
                 arg("12", "", 12, 0),
@@ -49,11 +50,11 @@ class AmountPartsTest {
 
     @Test
     void testImmutability() {
-        AmountParts original = AmountParts.from(new BigDecimal("42.58"));
+        AmountParts original = from(new BigDecimal("42.58"));
         assertEquals("AmountParts[sign=, whole=42, fractional=58]", original.toString());
     }
 
     private static Arguments arg(String input, String sign, int whole, int fractional) {
-        return Arguments.of(new BigDecimal(input), sign, whole, fractional);
+        return of(new BigDecimal(input), sign, whole, fractional);
     }
 }

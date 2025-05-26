@@ -1,6 +1,5 @@
 package ru.edmebank.clients.utils.currency;
 
-import com.github.petrovich4j.Gender;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -10,19 +9,23 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.stream.Stream;
 
+import static com.github.petrovich4j.Gender.Female;
+import static com.github.petrovich4j.Gender.Male;
+import static java.util.stream.Stream.of;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static ru.edmebank.clients.utils.currency.RussianNumeralUtils.correctGender;
+import static ru.edmebank.clients.utils.currency.RussianNumeralUtils.declension;
 
 class RussianNumeralUtilsTest {
 
     @Nested
     @DisplayName("declension() tests")
     class DeclensionTests {
-
         static Stream<Arguments> declensionData() {
             String[] forms = {"рубля", "рублей"};
             String formZero = "рубль";
 
-            return Stream.of(
+            return of(
                     arg(0, formZero, forms, "рублей"),
                     arg(5, formZero, forms, "рублей"),
                     arg(11, formZero, forms, "рублей"),
@@ -47,47 +50,46 @@ class RussianNumeralUtilsTest {
         @ParameterizedTest(name = "declension({0}) → {3}")
         @MethodSource("declensionData")
         void testDeclension(int number, String formZero, String[] forms, String expected) {
-            String result = RussianNumeralUtils.declension(number, formZero, forms);
+            String result = declension(number, formZero, forms);
             assertEquals(expected, result);
         }
 
-        private static org.junit.jupiter.params.provider.Arguments arg(int n, String f0, String[] f, String expected) {
-            return org.junit.jupiter.params.provider.Arguments.of(n, f0, f, expected);
+        private static Arguments arg(int n, String f0, String[] f, String expected) {
+            return Arguments.of(n, f0, f, expected);
         }
     }
 
     @Nested
     @DisplayName("correctGender() tests")
     class CorrectGenderTests {
-
         @Test
         void testMaleGenderUnchanged() {
-            assertEquals("один", RussianNumeralUtils.correctGender("один", Gender.Male));
-            assertEquals("два", RussianNumeralUtils.correctGender("два", Gender.Male));
-            assertEquals("три", RussianNumeralUtils.correctGender("три", Gender.Male));
+            assertEquals("один", correctGender("один", Male));
+            assertEquals("два", correctGender("два", Male));
+            assertEquals("три", correctGender("три", Male));
         }
 
         @Test
         void testFemaleGenderConversion() {
-            assertEquals("одна", RussianNumeralUtils.correctGender("один", Gender.Female));
-            assertEquals("две", RussianNumeralUtils.correctGender("два", Gender.Female));
+            assertEquals("одна", correctGender("один", Female));
+            assertEquals("две", correctGender("два", Female));
         }
 
         @Test
         void testFemaleGenderDoesNotAffectOthers() {
-            assertEquals("три", RussianNumeralUtils.correctGender("три", Gender.Female));
+            assertEquals("три", correctGender("три", Female));
         }
 
         @Test
         void testExactWordBoundaryReplacement() {
-            assertEquals("только одна", RussianNumeralUtils.correctGender("только один", Gender.Female));
-            assertEquals("всего две", RussianNumeralUtils.correctGender("всего два", Gender.Female));
+            assertEquals("только одна", correctGender("только один", Female));
+            assertEquals("всего две", correctGender("всего два", Female));
         }
 
         @Test
         void testPartialMatchShouldNotReplace() {
-            assertEquals("одинокий", RussianNumeralUtils.correctGender("одинокий", Gender.Female));
-            assertEquals("дважды", RussianNumeralUtils.correctGender("дважды", Gender.Female));
+            assertEquals("одинокий", correctGender("одинокий", Female));
+            assertEquals("дважды", correctGender("дважды", Female));
         }
     }
 }

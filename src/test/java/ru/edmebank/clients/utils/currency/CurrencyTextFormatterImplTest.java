@@ -9,19 +9,18 @@ import ru.edmebank.contracts.enums.Currency;
 import java.math.BigDecimal;
 import java.util.stream.Stream;
 
+import static java.util.stream.Stream.of;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static ru.edmebank.contracts.enums.Currency.RUB;
 
 class CurrencyTextFormatterImplTest {
-
     private final CurrencyTextFormatterImpl formatter = new CurrencyTextFormatterImpl();
-
-    private static final Currency TEST_CURRENCY = Currency.RUB;
+    private static final Currency TEST_CURRENCY = RUB;
 
     @Nested
     @DisplayName("toFullForm tests")
     class ToFullFormTests {
-
         static Stream<TestCase> data() {
             return Stream.of(
                     new TestCase(new BigDecimal("-1.25"), TEST_CURRENCY, "-1 (один) рубль 25 (двадцать пять) копеек", false), // expected substring, so 'false' for contains
@@ -42,9 +41,8 @@ class CurrencyTextFormatterImplTest {
     @Nested
     @DisplayName("toStandardForm tests")
     class ToStandardFormTests {
-
         static Stream<TestCase> data() {
-            return Stream.of(
+            return of(
                     new TestCase(new BigDecimal("1.01"), TEST_CURRENCY, "1 рубль 01 копейка", true),
                     new TestCase(new BigDecimal("2.02"), TEST_CURRENCY, "2 рубля 02 копейки", true),
                     new TestCase(new BigDecimal("-5.11"), TEST_CURRENCY, "-5 рублей 11 копеек", true)
@@ -62,9 +60,8 @@ class CurrencyTextFormatterImplTest {
     @Nested
     @DisplayName("toShortForm tests")
     class ToShortFormTests {
-
         static Stream<TestCase> data() {
-            return Stream.of(
+            return of(
                     new TestCase(new BigDecimal("100.25"), TEST_CURRENCY, "100 руб. 25 коп.", true),
                     new TestCase(new BigDecimal("0.99"), TEST_CURRENCY, "0 руб. 99 коп.", true),
                     new TestCase(new BigDecimal("-1.00"), TEST_CURRENCY, "-1 руб. 00 коп.", true)

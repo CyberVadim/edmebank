@@ -5,26 +5,33 @@ import com.github.petrovich4j.Gender;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.CsvSource;
 
-import java.util.stream.Stream;
-
+import static com.github.petrovich4j.Case.Genitive;
+import static com.github.petrovich4j.Gender.Male;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static ru.edmebank.clients.utils.document.NameFormatterUtils.declineFullName;
+import static ru.edmebank.clients.utils.document.NameFormatterUtils.fullName;
+import static ru.edmebank.clients.utils.document.NameFormatterUtils.shortName;
 
 class NameFormatterUtilsTest {
-
     @Nested
     class FullNameTests {
         @Test
         void returnsConcatenatedFullName() {
             assertEquals("Иванов Иван Иванович",
-                    NameFormatterUtils.fullName("Иванов", "Иван", "Иванович"));
+                    fullName("Иванов", "Иван", "Иванович"));
         }
 
         @Test
         void handlesEmptyStringsGracefully() {
-            assertEquals("  ", NameFormatterUtils.fullName("", "", ""));
+            assertEquals("", fullName("", "", ""));
+        }
+
+        @Test
+        void handlesNullValuesGracefully() {
+            assertEquals("", fullName(null, null, null));
+            assertEquals("Иванов Иван", fullName("Иванов", "Иван", null));
         }
     }
 
@@ -32,40 +39,47 @@ class NameFormatterUtilsTest {
     class ShortNameTests {
         @Test
         void withMiddleName() {
-            assertEquals("Петров П. С.",
-                    NameFormatterUtils.shortName("Петров", "Пётр", "Сергеевич"));
+            assertEquals("Петров П.С.",
+                    shortName("Петров", "Пётр", "Сергеевич"));
         }
 
         @Test
         void withoutMiddleName() {
             assertEquals("Петров П.",
-                    NameFormatterUtils.shortName("Петров", "Пётр", ""));
+                    shortName("Петров", "Пётр", ""));
+        }
+
+        @Test
+        void handlesNullValuesGracefully() {
+            assertEquals("Петров П.", shortName("Петров", "Пётр", null));
+            assertEquals("", shortName(null, null, null));
         }
     }
 
     @Nested
     class DeclineFullNameTests {
         @ParameterizedTest(name = "[{index}] {0} {1} {2} ({3}, {4}) → {5}")
-        @MethodSource("validCases")
+        @CsvSource({
+                "Иванов, Иван, Иванович, Male, Genitive, Иванова Ивана Ивановича",
+                "Петрова, Анна, Сергеевна, Female, Dative, Петровой Анне Сергеевне",
+                "Тимченко, Антон, Сергеевич, Male, Genitive, Тимченко Антона Сергеевича",
+                "Тимченко, Антон, Сергеевич, Male, Dative, Тимченко Антону Сергеевичу",
+                "Тимченко, Антон, Сергеевич, Male, Instrumental, Тимченко Антоном Сергеевичем",
+                "Тимченко, Антон, Сергеевич, Male, Prepositional, Тимченко Антоне Сергеевиче"
+        })
         void declinesCorrectly(String last, String first, String middle,
-                               Gender gender, Case grammaticalCase, String expected) {
+                               String gender, String grammaticalCase, String expected) {
+            Gender valueGender = Gender.valueOf(gender);
+            Case valueCase = Case.valueOf(grammaticalCase);
+
             assertEquals(expected,
-                    NameFormatterUtils.declineFullName(last, first, middle, gender, grammaticalCase));
+                    declineFullName(last, first, middle, valueGender, valueCase));
         }
 
-        static Stream<org.junit.jupiter.params.provider.Arguments> validCases() {
-            return Stream.of(
-                    arg("Иванов", "Иван", "Иванович", Gender.Male, Case.Genitive, "Иванова Ивана Ивановича"),
-                    arg("Петрова", "Анна", "Сергеевна", Gender.Female, Case.Dative, "Петровой Анне Сергеевне"),
-                    arg("Тимченко", "Антон", "Сергеевич", Gender.Male, Case.Genitive, "Тимченко Антона Сергеевича"),
-                    arg("Тимченко", "Антон", "Сергеевич", Gender.Male, Case.Dative, "Тимченко Антону Сергеевичу"),
-                    arg("Тимченко", "Антон", "Сергеевич", Gender.Male, Case.Instrumental, "Тимченко Антоном Сергеевичем"),
-                    arg("Тимченко", "Антон", "Сергеевич", Gender.Male, Case.Prepositional, "Тимченко Антоне Сергеевиче")
-            );
-        }
-
-        private static Arguments arg(Object... args) {
-            return Arguments.of(args);
+        @Test
+        void handlesNullValuesGracefully() {
+            assertEquals("", declineFullName(null, null, null, null, null));
+            assertEquals("Иванова Ивана", declineFullName("Иванов", "Иван", null, Male, Genitive));
         }
     }
 }

@@ -7,6 +7,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.stream.Stream;
 
+import static java.util.stream.Stream.of;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -24,7 +25,7 @@ public class CurrencyTest {
     }
 
     static Stream<Object[]> provideCurrencyData() {
-        return Stream.of(
+        return of(
                 new Object[]{"рубль", Currency.RUB, "fromWholeText"},
                 new Object[]{"доллар", Currency.USD, "fromWholeText"},
 
@@ -55,7 +56,7 @@ public class CurrencyTest {
     }
 
     static Stream<Object[]> provideInvalidCurrencyData() {
-        return Stream.of(
+        return of(
                 new Object[]{"евро", "fromWholeText"},
                 new Object[]{"€", "fromWholeShort"},
                 new Object[]{"£", "fromFractionalShort"},

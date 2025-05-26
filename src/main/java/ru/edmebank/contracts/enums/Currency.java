@@ -1,8 +1,11 @@
 package ru.edmebank.contracts.enums;
 
-import lombok.AllArgsConstructor;
 import com.github.petrovich4j.Gender;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+
+import static com.github.petrovich4j.Gender.Female;
+import static com.github.petrovich4j.Gender.Male;
 
 @AllArgsConstructor
 @Getter
@@ -10,11 +13,11 @@ public enum Currency {
     RUB("рубль", "копейка",
             "руб.", "коп.",
             new String[]{"рубля", "рублей"}, new String[]{"копейки", "копеек"},
-            Gender.Male, Gender.Female),
+            Male, Female),
     USD("доллар", "цент",
             "долл.", "¢",
             new String[]{"доллара", "долларов"}, new String[]{"цента", "центов"},
-            Gender.Male, Gender.Male);
+            Male, Male);
 
     public final String wholeText;
     public final String fractionalText;

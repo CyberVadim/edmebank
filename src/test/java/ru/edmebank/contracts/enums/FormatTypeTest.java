@@ -8,6 +8,7 @@ import ru.edmebank.clients.utils.currency.AmountParts;
 
 import java.util.stream.Stream;
 
+import static java.util.stream.Stream.of;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static ru.edmebank.contracts.enums.FormatType.FULL;
@@ -15,15 +16,13 @@ import static ru.edmebank.contracts.enums.FormatType.SHORT;
 import static ru.edmebank.contracts.enums.FormatType.STANDARD;
 
 class FormatTypeTest {
-
     private static final Currency TEST_CURRENCY = Currency.RUB;
 
     @Nested
     @DisplayName("FULL format")
     class FullFormatTests {
-
         static Stream<TestCase> fullCases() {
-            return Stream.of(
+            return of(
                     new TestCase(new AmountParts("-", 1, 25), "-1 (один) рубль 25 (двадцать пять) копеек"),
                     new TestCase(new AmountParts("", 2, 2), "2 (два) рубля 02 (две) копейки"),
                     new TestCase(new AmountParts("+", 5, 11), "+5 (пять) рублей 11 (одиннадцать) копеек")
@@ -42,9 +41,8 @@ class FormatTypeTest {
     @Nested
     @DisplayName("STANDARD format")
     class StandardFormatTests {
-
         static Stream<TestCase> standardCases() {
-            return Stream.of(
+            return of(
                     new TestCase(new AmountParts("", 1, 1), "1 рубль 01 копейка"),
                     new TestCase(new AmountParts("", 2, 2), "2 рубля 02 копейки"),
                     new TestCase(new AmountParts("-", 5, 11), "-5 рублей 11 копеек")
@@ -62,9 +60,8 @@ class FormatTypeTest {
     @Nested
     @DisplayName("SHORT format")
     class ShortFormatTests {
-
         static Stream<TestCase> shortCases() {
-            return Stream.of(
+            return of(
                     new TestCase(new AmountParts("+", 100, 25), "+100 руб. 25 коп."),
                     new TestCase(new AmountParts("", 0, 99), "0 руб. 99 коп."),
                     new TestCase(new AmountParts("-", 1, 0), "-1 руб. 00 коп.")
