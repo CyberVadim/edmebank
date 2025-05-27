@@ -19,16 +19,8 @@ import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
 public class NameFormatterUtils {
     private static final Petrovich petrovich = new Petrovich();
 
-    public static String fullName(String lastName, String firstName, String middleName) {
-        return formatName(lastName, firstName, middleName, false);
-    }
-
-    public static String shortName(String lastName, String firstName, String middleName) {
-        return formatName(lastName, firstName, middleName, true);
-    }
-
-    public static String declineFullName(String lastName, String firstName, String middleName,
-                                         Gender gender, Case nameCase) {
+    public static String formDeclineName(String lastName, String firstName, String middleName,
+                                               Gender gender, Case nameCase) {
         lastName = getFormattedName(lastName, LastName, gender, nameCase);
         firstName = getFormattedName(firstName, FirstName, gender, nameCase);
         middleName = getFormattedName(middleName, PatronymicName, gender, nameCase);
@@ -38,7 +30,7 @@ public class NameFormatterUtils {
                 : format("%s %s %s", lastName, firstName, middleName).trim();
     }
 
-    private static String formatName(String lastName, String firstName, String middleName, boolean isShort) {
+    public static String formName(String lastName, String firstName, String middleName, boolean isShort) {
         lastName = cleanString(lastName);
         firstName = cleanString(firstName);
         middleName = cleanString(middleName);

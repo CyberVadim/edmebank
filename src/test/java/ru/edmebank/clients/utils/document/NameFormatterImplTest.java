@@ -10,27 +10,27 @@ import org.junit.jupiter.params.provider.CsvSource;
 import static com.github.petrovich4j.Case.Genitive;
 import static com.github.petrovich4j.Gender.Male;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static ru.edmebank.clients.utils.document.NameFormatterUtils.formName;
-import static ru.edmebank.clients.utils.document.NameFormatterUtils.formDeclineName;
 
-class NameFormatterUtilsTest {
+public class NameFormatterImplTest {
+    private final NameFormatterImpl nameFormatter = new NameFormatterImpl();
+
     @Nested
     class FullNameTests {
         @Test
         void returnsConcatenatedFullName() {
             assertEquals("Иванов Иван Иванович",
-                    formName("Иванов", "Иван", "Иванович", false));
+                    nameFormatter.fullName("Иванов", "Иван", "Иванович"));
         }
 
         @Test
         void handlesEmptyStringsGracefully() {
-            assertEquals("", formName("", "", "", false));
+            assertEquals("", nameFormatter.fullName("", "", ""));
         }
 
         @Test
         void handlesNullValuesGracefully() {
-            assertEquals("", formName(null, null, null, false));
-            assertEquals("Иванов Иван", formName("Иванов", "Иван", null, false));
+            assertEquals("", nameFormatter.fullName(null, null, null));
+            assertEquals("Иванов Иван", nameFormatter.fullName("Иванов", "Иван", null));
         }
     }
 
@@ -39,19 +39,19 @@ class NameFormatterUtilsTest {
         @Test
         void withMiddleName() {
             assertEquals("Петров П.С.",
-                    formName("Петров", "Пётр", "Сергеевич", true));
+                    nameFormatter.shortName("Петров", "Пётр", "Сергеевич"));
         }
 
         @Test
         void withoutMiddleName() {
             assertEquals("Петров П.",
-                    formName("Петров", "Пётр", "", true));
+                    nameFormatter.shortName("Петров", "Пётр", ""));
         }
 
         @Test
         void handlesNullValuesGracefully() {
-            assertEquals("Петров П.", formName("Петров", "Пётр", null, true));
-            assertEquals("", formName(null, null, null, true));
+            assertEquals("Петров П.", nameFormatter.shortName("Петров", "Пётр", null));
+            assertEquals("", nameFormatter.shortName(null, null, null));
         }
     }
 
@@ -71,15 +71,14 @@ class NameFormatterUtilsTest {
             Gender valueGender = Gender.valueOf(gender);
             Case valueCase = Case.valueOf(grammaticalCase);
 
-            assertEquals(expected,
-                    formDeclineName(last, first, middle, valueGender, valueCase));
+            assertEquals(expected, nameFormatter.declineFullName(last, first, middle, valueGender, valueCase));
         }
 
         @Test
         void handlesNullValuesGracefully() {
-            assertEquals("", formDeclineName(null, null, null, null, null));
-            assertEquals("", formDeclineName(null, null, "Сергеевич", Male, Genitive));
-            assertEquals("Иванова Ивана", formDeclineName("Иванов", "Иван", null, Male, Genitive));
+            assertEquals("", nameFormatter.declineFullName(null, null, null, null, null));
+            assertEquals("", nameFormatter.declineFullName(null, null, "Сергеевич", Male, Genitive));
+            assertEquals("Иванова Ивана", nameFormatter.declineFullName("Иванов", "Иван", null, Male, Genitive));
         }
     }
 }
