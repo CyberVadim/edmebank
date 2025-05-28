@@ -27,25 +27,17 @@
             <column name="gender" type="VARCHAR(20)" remarks="Пол клиента">
                 <constraints nullable="false"/>
             </column>
-            <column name="marital_status" type="VARCHAR(30)" remarks="Семейное положение">
-                <constraints nullable="false"/>
-            </column>
-            <column name="employment_type" type="VARCHAR(30)" remarks="Тип занятости">
-                <constraints nullable="false"/>
-            </column>
-            <column name="created_at" type="TIMESTAMP" remarks="Дата создания записи">
-                <constraints nullable="false"/>
-            </column>
+            <column name="marital_status" type="VARCHAR(30)" remarks="Семейное положение"/>
+            <column name="employment_type" type="VARCHAR(30)" remarks="Тип занятости"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP" remarks="Дата создания записи"/>
             <column name="inn" type="VARCHAR(12)" remarks="ИНН клиента">
-                <constraints nullable="false" unique="true"/>
+                <constraints unique="true"/>
             </column>
             <column name="snils" type="VARCHAR(14)" remarks="СНИЛС клиента">
-                <constraints nullable="false" unique="true"/>
+                <constraints unique="true"/>
             </column>
             <column name="monthly_income" type="DECIMAL(20,2)" remarks="Ежемесячный доход клиента"/>
-            <column name="has_marriage_contract" type="BOOLEAN" remarks="Наличие брачного контракта">
-                <constraints nullable="false"/>
-            </column>
+            <column name="has_marriage_contract" type="BOOLEAN" remarks="Наличие брачного контракта"/>
         </createTable>
     </changeSet>
 
