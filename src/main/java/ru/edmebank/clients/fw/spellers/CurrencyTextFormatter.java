@@ -1,11 +1,11 @@
-package ru.edmebank.clients.utils.currency;
+package ru.edmebank.clients.fw.spellers;
 
 import ru.edmebank.contracts.enums.Currency;
 import ru.edmebank.contracts.enums.FormatType;
 
 import java.math.BigDecimal;
 
-import static ru.edmebank.clients.utils.currency.AmountParts.from;
+import static ru.edmebank.clients.fw.spellers.AmountParts.from;
 
 public interface CurrencyTextFormatter {
     String toFullForm(BigDecimal amount, Currency currency);

@@ -4,7 +4,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import ru.edmebank.clients.utils.currency.AmountParts;
+import ru.edmebank.clients.fw.spellers.AmountParts;
 
 import java.util.stream.Stream;
 

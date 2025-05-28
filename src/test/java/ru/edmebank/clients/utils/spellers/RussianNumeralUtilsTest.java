@@ -1,4 +1,4 @@
-package ru.edmebank.clients.utils.currency;
+package ru.edmebank.clients.utils.spellers;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -13,8 +13,8 @@ import static com.github.petrovich4j.Gender.Female;
 import static com.github.petrovich4j.Gender.Male;
 import static java.util.stream.Stream.of;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static ru.edmebank.clients.utils.currency.RussianNumeralUtils.correctGender;
-import static ru.edmebank.clients.utils.currency.RussianNumeralUtils.declension;
+import static ru.edmebank.clients.utils.spellers.RussianNumeralUtils.correctGender;
+import static ru.edmebank.clients.utils.spellers.RussianNumeralUtils.declension;
 
 class RussianNumeralUtilsTest {
 

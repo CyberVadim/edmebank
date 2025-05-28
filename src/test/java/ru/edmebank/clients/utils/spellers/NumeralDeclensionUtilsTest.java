@@ -1,4 +1,4 @@
-package ru.edmebank.clients.utils.numeral;
+package ru.edmebank.clients.utils.spellers;
 
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -10,6 +10,12 @@ import java.util.stream.Stream;
 
 import static java.util.stream.Stream.of;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static ru.edmebank.clients.utils.spellers.NumeralDeclensionUtils.formAccusativeDeclension;
+import static ru.edmebank.clients.utils.spellers.NumeralDeclensionUtils.formDativeDeclension;
+import static ru.edmebank.clients.utils.spellers.NumeralDeclensionUtils.formGenitiveDeclension;
+import static ru.edmebank.clients.utils.spellers.NumeralDeclensionUtils.formInstrumentalDeclension;
+import static ru.edmebank.clients.utils.spellers.NumeralDeclensionUtils.formNominativeDeclension;
+import static ru.edmebank.clients.utils.spellers.NumeralDeclensionUtils.formPrepositionalDeclension;
 import static ru.edmebank.contracts.enums.DeclensionType.PLURAL_ACCUSATIVE;
 import static ru.edmebank.contracts.enums.DeclensionType.PLURAL_DATIVE;
 import static ru.edmebank.contracts.enums.DeclensionType.PLURAL_GENITIVE;
@@ -23,9 +29,7 @@ import static ru.edmebank.contracts.enums.DeclensionType.SINGULAR_INSTRUMENTAL;
 import static ru.edmebank.contracts.enums.DeclensionType.SINGULAR_NOMINATIVE;
 import static ru.edmebank.contracts.enums.DeclensionType.SINGULAR_PREPOSITIONAL;
 
-class DeclinerFormatterImplTest {
-    private final DeclinerFormatter declinerFormatter = new DeclinerFormatterImpl();
-
+class NumeralDeclensionUtilsTest {
     @Nested
     class NominativeDeclensionTests {
         static Stream<Arguments> provideNumbersForDeclension() {
@@ -46,7 +50,7 @@ class DeclinerFormatterImplTest {
         @MethodSource("provideNumbersForDeclension")
         void testFormNominativeDeclension(int number, DeclensionType expectedDeclension) {
             String expected = expectedDeclension.getFormattedString(number);
-            String actual = declinerFormatter.getNominativeDeclension(number);
+            String actual = formNominativeDeclension(number);
             assertEquals(expected, actual);
         }
     }
@@ -71,7 +75,7 @@ class DeclinerFormatterImplTest {
         @MethodSource("provideNumbersForDeclension")
         void testFormGenitiveDeclension(int number, DeclensionType expectedDeclension) {
             String expected = expectedDeclension.getFormattedString(number);
-            String actual = declinerFormatter.getGenitiveDeclension(number);
+            String actual = formGenitiveDeclension(number);
             assertEquals(expected, actual);
         }
     }
@@ -96,7 +100,7 @@ class DeclinerFormatterImplTest {
         @MethodSource("provideNumbersForDeclension")
         void testFormDativeDeclension(int number, DeclensionType expectedDeclension) {
             String expected = expectedDeclension.getFormattedString(number);
-            String actual = declinerFormatter.getDativeDeclension(number);
+            String actual = formDativeDeclension(number);
             assertEquals(expected, actual);
         }
     }
@@ -121,7 +125,7 @@ class DeclinerFormatterImplTest {
         @MethodSource("provideNumbersForDeclension")
         void testFormAccusativeDeclension(int number, DeclensionType expectedDeclension) {
             String expected = expectedDeclension.getFormattedString(number);
-            String actual = declinerFormatter.getAccusativeDeclension(number);
+            String actual = formAccusativeDeclension(number);
             assertEquals(expected, actual);
         }
     }
@@ -146,7 +150,7 @@ class DeclinerFormatterImplTest {
         @MethodSource("provideNumbersForDeclension")
         void testFormInstrumentalDeclension(int number, DeclensionType expectedDeclension) {
             String expected = expectedDeclension.getFormattedString(number);
-            String actual = declinerFormatter.getInstrumentalDeclension(number);
+            String actual = formInstrumentalDeclension(number);
             assertEquals(expected, actual);
         }
     }
@@ -171,7 +175,7 @@ class DeclinerFormatterImplTest {
         @MethodSource("provideNumbersForDeclension")
         void testFormPrepositionalDeclension(int number, DeclensionType expectedDeclension) {
             String expected = expectedDeclension.getFormattedString(number);
-            String actual = declinerFormatter.getPrepositionalDeclension(number);
+            String actual = formPrepositionalDeclension(number);
             assertEquals(expected, actual);
         }
     }

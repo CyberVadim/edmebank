@@ -1,4 +1,4 @@
-package ru.edmebank.clients.utils.numeral;
+package ru.edmebank.clients.fw.spellers;
 
 public class DeclinerFormatterImpl implements DeclinerFormatter {
     @Override

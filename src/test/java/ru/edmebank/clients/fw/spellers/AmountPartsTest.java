@@ -1,4 +1,4 @@
-package ru.edmebank.clients.utils.currency;
+package ru.edmebank.clients.fw.spellers;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -10,7 +10,7 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.params.provider.Arguments.of;
-import static ru.edmebank.clients.utils.currency.AmountParts.from;
+import static ru.edmebank.clients.fw.spellers.AmountParts.from;
 
 class AmountPartsTest {
     @ParameterizedTest(name = "[{index}] {0} → sign: \"{1}\", whole: {2}, fractional: {3}")

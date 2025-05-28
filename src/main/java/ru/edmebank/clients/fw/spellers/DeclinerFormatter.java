@@ -1,11 +1,11 @@
-package ru.edmebank.clients.utils.numeral;
+package ru.edmebank.clients.fw.spellers;
 
-import static ru.edmebank.clients.utils.numeral.NumeralDeclensionUtils.formAccusativeDeclension;
-import static ru.edmebank.clients.utils.numeral.NumeralDeclensionUtils.formDativeDeclension;
-import static ru.edmebank.clients.utils.numeral.NumeralDeclensionUtils.formGenitiveDeclension;
-import static ru.edmebank.clients.utils.numeral.NumeralDeclensionUtils.formInstrumentalDeclension;
-import static ru.edmebank.clients.utils.numeral.NumeralDeclensionUtils.formNominativeDeclension;
-import static ru.edmebank.clients.utils.numeral.NumeralDeclensionUtils.formPrepositionalDeclension;
+import static ru.edmebank.clients.utils.spellers.NumeralDeclensionUtils.formAccusativeDeclension;
+import static ru.edmebank.clients.utils.spellers.NumeralDeclensionUtils.formDativeDeclension;
+import static ru.edmebank.clients.utils.spellers.NumeralDeclensionUtils.formGenitiveDeclension;
+import static ru.edmebank.clients.utils.spellers.NumeralDeclensionUtils.formInstrumentalDeclension;
+import static ru.edmebank.clients.utils.spellers.NumeralDeclensionUtils.formNominativeDeclension;
+import static ru.edmebank.clients.utils.spellers.NumeralDeclensionUtils.formPrepositionalDeclension;
 
 public interface DeclinerFormatter {
     String getNominativeDeclension(int number);

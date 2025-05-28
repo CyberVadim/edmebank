@@ -1,4 +1,4 @@
-package ru.edmebank.clients.utils.currency;
+package ru.edmebank.clients.fw.spellers;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -22,7 +22,7 @@ class CurrencyTextFormatterImplTest {
     @DisplayName("toFullForm tests")
     class ToFullFormTests {
         static Stream<TestCase> data() {
-            return Stream.of(
+            return of(
                     new TestCase(new BigDecimal("-1.25"), TEST_CURRENCY, "-1 (один) рубль 25 (двадцать пять) копеек", false), // expected substring, so 'false' for contains
                     new TestCase(new BigDecimal("2.02"), TEST_CURRENCY, "2 (два) рубля 02 (две) копейки", false),
                     new TestCase(new BigDecimal("-5.11"), TEST_CURRENCY, "-5 (пять) рублей 11 (одиннадцать) копеек", false)

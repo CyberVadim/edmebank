@@ -1,4 +1,4 @@
-package ru.edmebank.clients.utils.document;
+package ru.edmebank.clients.fw.spellers;
 
 import com.github.petrovich4j.Case;
 import com.github.petrovich4j.Gender;

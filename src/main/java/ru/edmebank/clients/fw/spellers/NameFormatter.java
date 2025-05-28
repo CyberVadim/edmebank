@@ -1,10 +1,10 @@
-package ru.edmebank.clients.utils.document;
+package ru.edmebank.clients.fw.spellers;
 
 import com.github.petrovich4j.Case;
 import com.github.petrovich4j.Gender;
 
-import static ru.edmebank.clients.utils.document.NameFormatterUtils.formDeclineName;
-import static ru.edmebank.clients.utils.document.NameFormatterUtils.formName;
+import static ru.edmebank.clients.utils.spellers.NameFormatterUtils.formDeclineName;
+import static ru.edmebank.clients.utils.spellers.NameFormatterUtils.formName;
 
 public interface NameFormatter {
     String fullName(String lastName, String firstName, String middleName);

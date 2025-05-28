@@ -1,4 +1,4 @@
-package ru.edmebank.clients.utils.document;
+package ru.edmebank.clients.utils.spellers;
 
 import com.github.petrovich4j.Case;
 import com.github.petrovich4j.Gender;
@@ -10,8 +10,8 @@ import org.junit.jupiter.params.provider.CsvSource;
 import static com.github.petrovich4j.Case.Genitive;
 import static com.github.petrovich4j.Gender.Male;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static ru.edmebank.clients.utils.document.NameFormatterUtils.formName;
-import static ru.edmebank.clients.utils.document.NameFormatterUtils.formDeclineName;
+import static ru.edmebank.clients.utils.spellers.NameFormatterUtils.formName;
+import static ru.edmebank.clients.utils.spellers.NameFormatterUtils.formDeclineName;
 
 class NameFormatterUtilsTest {
     @Nested
