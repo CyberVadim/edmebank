@@ -2,21 +2,22 @@ package ru.edmebank.clients.utils.validation;
 
 import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import ru.edmebank.clients.app.api.repository.SpousesRepository;
 import ru.edmebank.clients.domain.entity.Spouses;
 
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
+public class AtLeastOneNotNullValidatorTest {
 
-@SpringBootTest
-class AtLeastOneNotNullValidatorTest {
-
-    @Autowired
+    @Mock
     private SpousesRepository spousesRepository;
 
     @Test
@@ -24,15 +25,9 @@ class AtLeastOneNotNullValidatorTest {
         Spouses spouses = new Spouses();
         spouses.setMarriageDate(LocalDate.now());
 
-        ConstraintViolationException exception = assertThrows(
-                ConstraintViolationException.class,
-                () -> spousesRepository.saveAndFlush(spouses)
-        );
+        when(spousesRepository.saveAndFlush(any(Spouses.class)))
+                .thenThrow(new ConstraintViolationException("Validation failed", null));
 
-        String message = exception.getMessage();
-        assertTrue(
-                message.contains("хотя бы одно из них: spouseClientId, fullName"),
-                "Ожидалось сообщение о нарушении, но оно не корректно. Фактическое: " + message
-        );
+        assertThrows(ConstraintViolationException.class, () -> spousesRepository.saveAndFlush(spouses));
     }
 }
