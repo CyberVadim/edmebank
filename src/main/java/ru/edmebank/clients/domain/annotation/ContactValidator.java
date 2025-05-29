@@ -6,7 +6,7 @@ import ru.edmebank.contracts.dto.ClientUiDto;
 
 import java.util.regex.Pattern;
 
-public class ContactValidator implements ConstraintValidator<ValidContact, ClientUiDto.Contact> {
+public class ContactValidator implements ConstraintValidator<ContactValid, ClientUiDto.Contact> {
 
     // Регулярные выражения
     private static final Pattern EMAIL_PATTERN =

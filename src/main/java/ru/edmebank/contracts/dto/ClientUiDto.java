@@ -1,13 +1,14 @@
 package ru.edmebank.contracts.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PastOrPresent;
+import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
-import org.springframework.format.annotation.DateTimeFormat;
+import ru.edmebank.clients.domain.annotation.ContactValid;
 import ru.edmebank.clients.domain.annotation.MinAge;
-import ru.edmebank.clients.domain.annotation.ValidContact;
+import ru.edmebank.contracts.enums.AddressType;
 import ru.edmebank.contracts.enums.ContactType;
 import ru.edmebank.contracts.enums.Gender;
 
@@ -30,8 +31,9 @@ public class ClientUiDto {
     @Data
     public static class PersonalInfo {
         private FullName fullName;
+
         @NotNull(message = "Дата рождения обязательна")
-        @DateTimeFormat(pattern = "dd.MM.yyyy")
+        @JsonFormat(pattern = "dd.MM.yyyy")
         @MinAge
         private LocalDate birthDate;
         private Gender gender;
@@ -74,8 +76,8 @@ public class ClientUiDto {
         private String number;
 
         @NotNull(message = "Дата обязательна")
-        @DateTimeFormat(pattern = "dd.MM.yyyy")
-        @PastOrPresent(message = "Дата не может быть в будущем")
+        @JsonFormat(pattern = "dd.MM.yyyy")
+        @Past(message = "Дата выдачи паспорта должна быть в прошедшем времени")
         private LocalDate issueDate;
 
         @NotBlank
@@ -90,7 +92,7 @@ public class ClientUiDto {
     @Data
     public static class Address {
 
-        private String addressType;
+        private AddressType addressType;
 
         @NotNull(message = "Индекс обязателен")
         @Pattern(regexp = "^\\d{6}$",
@@ -112,7 +114,7 @@ public class ClientUiDto {
     }
 
     @Data
-    @ValidContact
+    @ContactValid
     public static class Contact {
         private ContactType type;
         private String value;

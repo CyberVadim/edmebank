@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = ContactValidator.class)
-public @interface ValidContact {
+public @interface ContactValid {
     String message() default "Некорректные контактные данные";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};

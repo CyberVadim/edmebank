@@ -9,7 +9,6 @@ import ru.edmebank.contracts.dto.ClientUiDto;
 public class ClientAdapter implements UiClientApi {
     @Override
     public ResponseEntity<byte[]> completeCreateClient(ClientUiDto clientUiDto) throws Exception {
-        System.out.println(clientUiDto);
         return ResponseEntity.ok(new byte[1]);
     }
 }
