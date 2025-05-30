@@ -1,12 +1,9 @@
 package ru.edmebank.clients.adapter.input.ui;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.validation.ValidationAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -20,7 +17,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@Import(ValidationAutoConfiguration.class)
 public class ClientAdapterTest {
 
     @Autowired
@@ -40,7 +36,7 @@ public class ClientAdapterTest {
                 .andExpect(status().isOk());
     }
 
-    @Disabled("Временное отключение до исправления валидации")
+    //@Disabled("Временное отключение до исправления валидации")
     @Test
     void createClientWithInvalidLastName() throws Exception {
         String jsonContent = Files.readString(Path.of(loader.getResource("test-data/clients/create_client_invalid_lastname.json").toURI()),
@@ -54,7 +50,7 @@ public class ClientAdapterTest {
                 .andExpect(status().isBadRequest());
     }
 
-    @Disabled("Временное отключение до исправления валидации")
+    //@Disabled("Временное отключение до исправления валидации")
     @Test
     void createClientWithInvalidBirthDate() throws Exception {
         String jsonContent = Files.readString(Path.of(loader.getResource("test-data/clients/create_client_invalid_birthdate.json").toURI()),
@@ -68,7 +64,7 @@ public class ClientAdapterTest {
                 .andExpect(status().isBadRequest());
     }
 
-    @Disabled("Временное отключение до исправления валидации")
+    //@Disabled("Временное отключение до исправления валидации")
     @Test
     void createClientWithInvalidPassportSeries() throws Exception {
         String jsonContent = Files.readString(Path.of(loader.getResource("test-data/clients/create_client_invalid_passport_series.json").toURI()),
@@ -82,7 +78,7 @@ public class ClientAdapterTest {
                 .andExpect(status().isBadRequest());
     }
 
-    @Disabled("Временное отключение до исправления валидации")
+    //@Disabled("Временное отключение до исправления валидации")
     @Test
     void createClientWithInvalidPassportIssueDate() throws Exception {
         String jsonContent = Files.readString(Path.of(loader.getResource("test-data/clients/create_client_invalid_passport_issuedate.json").toURI()),
