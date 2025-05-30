@@ -1,6 +1,7 @@
 package ru.edmebank.contracts.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
@@ -17,9 +18,14 @@ import java.util.List;
 
 @Data
 public class ClientUiDto {
+
+    @Valid
     private PersonalInfo personalInfo;
+    @Valid
     private Passports passports;
+    @Valid
     private List<Address> address;
+    @Valid
     private List<Contact> contacts;
 
     @NotBlank(message = "Пароль не может быть пустой")
@@ -30,6 +36,7 @@ public class ClientUiDto {
 
     @Data
     public static class PersonalInfo {
+        @Valid
         private FullName fullName;
 
         @NotNull(message = "Дата рождения обязательна")
@@ -59,6 +66,7 @@ public class ClientUiDto {
 
     @Data
     public static class Passports {
+        @Valid
         private Passport passport;
     }
 
