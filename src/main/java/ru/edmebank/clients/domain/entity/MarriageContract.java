@@ -1,10 +1,7 @@
 package ru.edmebank.clients.domain.entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -16,7 +13,8 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "marriage_contracts")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 public class MarriageContract {
     
@@ -24,7 +22,7 @@ public class MarriageContract {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(
             name = "spouse_id",
             referencedColumnName = "client_id",
