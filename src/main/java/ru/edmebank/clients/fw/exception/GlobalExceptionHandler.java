@@ -5,9 +5,9 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.http.converter.HttpMessageNotReadableException;
 import ru.edmebank.print.app.exception.FontLoadException;
 import ru.edmebank.print.app.exception.FontNotFoundException;
 import ru.edmebank.print.app.exception.HtmlGenerationException;
@@ -61,6 +61,13 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleHtmlGeneration(HtmlGenerationException e) {
         log.error("Ошибка генерации HTML из шаблона", e);
         return buildResponse("HTML_GENERATION_FAILED", "Произошла ошибка при формировании документа. Попробуйте позже.", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(DtoGenerationException.class)
+    public ResponseEntity<String> handleOtherExceptions(DtoGenerationException ex) {
+        log.error("Ошибка генерации DTO: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Ошибка при генерации: " + ex.getMessage());
     }
 
     private ResponseEntity<ErrorResponse> buildResponse(String code, String message, HttpStatus status) {

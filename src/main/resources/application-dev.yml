@@ -1,6 +1,3 @@
-server:
-  port: 8080
-
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/cm_db
@@ -24,3 +21,8 @@ spring:
 
 schedulers:
   enable: false
+
+logging:
+  level:
+    root: info
+    org.hibernate.orm.connections.pooling: warn

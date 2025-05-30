@@ -24,6 +24,11 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
+    // Instancio -Генерация данных модульного теста.
+    implementation libs.instancio
+    // Генерация по регулярному выражению
+    implementation libs.rgxgen
+
     // Spring Cloud
     implementation libs.spring.cloud.openfeign
 
