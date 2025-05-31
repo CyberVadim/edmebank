@@ -100,4 +100,43 @@ public class ClientAdapterTest {
                 .andDo(print())
                 .andExpect(status().isBadRequest());
     }
+
+    @Test
+    void createClientWithInvalidPassword1() throws Exception {
+        String jsonContent = Files.readString(Path.of(loader.getResource("test-data/clients/create_client_invalid_password1.json").toURI()),
+                StandardCharsets.UTF_8);
+        mockMvc.perform(MockMvcRequestBuilders
+                        .post("/api/ui/client")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonContent)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void createClientWithInvalidPassword2() throws Exception {
+        String jsonContent = Files.readString(Path.of(loader.getResource("test-data/clients/create_client_invalid_password2.json").toURI()),
+                StandardCharsets.UTF_8);
+        mockMvc.perform(MockMvcRequestBuilders
+                        .post("/api/ui/client")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonContent)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void createClientWithInvalidPassword3() throws Exception {
+        String jsonContent = Files.readString(Path.of(loader.getResource("test-data/clients/create_client_invalid_password3.json").toURI()),
+                StandardCharsets.UTF_8);
+        mockMvc.perform(MockMvcRequestBuilders
+                        .post("/api/ui/client")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonContent)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
 }

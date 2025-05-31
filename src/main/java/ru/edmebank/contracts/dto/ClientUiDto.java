@@ -7,8 +7,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
-import ru.edmebank.clients.domain.annotation.ContactValid;
 import ru.edmebank.clients.domain.annotation.MinAge;
+import ru.edmebank.clients.domain.annotation.Password;
 import ru.edmebank.contracts.enums.AddressType;
 import ru.edmebank.contracts.enums.ContactType;
 import ru.edmebank.contracts.enums.Gender;
@@ -28,10 +28,8 @@ public class ClientUiDto {
     @Valid
     private List<Contact> contacts;
 
-    @NotBlank(message = "Пароль не может быть пустой")
-    @Pattern(
-            regexp = "^[a-zA-Z0-9!#\\$%&'\\*\\+-/]{8,}$",
-            message = "Имя должно начинаться с заглавной буквы и содержать буквы, пробелы, дефисы или апострофы")
+    @NotNull
+    @Password
     private String password;
 
     @Data
@@ -122,7 +120,7 @@ public class ClientUiDto {
     }
 
     @Data
-    @ContactValid
+    @ru.edmebank.clients.domain.annotation.Contact
     public static class Contact {
         private ContactType type;
         private String value;
