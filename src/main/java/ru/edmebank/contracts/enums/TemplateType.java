@@ -12,12 +12,15 @@ public enum TemplateType {
     @Deprecated
     FOR_TEST_DATA;
 
-    @JsonCreator
+    @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
     public static TemplateType from(String value) {
+        if (value == null) {
+            throw new IllegalArgumentException("TemplateType не может быть null");
+        }
+
         return Arrays.stream(values())
-                .filter(v -> v.name().equalsIgnoreCase(value) || v.name().replace("_", "").equalsIgnoreCase(value))
+                .filter(t -> t.name().equals(value))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Unknown template type: " + value));
+                .orElseThrow(() -> new IllegalArgumentException("Неизвестный тип шаблона: " + value));
     }
 }
-
