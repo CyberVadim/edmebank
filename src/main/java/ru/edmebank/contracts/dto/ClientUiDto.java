@@ -28,7 +28,7 @@ public class ClientUiDto {
     @Valid
     private List<Contact> contacts;
 
-    @NotNull
+    @NotBlank
     @Password
     private String password;
 
@@ -71,17 +71,17 @@ public class ClientUiDto {
     @Data
     public static class Passport {
 
-        @NotNull(message = "Серия обязательна")
+        @NotBlank(message = "Серия обязательна")
         @Pattern(regexp = "^\\d{4}$",
                 message = "Серия должна быть в формате XXXX")
         private String series;
 
-        @NotNull(message = "Номер обязателен")
+        @NotBlank(message = "Номер обязателен")
         @Pattern(regexp = "^\\d{6}$",
                 message = "Номер должен быть в формате ХХXXXX")
         private String number;
 
-        @NotNull(message = "Дата обязательна")
+        @NotBlank(message = "Дата обязательна")
         @JsonFormat(pattern = "dd.MM.yyyy")
         @Past(message = "Дата выдачи паспорта должна быть в прошедшем времени")
         private LocalDate issueDate;
@@ -89,7 +89,7 @@ public class ClientUiDto {
         @NotBlank
         private String issuedBy;
 
-        @NotNull(message = "Код подразделения обязателен")
+        @NotBlank(message = "Код подразделения обязателен")
         @Pattern(regexp = "^\\d{3}-\\d{3}$",
                 message = "Код подразделения должен быть в формате ХХX-XXX")
         private String departmentCode;
@@ -100,7 +100,7 @@ public class ClientUiDto {
 
         private AddressType addressType;
 
-        @NotNull(message = "Индекс обязателен")
+        @NotBlank(message = "Индекс обязателен")
         @Pattern(regexp = "^\\d{6}$",
                 message = "Индекс должен быть в формате ХХXXXX")
         private String postalCode;
@@ -108,11 +108,11 @@ public class ClientUiDto {
         private String region;
         private String district;
 
-        @NotNull(message = "Пункт обязателен")
+        @NotBlank(message = "Пункт обязателен")
         private String city;
         private String street;
 
-        @NotNull(message = "Дом обязателен")
+        @NotBlank(message = "Дом обязателен")
         private String house;
         private String building;
         private String corpus;

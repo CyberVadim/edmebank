@@ -15,10 +15,6 @@ public class PasswordValidator implements ConstraintValidator<Password, String> 
     @Override
     public boolean isValid(String s, ConstraintValidatorContext context) {
 
-        if (s.contains("\\s")) {
-            setContext(context, "Пароль не должен содержать пробелные символы.");
-            return false;
-        }
         if (s.length() < 8) {
             setContext(context, "Пароль должен состоять из 8 или более символов.");
             return false;
