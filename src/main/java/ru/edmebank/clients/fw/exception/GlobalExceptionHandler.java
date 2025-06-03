@@ -67,10 +67,4 @@ public class GlobalExceptionHandler {
         ErrorResponse error = new ErrorResponse(code, message, Map.of());
         return ResponseEntity.status(status).body(error);
     }
-
-    public record ErrorResponse(
-            String code,
-            String message,
-            Map<String, Object> details
-    ) {}
 }
