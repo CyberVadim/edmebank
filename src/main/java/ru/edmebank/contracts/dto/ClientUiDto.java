@@ -81,7 +81,7 @@ public class ClientUiDto {
                 message = "Номер должен быть в формате ХХXXXX")
         private String number;
 
-        @NotBlank(message = "Дата обязательна")
+        @NotNull(message = "Дата обязательна")
         @JsonFormat(pattern = "dd.MM.yyyy")
         @Past(message = "Дата выдачи паспорта должна быть в прошедшем времени")
         private LocalDate issueDate;
