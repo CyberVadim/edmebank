@@ -16,8 +16,8 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Table(name = "login_credentials")
 @Entity
+@Table(name = "login_credentials")
 @Getter
 @Setter
 public class LoginCredential {
