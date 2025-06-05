@@ -40,7 +40,7 @@ class StrategySelectorTest {
             selector.getStrategy(null);
         });
 
-        assertEquals("Тип шаблона не передан", ex.getMessage());
+        assertEquals("Неподдерживаемый тип шаблона: null", ex.getMessage());
     }
 
     @Test

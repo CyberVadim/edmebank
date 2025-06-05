@@ -3,26 +3,28 @@ package ru.edmebank.print.app.impl.service;
 import org.springframework.stereotype.Component;
 import ru.edmebank.contracts.enums.TemplateType;
 
+import java.util.EnumMap;
 import java.util.Map;
 
 @Component
 public class StrategySelector {
 
-    private final Map<String, PdfTemplateStrategy> strategies;
+    private final EnumMap<TemplateType, PdfTemplateStrategy> strategies;
 
-    public StrategySelector(Map<String, PdfTemplateStrategy> strategies) {
-        this.strategies = strategies;
+    public StrategySelector(Map<String, PdfTemplateStrategy> beans) {
+        this.strategies = new EnumMap<>(TemplateType.class);
+
+        for (Map.Entry<String, PdfTemplateStrategy> entry : beans.entrySet()) {
+            TemplateType type = TemplateType.valueOf(entry.getKey());
+            strategies.put(type, entry.getValue());
+        }
     }
 
     public PdfTemplateStrategy getStrategy(TemplateType type) {
-        if (type == null) {
-            throw new IllegalArgumentException("Тип шаблона не передан");
-        }
-
-        String key = type.name();
-        if (!strategies.containsKey(key)) {
+        PdfTemplateStrategy strategy = strategies.get(type);
+        if (strategy == null) {
             throw new IllegalArgumentException("Неподдерживаемый тип шаблона: " + type);
         }
-        return strategies.get(key);
+        return strategy;
     }
 }

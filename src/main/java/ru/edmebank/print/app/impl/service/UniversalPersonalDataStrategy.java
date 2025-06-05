@@ -23,13 +23,20 @@ public class UniversalPersonalDataStrategy implements PdfTemplateStrategy {
     private final Configuration freemarkerConfig;
     private final ObjectMapper objectMapper;
 
+    private static final String DEFAULT_FIRST_NAME = "_________";
+    private static final String DEFAULT_LAST_NAME = "____________";
+    private static final String DEFAULT_MIDDLE_NAME = "_____________";
+    private static final String DEFAULT_BIRTH_DATE = "____.__.__";
+    private static final String DEFAULT_EMAIL = "_______@____.___";
+
     private static final Map<String, Object> DEFAULT_MODEL = Map.of(
-            "firstName", "_________",
-            "lastName", "____________",
-            "middleName", "_____________",
-            "birthDate", "____.__.__",
-            "email", "_______@____.___"
+            "firstName", DEFAULT_FIRST_NAME,
+            "lastName", DEFAULT_LAST_NAME,
+            "middleName", DEFAULT_MIDDLE_NAME,
+            "birthDate", DEFAULT_BIRTH_DATE,
+            "email", DEFAULT_EMAIL
     );
+
 
     @Override
     public String generateHtml(PrintRequestDto request) {
@@ -53,10 +60,16 @@ public class UniversalPersonalDataStrategy implements PdfTemplateStrategy {
     }
 
     private void fillModelFromData(Map<String, Object> model, ConsentDataPrintDto data) {
-        if (data.firstName() != null) model.put("firstName", data.firstName());
-        if (data.lastName() != null) model.put("lastName", data.lastName());
-        if (data.middleName() != null) model.put("middleName", data.middleName());
-        if (data.birthDate() != null) model.put("birthDate", data.birthDate());
-        if (data.email() != null) model.put("email", data.email());
+        putIfNotNull(model, "firstName", data.firstName());
+        putIfNotNull(model, "lastName", data.lastName());
+        putIfNotNull(model, "middleName", data.middleName());
+        putIfNotNull(model, "birthDate", data.birthDate());
+        putIfNotNull(model, "email", data.email());
+    }
+
+    private void putIfNotNull(Map<String, Object> map, String key, Object value) {
+        if (value != null) {
+            map.put(key, value);
+        }
     }
 }

@@ -9,10 +9,14 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class FontUtilsTest {
 
+    public static final String FONT_NOT_FOUND_MESSAGE = "Файл шрифта не найден";
+    private static final String VALID_FONT_PATH = "fonts/times.ttf";
+    private static final String MISSING_FONT_PATH = "fonts/not_exist.ttf";
+
     @Test
     void shouldLoadFontFileSuccessfully() {
         // given
-        String fontPath = "fonts/times.ttf";
+        String fontPath = VALID_FONT_PATH;
 
         // when
         File fontFile = FontUtils.loadFont(fontPath);
@@ -25,14 +29,14 @@ class FontUtilsTest {
     @Test
     void shouldThrowFontNotFoundExceptionWhenResourceMissing() {
         // given
-        String missingFont = "fonts/not_exist.ttf";
+        String missingFont = MISSING_FONT_PATH;
 
         // when / then
         FontNotFoundException ex = assertThrows(FontNotFoundException.class, () -> {
             FontUtils.loadFont(missingFont);
         });
 
-        assertTrue(ex.getMessage().contains("Файл шрифта не найден"));
+        assertTrue(ex.getMessage().contains(FONT_NOT_FOUND_MESSAGE));
     }
 }
 
