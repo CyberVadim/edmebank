@@ -39,20 +39,19 @@ public class Client {
     private Gender gender;
 
     @Enumerated(EnumType.STRING)
-    @Column(length = 30, nullable = false)
+    @Column(length = 30)
     private MaritalStatus maritalStatus;
 
     @Enumerated(EnumType.STRING)
-    @Column(length = 30, nullable = false)
+    @Column(length = 30)
     private EmploymentType employmentType;
 
-    @Column(nullable = false)
     private LocalDateTime createdAt;
 
-    @Column(nullable = false, length = 12, unique = true)
+    @Column(length = 12, unique = true)
     private String inn;
 
-    @Column(nullable = false, length = 14, unique = true)
+    @Column(length = 14, unique = true)
     private String snils;
 
     @OneToOne(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -61,7 +60,7 @@ public class Client {
     @Column(precision = 20, scale = 2)
     private BigDecimal monthlyIncome;
 
-    @Column(name = "has_marriage_contract", nullable = false)
+    @Column(name = "has_marriage_contract")
     private Boolean marriageContract;
 
 }
