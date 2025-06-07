@@ -6,7 +6,7 @@
             http://www.liquibase.org/xml/ns/dbchangelog
             https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
 
-    <changeSet id="033" author="kadamovnk">
+    <changeSet id="034" author="kadamovnk">
         <preConditions onFail="HALT">
             <not>
                 <tableExists tableName="marriage_contracts"/>
@@ -15,12 +15,10 @@
 
         <createTable tableName="marriage_contracts" remarks="Брачные контракты">
             <column name="id" type="UUID" remarks="Идентификатор записи">
-                <constraints primaryKey="true" primaryKeyName="marriage_contracts_pkey" nullable="false"/>
+                <constraints primaryKey="true" primaryKeyName="marriage_contracts_pkey" nullable="false" unique="true"/>
             </column>
             <column name="spouse_id" type="UUID" remarks="Ссылка на супруга">
-                <constraints nullable="false"
-                             unique="true"
-                             uniqueConstraintName="uk_marriage_contracts_spouse_id"/>
+                <constraints nullable="false"/>
             </column>
             <column name="contract_number" type="VARCHAR(50)" remarks="Номер контракта">
                 <constraints nullable="false"/>
@@ -29,7 +27,9 @@
                 <constraints nullable="false"/>
             </column>
             <column name="notary_info" type="TEXT" remarks="Информация о нотариусе"/>
-            <column name="scan_url" type="TEXT" remarks="Ссылка на скан документа"/>
+            <column name="scan_url" type="TEXT" remarks="Ссылка на скан документа">
+                <constraints nullable="false"/>
+            </column>
             <column name="terms" type="JSONB" remarks="Условия контракта в JSON формате"/>
             <column name="validity_period" type="DATERANGE" remarks="Период действия контракта"/>
             <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP" remarks="Дата создания"/>
@@ -41,7 +41,6 @@
                 baseColumnNames="spouse_id"
                 constraintName="fk_marriage_contracts_spouse_id"
                 referencedTableName="spouses"
-                referencedColumnNames="id"
-                onDelete="CASCADE"/>
+                referencedColumnNames="id"/>
     </changeSet>
 </databaseChangeLog>
