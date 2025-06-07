@@ -37,7 +37,7 @@
     <include file="db/migration/030-insert-financial-transactions.sql"/>
     <include file="db/migration/031-create_addresses-table.xml"/>
     <include file="db/migration/032-insert-address-table.sql"/>
-    <include file="/db/migration/033-fix-spouses-id-to-client-id.sql"/>
-    <include file="/db/migration/034-create-marriage-contracts-table.xml"/>
-    <include file="/db/migration/035-insert-marriage-contracts-table.sql"/>
+    <include file="db/migration/033-fix-spouses-id-to-client-id.sql"/>
+    <include file="db/migration/034-create-marriage-contracts-table.xml"/>
+    <include file="db/migration/035-insert-marriage-contracts-table.sql"/>
 </databaseChangeLog>
