@@ -1,0 +1,17 @@
+{
+  "firstName": "Галина",
+  "lastName": "Искрева",
+  "middleName": "Петровна",
+  "birthDate": "1990-05-15",
+  "passportSeries": "4510",
+  "passportNumber": "123456",
+  "passportIssuedBy": "МВД России по г. Москва",
+  "passportIssuedDate": "2010-06-20",
+  "passportExpiryDate": "2030-06-20",
+  "passportSubdivisionCode": "770-001",
+  "address": "123456, Российская Федерация, Краснодарский край, Темрюкский район, ул. Ленина, д. 4, кв. 22",
+  "phone": "+7(999)123-45-67",
+  "email": "galina.petrovna@mail.ru",
+  "inn": "1234567890",
+  "snils": "123-456-789-01"
+}
