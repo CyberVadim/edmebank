@@ -1,7 +1,16 @@
 package ru.edmebank.clients.domain.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.Min;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -18,15 +27,18 @@ import java.util.UUID;
         indexes = @Index(name = "idx_payment_date", columnList = "payment_date"))
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor(force = true)
 public class CreditHistory {
+
     @Id
     private UUID id;
 
-    @MapsId
-    @OneToOne
-    @JoinColumn(name = "id")
-    private ClientProducts clientProduct;
+    @Builder.Default
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "client_product_id", referencedColumnName = "id", nullable = false)
+    private ClientProducts clientProduct = new ClientProducts();
 
     @Column(nullable = false)
     private LocalDateTime paymentDate;
