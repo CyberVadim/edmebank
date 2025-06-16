@@ -1,3 +1,6 @@
+--liquibase formatted sql
+ --preconditions onFail:HALT onError:HALT
+ --changeset Kapyrin_Vladimir:040
 INSERT INTO accounts (
     account_id,
     client_id,
@@ -40,4 +43,5 @@ INSERT INTO accounts (
         'закрыт',
         '2023-11-01 09:00:00',
         '2024-06-01 12:00:00'
-    );
+    )
+    ON CONFLICT DO NOTHING;

@@ -6,7 +6,7 @@
             http://www.liquibase.org/xml/ns/dbchangelog
             https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
 
-    <changeSet id="038.1" author="vladimir_kapyrin">
+    <changeSet id="041" author="vladimir_kapyrin">
         <preConditions onFail="HALT">
             <not>
                 <tableExists tableName="account_product_links"/>
@@ -43,15 +43,5 @@
                 referencedTableName="client_products"
                 referencedColumnNames="id"/>
     </changeSet>
-    <changeSet id="038.2" author="vladimir_kapyrin">
-        <preConditions onFail="HALT">
-            <tableExists tableName="account_product_links"/>
-        </preConditions>
-        <sql>
-            CREATE TRIGGER update_account_product_links_updated_at
-            BEFORE UPDATE ON account_product_links
-            FOR EACH ROW
-            EXECUTE FUNCTION update_updated_at_column();
-        </sql>
-    </changeSet>
+
 </databaseChangeLog>
