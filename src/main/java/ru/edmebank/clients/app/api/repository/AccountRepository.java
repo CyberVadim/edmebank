@@ -5,5 +5,5 @@ import ru.edmebank.clients.domain.entity.Account;
 
 import java.util.UUID;
 
-public interface AccountRepository extends JpaRepository <Account, UUID> {
+public interface AccountRepository extends JpaRepository<Account, UUID> {
 }

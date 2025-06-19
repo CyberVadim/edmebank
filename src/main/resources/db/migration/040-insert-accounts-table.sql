@@ -1,6 +1,6 @@
 --liquibase formatted sql
  --preconditions onFail:HALT onError:HALT
- --changeset Kapyrin_Vladimir:040
+ --changeset vladimir_kapyrin:040
 INSERT INTO accounts (
     account_id,
     client_id,

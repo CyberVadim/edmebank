@@ -1,8 +1,21 @@
 package ru.edmebank.clients.domain.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.ForeignKey;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.GeneratedValue;
 import jakarta.validation.constraints.NotNull;
-import lombok.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.AccessLevel;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -17,6 +30,8 @@ import java.util.UUID;
 @NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Account {
+    private final String defaultStatus = "открыт";
+    private final BigDecimal defaultBalance = BigDecimal.ZERO;
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -35,7 +50,7 @@ public class Account {
 
     @Column(name = "balance", nullable = false, precision = 15, scale = 2)
     @NotNull
-    private BigDecimal balance = BigDecimal.ZERO;
+    private BigDecimal balance = defaultBalance;
 
     @Column(name = "currency", nullable = false, length = 3)
     @NotNull
@@ -43,7 +58,7 @@ public class Account {
 
     @Column(name = "status", nullable = false, length = 20)
     @NotNull
-    private String status = "открыт";
+    private String status = defaultStatus;
 
     @Column(name = "opened_at", nullable = false)
     @NotNull
