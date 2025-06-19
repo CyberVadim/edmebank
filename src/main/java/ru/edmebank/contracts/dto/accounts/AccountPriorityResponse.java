@@ -1,4 +1,4 @@
-package ru.edmebank.accounts.adapter.input.rest.dto;
+package ru.edmebank.contracts.dto.accounts;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

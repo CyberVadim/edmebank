@@ -1,7 +1,7 @@
 package ru.edmebank.accounts.fw.exception;
 
 import lombok.Getter;
-import ru.edmebank.accounts.domain.entity.BlockReason;
+import ru.edmebank.accounts.domain.enums.BlockReason;
 
 import java.time.LocalDateTime;
 

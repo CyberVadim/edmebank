@@ -1,23 +1,13 @@
 package ru.edmebank.accounts.app.api.service;
 
-import ru.edmebank.accounts.adapter.input.rest.dto.AccountPriorityGetResponse;
-import ru.edmebank.accounts.adapter.input.rest.dto.AccountPriorityResponse;
-import ru.edmebank.accounts.adapter.input.rest.dto.AccountPriorityUpdateRequest;
+import ru.edmebank.accounts.fw.exception.AccountException;
+import ru.edmebank.contracts.dto.accounts.AccountPriorityGetResponse;
+import ru.edmebank.contracts.dto.accounts.AccountPriorityResponse;
+import ru.edmebank.contracts.dto.accounts.AccountPriorityUpdateRequest;
 
 public interface AccountPriorityService {
 
-    /**
-     * Обновляет приоритеты счета для списания и начисления средств
-     * @param accountId ID счета
-     * @param request Параметры запроса
-     * @return Результат обновления приоритетов
-     */
-    AccountPriorityResponse updatePriorities(String accountId, AccountPriorityUpdateRequest request);
+    AccountPriorityResponse updatePriorities(String accountId, AccountPriorityUpdateRequest request) throws AccountException;
 
-    /**
-     * Получает текущие приоритеты счета и доступные изменения
-     * @param accountId ID счета
-     * @return Информация о приоритетах счета
-     */
-    AccountPriorityGetResponse getPriorities(String accountId);
+    AccountPriorityGetResponse getPriorities(String accountId) throws AccountException;
 }

@@ -13,7 +13,7 @@ import ru.edmebank.accounts.adapter.input.rest.dto.AccountPriorityGetResponse;
 import ru.edmebank.accounts.adapter.input.rest.dto.AccountPriorityResponse;
 import ru.edmebank.accounts.adapter.input.rest.dto.AccountPriorityUpdateRequest;
 import ru.edmebank.accounts.app.api.service.AccountPriorityService;
-import ru.edmebank.accounts.domain.entity.AccountType;
+import ru.edmebank.accounts.domain.enums.AccountType;
 import ru.edmebank.accounts.fw.exception.AccountNotFoundException;
 import ru.edmebank.accounts.fw.exception.GlobalExceptionHandler;
 

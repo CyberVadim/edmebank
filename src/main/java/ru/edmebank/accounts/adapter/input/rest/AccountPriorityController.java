@@ -5,11 +5,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.edmebank.accounts.adapter.input.rest.dto.AccountPriorityGetResponse;
-import ru.edmebank.accounts.adapter.input.rest.dto.AccountPriorityResponse;
-import ru.edmebank.accounts.adapter.input.rest.dto.AccountPriorityUpdateRequest;
 import ru.edmebank.accounts.app.api.service.AccountPriorityService;
 import ru.edmebank.accounts.fw.exception.AccountException;
+import ru.edmebank.contracts.dto.accounts.AccountPriorityGetResponse;
+import ru.edmebank.contracts.dto.accounts.AccountPriorityResponse;
+import ru.edmebank.contracts.dto.accounts.AccountPriorityUpdateRequest;
 
 @RestController
 @RequestMapping("/api/accounts")
