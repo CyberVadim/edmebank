@@ -12,7 +12,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import ru.edmebank.accounts.app.api.service.AccountPriorityService;
 import ru.edmebank.accounts.domain.enums.AccountType;
 import ru.edmebank.accounts.fw.exception.AccountException;
-import ru.edmebank.accounts.fw.exception.GlobalExceptionHandler;
+import ru.edmebank.accounts.fw.exception.AccountsGlobalExceptionHandler;
 import ru.edmebank.contracts.dto.accounts.AccountPriorityGetResponse;
 import ru.edmebank.contracts.dto.accounts.AccountPriorityGetResponse.AccountPriorityGetData;
 import ru.edmebank.contracts.dto.accounts.AccountPriorityGetResponse.AllowedChanges;
@@ -57,7 +57,7 @@ public class AccountPriorityControllerTest {
         // Настраиваем MockMvc вручную с контроллером и глобальным обработчиком исключений
         AccountPriorityController controller = new AccountPriorityController(accountPriorityService);
         mockMvc = MockMvcBuilders.standaloneSetup(controller)
-                .setControllerAdvice(new GlobalExceptionHandler())
+                .setControllerAdvice(new AccountsGlobalExceptionHandler())
                 .build();
 
         // Настраиваем ObjectMapper для работы с Java 8 Date/Time API

@@ -1,6 +1,7 @@
 package ru.edmebank.accounts.fw.exception;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -13,9 +14,10 @@ import ru.edmebank.contracts.dto.accounts.AccountPriorityResponse;
 import java.util.HashMap;
 import java.util.Map;
 
-@RestControllerAdvice
+@RestControllerAdvice(basePackages = "ru.edmebank.accounts")
+@Order(1)
 @Slf4j
-public class GlobalExceptionHandler {
+public class AccountsGlobalExceptionHandler {
 
     @ExceptionHandler(AccountException.class)
     public ResponseEntity<AccountPriorityResponse> handleAccountException(AccountException ex) {
