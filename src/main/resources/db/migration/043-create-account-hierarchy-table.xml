@@ -6,7 +6,7 @@
             http://www.liquibase.org/xml/ns/dbchangelog
             https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
 
-    <changeSet id="043.1" author="vladimir_kapyrin">
+    <changeSet id="043" author="vladimir_kapyrin">
         <preConditions onFail="HALT">
             <not>
                 <tableExists tableName="account_hierarchy"/>
@@ -33,11 +33,6 @@
         <addForeignKeyConstraint baseTableName="account_hierarchy" baseColumnNames="child_account_id"
                                  constraintName="fk_account_hierarchy_child" referencedTableName="accounts"
                                  referencedColumnNames="account_id"/>
-    </changeSet>
-    <changeSet id="043.2" author="vladimir_kapyrin">
-        <preConditions onFail="HALT">
-            <tableExists tableName="account_hierarchy"/>
-        </preConditions>
         <sql>
             ALTER TABLE client_data.account_hierarchy
             ADD CONSTRAINT ck_account_hierarchy_no_self_reference
