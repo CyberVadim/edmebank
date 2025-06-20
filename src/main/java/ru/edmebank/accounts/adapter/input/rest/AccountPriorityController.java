@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.edmebank.accounts.app.api.service.AccountPriorityService;
-import ru.edmebank.accounts.fw.exception.AccountException;
 import ru.edmebank.contracts.dto.accounts.AccountPriorityGetResponse;
 import ru.edmebank.contracts.dto.accounts.AccountPriorityResponse;
 import ru.edmebank.contracts.dto.accounts.AccountPriorityUpdateRequest;
@@ -26,21 +25,8 @@ public class AccountPriorityController {
             @RequestHeader("X-Request-ID") String requestId
     ) {
         log.info("Получен запрос на обновление приоритетов счета: {}. RequestID: {}", accountId, requestId);
-
-        try {
-            AccountPriorityResponse response = accountPriorityService.updatePriorities(accountId, request);
-            return ResponseEntity.ok(response);
-        } catch (AccountException e) {
-            log.error("Ошибка при обновлении приоритетов счета: {}. Код ошибки: {}", e.getMessage(), e.getErrorCode(), e);
-
-            AccountPriorityResponse errorResponse = AccountPriorityResponse.error(
-                    e.getErrorCode(),
-                    e.getMessage(),
-                    e.getDetails()
-            );
-
-            return ResponseEntity.status(getHttpStatusByErrorCode(e.getErrorCode())).body(errorResponse);
-        }
+        AccountPriorityResponse response = accountPriorityService.updatePriorities(accountId, request);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{accountId}/priority")
@@ -49,36 +35,7 @@ public class AccountPriorityController {
             @RequestHeader("X-Request-ID") String requestId
     ) {
         log.info("Получен запрос на получение приоритетов счета: {}. RequestID: {}", accountId, requestId);
-
-        try {
-            AccountPriorityGetResponse response = accountPriorityService.getPriorities(accountId);
-            return ResponseEntity.ok(response);
-        } catch (AccountException e) {
-            log.error("Ошибка при получении приоритетов счета: {}. Код ошибки: {}", e.getMessage(), e.getErrorCode(), e);
-
-            AccountPriorityGetResponse errorResponse = AccountPriorityGetResponse.error(
-                    e.getErrorCode(),
-                    e.getMessage(),
-                    e.getDetails()
-            );
-
-            return ResponseEntity.status(getHttpStatusByErrorCode(e.getErrorCode())).body(errorResponse);
-        }
-    }
-
-    /**
-     * Преобразует код ошибки в HTTP статус
-     */
-    private int getHttpStatusByErrorCode(String errorCode) {
-        return switch (errorCode) {
-            case "INVALID_REQUEST" -> 400;
-            case "UNAUTHORIZED" -> 401;
-            case "FORBIDDEN" -> 403;
-            case "ACCOUNT_NOT_FOUND" -> 404;
-            case "CONFLICT_PRIORITIES" -> 409;
-            case "INVALID_ACCOUNT_STATE" -> 422;
-            case "TOO_MANY_REQUESTS" -> 429;
-            default -> 500;
-        };
+        AccountPriorityGetResponse response = accountPriorityService.getPriorities(accountId);
+        return ResponseEntity.ok(response);
     }
 }

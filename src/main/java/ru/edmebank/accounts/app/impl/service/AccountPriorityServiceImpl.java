@@ -18,7 +18,6 @@ import ru.edmebank.contracts.dto.accounts.AccountPriorityGetResponse.LastUpdated
 import ru.edmebank.contracts.dto.accounts.AccountPriorityResponse;
 import ru.edmebank.contracts.dto.accounts.AccountPriorityUpdateRequest;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -35,7 +34,7 @@ public class AccountPriorityServiceImpl implements AccountPriorityService {
     @Transactional
     public AccountPriorityResponse updatePriorities(String accountId, AccountPriorityUpdateRequest request)
             throws AccountException {
-        log.debug("Обновление приоритетов для счета: {}", accountId);
+        log.debug("Обновление приоритетов для счета: {}. Инициатор: {}", accountId, request.getInitiator().getName());
 
         // Проверка и получение счета
         Account account = findAndValidateAccount(accountId);
@@ -44,29 +43,30 @@ public class AccountPriorityServiceImpl implements AccountPriorityService {
         validatePriorityUpdatePossibility(account, request);
 
         // Обновление приоритетов счета
-        if (request.priorityForWriteOff() != null) {
-            account.setPriorityForWriteOff(request.priorityForWriteOff());
-        }
+        account.setPriorityForWriteOff(request.getPriorityForWriteOff());
+        account.setPriorityForAccrual(request.getPriorityForAccrual());
 
-        if (request.priorityForAccrual() != null) {
-            account.setPriorityForAccrual(request.priorityForAccrual());
-        }
+        // Формируем информацию об инициаторе изменений
+        String initiatorInfo = String.format("%s (%s, %s)",
+                request.getInitiator().getName(),
+                request.getInitiator().getId(),
+                request.getInitiator().getRole().name());
 
         // Установка информации об обновлении
-        account.setLastUpdatedBy(request.updatedBy());
-        account.setLastUpdatedDate(LocalDateTime.now());
+        account.setLastUpdatedBy(initiatorInfo);
+        // updatedAt обновится автоматически через @UpdateTimestamp
 
         // Сохранение изменений
         Account savedAccount = accountRepository.save(account);
 
         // Формирование ответа
-        return AccountPriorityResponse.success(new AccountPriorityResponse.AccountPriorityData(
+        return AccountPriorityResponse.success(
                 accountId,
                 savedAccount.isPriorityForWriteOff(),
                 savedAccount.isPriorityForAccrual(),
-                LocalDateTime.now(),
-                request.updatedBy()
-        ));
+                savedAccount.getUpdatedAt(),
+                savedAccount.getVersion()
+        );
     }
 
     @Override
@@ -83,14 +83,14 @@ public class AccountPriorityServiceImpl implements AccountPriorityService {
         // Формирование ответа
         return AccountPriorityGetResponse.success(new AccountPriorityGetData(
                 accountId,
-                account.getType(),
+                account.getAccountType(),
                 new CurrentPriorities(
                         account.isPriorityForWriteOff(),
                         account.isPriorityForAccrual()
                 ),
                 allowedChanges,
                 new LastUpdated(
-                        account.getLastUpdatedDate(),
+                        account.getUpdatedAt(),
                         account.getLastUpdatedBy()
                 )
         ));
@@ -116,14 +116,28 @@ public class AccountPriorityServiceImpl implements AccountPriorityService {
             );
         }
 
-        // Проверка совместимости приоритетов (если применимо)
-        if (Boolean.TRUE.equals(request.priorityForWriteOff()) && Boolean.TRUE.equals(request.priorityForAccrual())) {
+        // Проверка совместимости приоритетов
+        if (Boolean.TRUE.equals(request.getPriorityForWriteOff()) && Boolean.TRUE.equals(request.getPriorityForAccrual())) {
             // Для некоторых типов счетов может быть запрещено устанавливать оба приоритета
-            if (account.getType() == AccountType.DEPOSIT) {
+            if (account.getAccountType() == AccountType.DEPOSIT) {
                 throw new AccountException(
                         "CONFLICT_PRIORITIES",
                         "Для депозитного счета нельзя одновременно установить оба приоритета",
                         Map.of("accountId", account.getId().toString())
+                );
+            }
+        }
+
+        // Проверка прав доступа инициатора
+        if (request.getInitiator().getRole() == AccountPriorityUpdateRequest.InitiatorRole.CLIENT) {
+            // Например, клиент может не иметь права менять приоритет списания для кредитных счетов
+            if ((account.getAccountType() == AccountType.LOAN_PRINCIPAL ||
+                 account.getAccountType() == AccountType.LOAN_INTEREST) &&
+                request.getPriorityForWriteOff() != null) {
+                throw new AccountException(
+                        "FORBIDDEN",
+                        "Клиент не имеет права менять приоритет списания для кредитных счетов",
+                        Map.of("accountId", account.getId().toString(), "initiatorRole", request.getInitiator().getRole())
                 );
             }
         }
@@ -142,11 +156,12 @@ public class AccountPriorityServiceImpl implements AccountPriorityService {
         }
 
         // Дополнительные проверки в зависимости от типа счета
-        if (account.getType() == AccountType.CREDIT) {
+        if (account.getAccountType() == AccountType.LOAN_PRINCIPAL ||
+            account.getAccountType() == AccountType.LOAN_INTEREST) {
             // Для кредитных счетов нельзя установить приоритет списания
             canSetWriteOff = false;
             reasons.add("Для кредитных счетов нельзя установить приоритет списания");
-        } else if (account.getType() == AccountType.DEPOSIT) {
+        } else if (account.getAccountType() == AccountType.DEPOSIT) {
             // Для депозитных счетов нельзя установить приоритет начисления
             canSetAccrual = false;
             reasons.add("Для депозитных счетов нельзя установить приоритет начисления");
