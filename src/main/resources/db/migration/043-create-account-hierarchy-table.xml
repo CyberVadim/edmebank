@@ -33,10 +33,6 @@
         <addForeignKeyConstraint baseTableName="account_hierarchy" baseColumnNames="child_account_id"
                                  constraintName="fk_account_hierarchy_child" referencedTableName="accounts"
                                  referencedColumnNames="account_id"/>
-        <sql>
-            ALTER TABLE client_data.account_hierarchy
-            ADD CONSTRAINT ck_account_hierarchy_no_self_reference
-            CHECK (parent_account_id IS DISTINCT FROM child_account_id);
-        </sql>
     </changeSet>
+
 </databaseChangeLog>

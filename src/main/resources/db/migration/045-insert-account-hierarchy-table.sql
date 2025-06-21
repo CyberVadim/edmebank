@@ -1,6 +1,6 @@
 --liquibase formatted sql
 --preconditions onFail:HALT onError:HALT
---changeset vladimir_kapyrin:044
+--changeset vladimir_kapyrin:045
 INSERT INTO account_hierarchy (
     parent_account_id,
     child_account_id
