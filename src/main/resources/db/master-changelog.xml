@@ -48,6 +48,6 @@
     <include file="db/migration/041-create-account-product-links-table.xml"/>
     <include file="db/migration/042-insert-account-product-links-table.sql"/>
     <include file="db/migration/043-create-account-hierarchy-table.xml"/>
-    <include file="/db/migration/044-add-constraint-parent-child-id.sql"/>
+    <include file="db/migration/044-add-constraint-parent-child-id.sql"/>
     <include file="db/migration/045-insert-account-hierarchy-table.sql"/>
 </databaseChangeLog>
