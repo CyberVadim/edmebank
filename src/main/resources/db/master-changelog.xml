@@ -43,7 +43,4 @@
     <include file="db/migration/036-create-login-credentials-table.xml"/>
     <include file="db/migration/037-insert-login-credentials-table.sql"/>
     <include file="db/migration/038-changes-credit-history-table.sql"/>
-    <include file="db/migration/039-create-accounts-table.xml"/>
-    <include file="db/migration/040-insert-accounts.sql"/>
-    <include file="db/migration/041-updaete-accounts.sql"/>
 </databaseChangeLog>

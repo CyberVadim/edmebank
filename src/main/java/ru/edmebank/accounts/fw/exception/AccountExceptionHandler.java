@@ -7,8 +7,8 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.edmebank.contracts.dto.accounts.AccountPriorityResponse;
 
 import java.time.ZonedDateTime;
@@ -16,12 +16,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@ControllerAdvice
+@RestControllerAdvice
 @Slf4j
 public class AccountExceptionHandler {
 
     @ExceptionHandler(AccountNotFoundException.class)
-    public ResponseEntity<Object> handleAccountNotFoundException(AccountNotFoundException ex) {
+    public ResponseEntity<AccountPriorityResponse> handleAccountNotFoundException(AccountNotFoundException ex) {
         log.error("Account not found exception: {}", ex.getMessage());
 
         AccountPriorityResponse.ErrorData errorData = new AccountPriorityResponse.ErrorData();
@@ -46,7 +46,7 @@ public class AccountExceptionHandler {
     }
 
     @ExceptionHandler(AuthenticationException.class)
-    public ResponseEntity<Object> handleAuthenticationException(AuthenticationException ex) {
+    public ResponseEntity<AccountPriorityResponse> handleAuthenticationException(AuthenticationException ex) {
         log.error("Authentication exception: {}", ex.getMessage());
 
         AccountPriorityResponse.ErrorData errorData = new AccountPriorityResponse.ErrorData();
@@ -67,7 +67,7 @@ public class AccountExceptionHandler {
     }
 
     @ExceptionHandler(AccountValidationException.class)
-    public ResponseEntity<Object> handleAccountValidationException(AccountValidationException ex) {
+    public ResponseEntity<AccountPriorityResponse> handleAccountValidationException(AccountValidationException ex) {
         log.error("Account validation exception: {}, code: {}", ex.getMessage(), ex.getErrorCode());
 
         AccountPriorityResponse.ErrorData errorData = new AccountPriorityResponse.ErrorData();
@@ -93,7 +93,7 @@ public class AccountExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Object> handleValidationExceptions(MethodArgumentNotValidException ex) {
+    public ResponseEntity<AccountPriorityResponse> handleValidationExceptions(MethodArgumentNotValidException ex) {
         log.error("Validation exception: {}", ex.getMessage());
 
         Map<String, String> errors = ex.getBindingResult()
@@ -122,7 +122,7 @@ public class AccountExceptionHandler {
     }
 
     @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<Object> handleAccessDeniedException(AccessDeniedException ex) {
+    public ResponseEntity<AccountPriorityResponse> handleAccessDeniedException(AccessDeniedException ex) {
         log.error("Access denied exception: {}", ex.getMessage());
 
         AccountPriorityResponse.ErrorData errorData = new AccountPriorityResponse.ErrorData();
@@ -142,7 +142,7 @@ public class AccountExceptionHandler {
     }
 
     @ExceptionHandler(TooManyRequestsException.class)
-    public ResponseEntity<Object> handleTooManyRequestsException(TooManyRequestsException ex) {
+    public ResponseEntity<AccountPriorityResponse> handleTooManyRequestsException(TooManyRequestsException ex) {
         log.error("Too many requests exception: {}", ex.getMessage());
 
         AccountPriorityResponse.ErrorData errorData = new AccountPriorityResponse.ErrorData();
@@ -162,7 +162,7 @@ public class AccountExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Object> handleGenericException(Exception ex) {
+    public ResponseEntity<AccountPriorityResponse> handleGenericException(Exception ex) {
         log.error("Unexpected exception: ", ex);
 
         AccountPriorityResponse.ErrorData errorData = new AccountPriorityResponse.ErrorData();
