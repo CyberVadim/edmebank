@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -44,6 +45,27 @@ public class AccountExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<Object> handleAuthenticationException(AuthenticationException ex) {
+        log.error("Authentication exception: {}", ex.getMessage());
+
+        AccountPriorityResponse.ErrorData errorData = new AccountPriorityResponse.ErrorData();
+        errorData.setCode("UNAUTHORIZED");
+        errorData.setMessage("Требуется авторизация");
+        errorData.setTimestamp(ZonedDateTime.now());
+
+        Map<String, Object> details = new HashMap<>();
+        details.put("message", "Отсутствует/неверный токен доступа");
+        details.put("exceptionMessage", ex.getMessage());
+        errorData.setDetails(details);
+
+        AccountPriorityResponse response = new AccountPriorityResponse();
+        response.setStatus("ERROR");
+        response.setError(errorData);
+
+        return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+    }
+
     @ExceptionHandler(AccountValidationException.class)
     public ResponseEntity<Object> handleAccountValidationException(AccountValidationException ex) {
         log.error("Account validation exception: {}, code: {}", ex.getMessage(), ex.getErrorCode());
@@ -60,21 +82,12 @@ public class AccountExceptionHandler {
         response.setStatus("ERROR");
         response.setError(errorData);
 
-        HttpStatus status;
-        switch (ex.getErrorCode()) {
-            case "INVALID_REQUEST":
-                status = HttpStatus.BAD_REQUEST;
-                break;
-            case "CONFLICT_PRIORITIES":
-                status = HttpStatus.CONFLICT;
-                break;
-            case "INVALID_ACCOUNT_STATE":
-            case "ACCOUNT_BLOCKED":
-                status = HttpStatus.UNPROCESSABLE_ENTITY;
-                break;
-            default:
-                status = HttpStatus.INTERNAL_SERVER_ERROR;
-        }
+        HttpStatus status = switch (ex.getErrorCode()) {
+            case "INVALID_REQUEST" -> HttpStatus.BAD_REQUEST;
+            case "CONFLICT_PRIORITIES" -> HttpStatus.CONFLICT;
+            case "INVALID_ACCOUNT_STATE", "ACCOUNT_BLOCKED" -> HttpStatus.UNPROCESSABLE_ENTITY;
+            default -> HttpStatus.INTERNAL_SERVER_ERROR;
+        };
 
         return new ResponseEntity<>(response, status);
     }
