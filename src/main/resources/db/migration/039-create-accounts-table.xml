@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="039" author="Vadim_Protasov">
+        <comment>Создание таблицы счетов</comment>
+        <createTable tableName="accounts">
+            <column name="account_id" type="UUID">
+                <constraints primaryKey="true" primaryKeyName="accounts_pkey" nullable="false"/>
+            </column>
+            <column name="client_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="account_type" type="VARCHAR(50)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="balance" type="DECIMAL(15,2)" defaultValueNumeric="0.00">
+                <constraints nullable="false"/>
+            </column>
+            <column name="currency" type="VARCHAR(3)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="VARCHAR(20)" defaultValue="ACTIVE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="opened_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="closed_at" type="TIMESTAMP">
+                <constraints nullable="true"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createIndex indexName="idx_accounts_client_id" tableName="accounts">
+            <column name="client_id"/>
+        </createIndex>
+
+        <createIndex indexName="idx_accounts_status" tableName="accounts">
+            <column name="status"/>
+        </createIndex>
+
+        <createIndex indexName="idx_accounts_account_type" tableName="accounts">
+            <column name="account_type"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

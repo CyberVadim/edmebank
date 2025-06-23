@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.UUID;
 
 @Data
@@ -19,5 +19,5 @@ public class AccountPriorityData implements Serializable {
     private String lastUpdatedRole;
     private String lastUpdateReason;
     private Integer version = 0;
-    private LocalDateTime updatedAt = LocalDateTime.now();
+    private ZonedDateTime updatedAt = ZonedDateTime.now();
 }

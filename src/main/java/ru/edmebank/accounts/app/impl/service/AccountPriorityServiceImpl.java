@@ -4,13 +4,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.edmebank.accounts.adapter.output.repository.AccountRepository;
 import ru.edmebank.accounts.app.api.service.AccountPriorityService;
 import ru.edmebank.accounts.domain.entity.Account;
 import ru.edmebank.accounts.domain.enums.AccountStatus;
 import ru.edmebank.accounts.fw.exception.AccountNotFoundException;
 import ru.edmebank.accounts.fw.exception.AccountValidationException;
 import ru.edmebank.accounts.fw.exception.TooManyRequestsException;
-import ru.edmebank.accounts.adapter.output.repository.AccountRepository;
 import ru.edmebank.accounts.utils.RateLimiter;
 import ru.edmebank.contracts.dto.accounts.AccountPriorityData;
 import ru.edmebank.contracts.dto.accounts.AccountPriorityDetailsResponse;
@@ -39,54 +39,75 @@ public class AccountPriorityServiceImpl implements AccountPriorityService {
     // In-memory кэш для хранения приоритетов
     private final Map<UUID, AccountPriorityData> priorityCache = new ConcurrentHashMap<>();
 
+    // Константы
+    private static final String SUCCESS_STATUS = "SUCCESS";
+    private static final String SYSTEM_USER = "Система";
+    private static final String ACCOUNT_NOT_FOUND_MSG = "Счет не найден с идентификатором: ";
+    private static final String INVALID_ACCOUNT_STATE = "INVALID_ACCOUNT_STATE";
+    private static final String ACCOUNT_BLOCKED = "ACCOUNT_BLOCKED";
+    private static final String CONFLICT_PRIORITIES = "CONFLICT_PRIORITIES";
+
     @Override
-    @Transactional(readOnly = true) // только чтение из БД
+    @Transactional(readOnly = true)
     public AccountPriorityResponse updateAccountPriority(UUID accountId, AccountPriorityRequest request, UUID requestId) {
         log.info("Setting account priority for account: {}, requestId: {}", accountId, requestId);
 
-        // Применение ограничения скорости запросов
         if (!rateLimiter.tryAcquire()) {
             throw new TooManyRequestsException("Превышен лимит запросов на изменение приоритетов");
         }
 
-        // Получение счета
-        Account account = accountRepository.findById(accountId)
-                .orElseThrow(() -> new AccountNotFoundException("Счет не найден с идентификатором: " + accountId));
-
-        // Валидация состояния счета
+        Account account = getAccountById(accountId);
         validateAccountForPriorityChange(account);
-
-        // Валидация бизнес-правил
         validatePriorityRules(account, request);
 
-        // Получение или создание данных о приоритетах
-        AccountPriorityData priorityData = getPriorityData(accountId).orElse(new AccountPriorityData());
+        AccountPriorityData priorityData = updatePriorityData(accountId, request);
+        logPriorityChange(account, priorityData, request);
 
-        // Обновление версии
+        return createSuccessResponse(account, priorityData);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public AccountPriorityDetailsResponse getAccountPriority(UUID accountId, UUID requestId) {
+        log.info("Getting account priority for account: {}, requestId: {}", accountId, requestId);
+
+        Account account = getAccountById(accountId);
+        Optional<AccountPriorityData> priorityDataOpt = Optional.ofNullable(priorityCache.get(accountId));
+
+        return createDetailsResponse(account, priorityDataOpt);
+    }
+
+    // --- Вспомогательные методы ---
+
+    private Account getAccountById(UUID accountId) {
+        return accountRepository.findById(accountId)
+                .orElseThrow(() -> new AccountNotFoundException(ACCOUNT_NOT_FOUND_MSG + accountId));
+    }
+
+    private AccountPriorityData updatePriorityData(UUID accountId, AccountPriorityRequest request) {
+        AccountPriorityData priorityData = priorityCache.getOrDefault(accountId, new AccountPriorityData());
+
         priorityData.setVersion(priorityData.getVersion() + 1);
-
-        // Обновление приоритетов
         priorityData.setPriorityForWriteOff(request.getPriorityForWriteOff());
         priorityData.setPriorityForAccrual(request.getPriorityForAccrual());
 
-        // Сохранение информации об инициаторе
         if (request.getInitiator() != null) {
             priorityData.setLastUpdatedBy(request.getInitiator().getName());
             priorityData.setLastUpdatedRole(request.getInitiator().getRole());
         }
+
         priorityData.setLastUpdateReason(request.getReason());
         priorityData.setAccountId(accountId);
-        priorityData.setUpdatedAt(LocalDateTime.now());
+        priorityData.setUpdatedAt(ZonedDateTime.now());
 
-        // Сохранение в кэше
         priorityCache.put(accountId, priorityData);
 
-        // Запись в аудит-лог
-        logPriorityChange(account, priorityData, request);
+        return priorityData;
+    }
 
-        // Формирование ответа
+    private AccountPriorityResponse createSuccessResponse(Account account, AccountPriorityData priorityData) {
         AccountPriorityResponse response = new AccountPriorityResponse();
-        response.setStatus("SUCCESS");
+        response.setStatus(SUCCESS_STATUS);
 
         AccountPriorityResponse.PriorityData data = new AccountPriorityResponse.PriorityData();
         data.setAccountId(account.getAccountId().toString());
@@ -96,7 +117,15 @@ public class AccountPriorityServiceImpl implements AccountPriorityService {
         updatedPriorities.setPriorityForAccrual(priorityData.getPriorityForAccrual());
 
         data.setUpdatedPriorities(updatedPriorities);
-        data.setUpdatedAt(priorityData.getUpdatedAt().atZone(ZoneId.systemDefault()));
+
+        // Исправленная версия конвертации LocalDateTime в ZonedDateTime
+        ZonedDateTime zonedDateTime = ZonedDateTime.of(
+                priorityData.getUpdatedAt().toLocalDate(),
+                priorityData.getUpdatedAt().toLocalTime(),
+                ZoneId.systemDefault()
+        );
+        data.setUpdatedAt(zonedDateTime);
+
         data.setVersion(priorityData.getVersion());
 
         response.setData(data);
@@ -104,276 +133,223 @@ public class AccountPriorityServiceImpl implements AccountPriorityService {
         return response;
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public AccountPriorityDetailsResponse getAccountPriority(UUID accountId, UUID requestId) {
-        log.info("Getting account priority for account: {}, requestId: {}", accountId, requestId);
-
-        // Получение счета
-        Account account = accountRepository.findById(accountId)
-                .orElseThrow(() -> new AccountNotFoundException("Счет не найден с идентификатором: " + accountId));
-
-        // Получение данных о приоритетах из кэша
-        Optional<AccountPriorityData> priorityDataOpt = getPriorityData(accountId);
-
-        // Формирование ответа
+    private AccountPriorityDetailsResponse createDetailsResponse(Account account, Optional<AccountPriorityData> priorityDataOpt) {
         AccountPriorityDetailsResponse response = new AccountPriorityDetailsResponse();
-        response.setStatus("SUCCESS");
+        response.setStatus(SUCCESS_STATUS);
 
         AccountPriorityDetailsResponse.PriorityData data = new AccountPriorityDetailsResponse.PriorityData();
         data.setAccountId(account.getAccountId().toString());
         data.setAccountType(account.getAccountType());
 
+        // Настройка текущих приоритетов
         AccountPriorityDetailsResponse.CurrentPriorities currentPriorities = new AccountPriorityDetailsResponse.CurrentPriorities();
-        if (priorityDataOpt.isPresent()) {
-            AccountPriorityData priorityData = priorityDataOpt.get();
+        priorityDataOpt.ifPresent(priorityData -> {
             currentPriorities.setPriorityForWriteOff(priorityData.getPriorityForWriteOff());
             currentPriorities.setPriorityForAccrual(priorityData.getPriorityForAccrual());
-        } else {
+        });
+
+        if (!priorityDataOpt.isPresent()) {
             currentPriorities.setPriorityForWriteOff(false);
             currentPriorities.setPriorityForAccrual(false);
         }
+
         data.setCurrentPriorities(currentPriorities);
 
+        // Настройка разрешенных изменений
         AccountPriorityDetailsResponse.AllowedChanges allowedChanges = new AccountPriorityDetailsResponse.AllowedChanges();
         allowedChanges.setCanSetWriteOff(canSetWriteOffPriority(account));
         allowedChanges.setCanSetAccrual(canSetAccrualPriority(account));
         allowedChanges.setReasons(getRestrictionReasons(account));
         data.setAllowedChanges(allowedChanges);
 
+        // Настройка информации о последнем обновлении
         AccountPriorityDetailsResponse.LastUpdated lastUpdated = new AccountPriorityDetailsResponse.LastUpdated();
+
         if (priorityDataOpt.isPresent()) {
             AccountPriorityData priorityData = priorityDataOpt.get();
-            lastUpdated.setDate(priorityData.getUpdatedAt().atZone(ZoneId.systemDefault()));
+
+            // Исправленная версия конвертации LocalDateTime в ZonedDateTime
+            ZonedDateTime zonedDateTime = ZonedDateTime.of(
+                    priorityData.getUpdatedAt().toLocalDate(),
+                    priorityData.getUpdatedAt().toLocalTime(),
+                    ZoneId.systemDefault()
+            );
+            lastUpdated.setDate(zonedDateTime);
+
             String updatedBy = priorityData.getLastUpdatedBy();
             String updatedRole = priorityData.getLastUpdatedRole();
-            if (updatedBy != null && updatedRole != null) {
-                lastUpdated.setBy(updatedBy + " (" + updatedRole + ")");
-            } else {
-                lastUpdated.setBy("Система");
-            }
+            lastUpdated.setBy((updatedBy != null && updatedRole != null) ?
+                    updatedBy + " (" + updatedRole + ")" : SYSTEM_USER);
         } else {
-            lastUpdated.setDate(account.getUpdatedAt().atZone(ZoneId.systemDefault()));
-            lastUpdated.setBy("Система");
+            // Исправленная версия конвертации LocalDateTime в ZonedDateTime
+            ZonedDateTime zonedDateTime = ZonedDateTime.of(
+                    account.getUpdatedAt().toLocalDate(),
+                    account.getUpdatedAt().toLocalTime(),
+                    ZoneId.systemDefault()
+            );
+            lastUpdated.setDate(zonedDateTime);
+            lastUpdated.setBy(SYSTEM_USER);
         }
-        data.setLastUpdated(lastUpdated);
 
+        data.setLastUpdated(lastUpdated);
         response.setData(data);
 
         return response;
     }
 
-    private Optional<AccountPriorityData> getPriorityData(UUID accountId) {
-        return Optional.ofNullable(priorityCache.get(accountId));
-    }
+    // --- Методы валидации и проверки ---
 
     private void validateAccountForPriorityChange(Account account) {
-        // Проверка закрытого счета
-        if (AccountStatus.CLOSED.toString().equalsIgnoreCase(account.getStatus())) {
-            throw new AccountValidationException("INVALID_ACCOUNT_STATE",
+        String status = account.getStatus();
+
+        if (AccountStatus.CLOSED.toString().equalsIgnoreCase(status)) {
+            throw new AccountValidationException(INVALID_ACCOUNT_STATE,
                     "Невозможно изменить приоритеты для закрытого счета");
         }
 
-        // Проверка заблокированного счета
-        if (AccountStatus.BLOCKED.toString().equalsIgnoreCase(account.getStatus())) {
+        if (AccountStatus.BLOCKED.toString().equalsIgnoreCase(status)) {
             Map<String, Object> details = new HashMap<>();
             details.put("accountId", account.getAccountId().toString());
             details.put("blockReason", "OVERDUE_PAYMENT");
             details.put("blockDate", ZonedDateTime.now().minusDays(7));
 
-            throw new AccountValidationException("ACCOUNT_BLOCKED",
+            throw new AccountValidationException(ACCOUNT_BLOCKED,
                     "Невозможно изменить приоритеты для заблокированного счета", details);
         }
 
-        // Проверка замороженного счета
-        if (AccountStatus.FROZEN.toString().equalsIgnoreCase(account.getStatus())) {
-            throw new AccountValidationException("INVALID_ACCOUNT_STATE",
+        if (AccountStatus.FROZEN.toString().equalsIgnoreCase(status)) {
+            throw new AccountValidationException(INVALID_ACCOUNT_STATE,
                     "Невозможно изменить приоритеты для замороженного счета");
         }
     }
 
     private void validatePriorityRules(Account account, AccountPriorityRequest request) {
-        // Проверка конфликта приоритетов для кредитных счетов
-        if (account.getAccountType() != null &&
-            account.getAccountType().startsWith("LOAN_") &&
-            Boolean.TRUE.equals(request.getPriorityForWriteOff()) &&
-            Boolean.TRUE.equals(request.getPriorityForAccrual())) {
-            throw new AccountValidationException("CONFLICT_PRIORITIES",
+        String accountType = account.getAccountType();
+        Boolean writeOff = request.getPriorityForWriteOff();
+        Boolean accrual = request.getPriorityForAccrual();
+
+        // Проверки типа счета
+        boolean isLoanAccount = accountType != null && accountType.startsWith("LOAN_");
+        boolean isDepositAccount = accountType != null &&
+                                   ("DEPOSIT".equalsIgnoreCase(accountType) || "сберегательный".equalsIgnoreCase(accountType));
+
+        // Конфликт приоритетов для кредитных счетов
+        if (isLoanAccount && Boolean.TRUE.equals(writeOff) && Boolean.TRUE.equals(accrual)) {
+            throw new AccountValidationException(CONFLICT_PRIORITIES,
                     "Для кредитных счетов можно установить только один тип приоритета");
         }
 
-        // Проверка для депозитных счетов
-        if (account.getAccountType() != null &&
-            ("DEPOSIT".equalsIgnoreCase(account.getAccountType()) ||
-             "сберегательный".equalsIgnoreCase(account.getAccountType()))) {
-            throw new AccountValidationException("INVALID_ACCOUNT_STATE",
+        // Депозитные счета
+        if (isDepositAccount) {
+            throw new AccountValidationException(INVALID_ACCOUNT_STATE,
                     "Для депозитных счетов приоритеты не могут быть изменены");
         }
 
-        // Проверки для счетов с отрицательным балансом
-        if (account.getBalance() != null && account.getBalance().signum() < 0 &&
-            Boolean.TRUE.equals(request.getPriorityForWriteOff())) {
-            throw new AccountValidationException("INVALID_ACCOUNT_STATE",
-                    "Невозможно установить приоритет списания для счета с отрицательным балансом");
+        // Проверки для приоритета списания
+        if (Boolean.TRUE.equals(writeOff)) {
+            // Отрицательный баланс
+            if (account.getBalance() != null && account.getBalance().signum() < 0) {
+                throw new AccountValidationException(INVALID_ACCOUNT_STATE,
+                        "Невозможно установить приоритет списания для счета с отрицательным балансом");
+            }
         }
 
-        // Проверка счетов с просроченной задолженностью
-        if (hasOverdueDebt(account) && Boolean.TRUE.equals(request.getPriorityForWriteOff())) {
-            throw new AccountValidationException("INVALID_ACCOUNT_STATE",
-                    "Невозможно установить приоритет списания для счета с просроченной задолженностью");
-        }
-
-        // Проверка счетов с истекшим сроком действия
-        if (hasExpiredTerm(account) && Boolean.TRUE.equals(request.getPriorityForAccrual())) {
-            throw new AccountValidationException("INVALID_ACCOUNT_STATE",
-                    "Невозможно установить приоритет начисления для счета с истекшим сроком действия");
-        }
-
-        // Проверка счетов с ограниченными операциями
-        if (hasLimitedOperations(account) && Boolean.TRUE.equals(request.getPriorityForAccrual())) {
-            throw new AccountValidationException("INVALID_ACCOUNT_STATE",
-                    "Невозможно установить приоритет начисления для счета с ограниченными операциями");
-        }
-
-        // Проверка счетов, привязанных к коллекторскому взысканию
-        if (isLinkedToCollection(account) && Boolean.TRUE.equals(request.getPriorityForAccrual())) {
-            throw new AccountValidationException("INVALID_ACCOUNT_STATE",
-                    "Невозможно установить приоритет начисления для счета, привязанного к коллекторскому взысканию");
+        // Проверки для приоритета начисления
+        if (Boolean.TRUE.equals(accrual)) {
+            // Истекший срок действия
+            boolean isExpired = account.getOpenedAt() != null &&
+                                account.getOpenedAt().plusYears(5).isBefore(LocalDateTime.now());
+            if (isExpired) {
+                throw new AccountValidationException(INVALID_ACCOUNT_STATE,
+                        "Невозможно установить приоритет начисления для счета с истекшим сроком действия");
+            }
         }
     }
 
     private boolean canSetWriteOffPriority(Account account) {
-        // Проверка статуса счета
-        if (!AccountStatus.ACTIVE.toString().equalsIgnoreCase(account.getStatus())) {
-            return false;
-        }
+        boolean isActiveAccount = AccountStatus.ACTIVE.toString().equalsIgnoreCase(account.getStatus());
+        boolean hasPositiveBalance = !(account.getBalance() != null && account.getBalance().signum() < 0);
 
-        // Проверка баланса
-        if (account.getBalance() != null && account.getBalance().signum() < 0) {
-            return false;
-        }
-
-        // Проверка просроченной задолженности
-        if (hasOverdueDebt(account)) {
-            return false;
-        }
-
-        return true;
+        return isActiveAccount && hasPositiveBalance;
     }
 
     private boolean canSetAccrualPriority(Account account) {
-        // Проверка статуса счета
-        if (!AccountStatus.ACTIVE.toString().equalsIgnoreCase(account.getStatus())) {
-            return false;
-        }
+        String accountType = account.getAccountType();
+        boolean isActiveAccount = AccountStatus.ACTIVE.toString().equalsIgnoreCase(account.getStatus());
+        boolean isNotDepositAccount = !(accountType != null &&
+                                        ("DEPOSIT".equalsIgnoreCase(accountType) ||
+                                         "сберегательный".equalsIgnoreCase(accountType)));
+        boolean hasNotExpiredTerm = !(account.getOpenedAt() != null &&
+                                      account.getOpenedAt().plusYears(5).isBefore(LocalDateTime.now()));
 
-        // Проверка типа счета
-        if (account.getAccountType() != null &&
-            ("DEPOSIT".equalsIgnoreCase(account.getAccountType()) ||
-             "сберегательный".equalsIgnoreCase(account.getAccountType()))) {
-            return false;
-        }
-
-        // Проверка истекшего срока действия
-        if (hasExpiredTerm(account)) {
-            return false;
-        }
-
-        // Проверка ограниченных операций
-        if (hasLimitedOperations(account)) {
-            return false;
-        }
-
-        // Проверка привязки к коллекторскому взысканию
-        if (isLinkedToCollection(account)) {
-            return false;
-        }
-
-        return true;
+        return isActiveAccount && isNotDepositAccount && hasNotExpiredTerm;
     }
 
     private List<String> getRestrictionReasons(Account account) {
         List<String> reasons = new ArrayList<>();
+        String accountType = account.getAccountType();
+        String status = account.getStatus();
 
-        // Добавление причин ограничений в зависимости от типа и состояния счета
-        if (account.getAccountType() != null && account.getAccountType().startsWith("LOAN_")) {
-            reasons.add("Только один приоритет разрешен для кредитных счетов");
-        }
+        // Использование Map для сопоставления условий и сообщений
+        Map<Boolean, String> reasonChecks = new HashMap<>();
 
-        if (account.getAccountType() != null &&
-            ("DEPOSIT".equalsIgnoreCase(account.getAccountType()) ||
-             "сберегательный".equalsIgnoreCase(account.getAccountType()))) {
-            reasons.add("Для депозитных счетов приоритеты не могут быть изменены");
-        }
+        // Проверки типа счета
+        reasonChecks.put(
+                accountType != null && accountType.startsWith("LOAN_"),
+                "Только один приоритет разрешен для кредитных счетов"
+        );
 
-        if (AccountStatus.CLOSED.toString().equalsIgnoreCase(account.getStatus())) {
-            reasons.add("Невозможно изменить приоритеты для закрытого счета");
-        }
+        reasonChecks.put(
+                accountType != null && ("DEPOSIT".equalsIgnoreCase(accountType) || "сберегательный".equalsIgnoreCase(accountType)),
+                "Для депозитных счетов приоритеты не могут быть изменены"
+        );
 
-        if (AccountStatus.BLOCKED.toString().equalsIgnoreCase(account.getStatus())) {
-            reasons.add("Невозможно изменить приоритеты для заблокированного счета");
-        }
+        // Проверки статуса счета
+        reasonChecks.put(
+                AccountStatus.CLOSED.toString().equalsIgnoreCase(status),
+                "Невозможно изменить приоритеты для закрытого счета"
+        );
 
-        if (AccountStatus.FROZEN.toString().equalsIgnoreCase(account.getStatus())) {
-            reasons.add("Невозможно изменить приоритеты для замороженного счета");
-        }
+        reasonChecks.put(
+                AccountStatus.BLOCKED.toString().equalsIgnoreCase(status),
+                "Невозможно изменить приоритеты для заблокированного счета"
+        );
 
-        if (account.getBalance() != null && account.getBalance().signum() < 0) {
-            reasons.add("Невозможно установить приоритет списания для счета с отрицательным балансом");
-        }
+        reasonChecks.put(
+                AccountStatus.FROZEN.toString().equalsIgnoreCase(status),
+                "Невозможно изменить приоритеты для замороженного счета"
+        );
 
-        if (hasOverdueDebt(account)) {
-            reasons.add("Невозможно установить приоритет списания для счета с просроченной задолженностью");
-        }
+        // Проверки баланса и срока действия
+        reasonChecks.put(
+                account.getBalance() != null && account.getBalance().signum() < 0,
+                "Невозможно установить приоритет списания для счета с отрицательным балансом"
+        );
 
-        if (hasExpiredTerm(account)) {
-            reasons.add("Невозможно установить приоритет начисления для счета с истекшим сроком действия");
-        }
+        reasonChecks.put(
+                account.getOpenedAt() != null && account.getOpenedAt().plusYears(5).isBefore(LocalDateTime.now()),
+                "Невозможно установить приоритет начисления для счета с истекшим сроком действия"
+        );
 
-        if (hasLimitedOperations(account)) {
-            reasons.add("Невозможно установить приоритет начисления для счета с ограниченными операциями");
-        }
-
-        if (isLinkedToCollection(account)) {
-            reasons.add("Невозможно установить приоритет начисления для счета, привязанного к коллекторскому взысканию");
-        }
+        // Добавление всех применимых причин
+        reasonChecks.forEach((condition, message) -> {
+            if (Boolean.TRUE.equals(condition)) {
+                reasons.add(message);
+            }
+        });
 
         return reasons;
     }
 
-    private boolean hasOverdueDebt(Account account) {
-        // Здесь будет реальная логика проверки просроченной задолженности
-        // Для примера возвращаем false
-        return false;
-    }
-
-    private boolean hasExpiredTerm(Account account) {
-        // Здесь будет реальная логика проверки истекшего срока действия
-        // Для примера проверяем, что счет открыт более 5 лет назад
-        return account.getOpenedAt() != null &&
-               account.getOpenedAt().plusYears(5).isBefore(LocalDateTime.now());
-    }
-
-    private boolean hasLimitedOperations(Account account) {
-        // Здесь будет реальная логика проверки ограниченных операций
-        // Для примера возвращаем false
-        return false;
-    }
-
-    private boolean isLinkedToCollection(Account account) {
-        // Здесь будет реальная логика проверки привязки к коллекторскому взысканию
-        // Для примера возвращаем false
-        return false;
-    }
-
     private void logPriorityChange(Account account, AccountPriorityData priorityData, AccountPriorityRequest request) {
-        // Логирование изменений
+        String initiatorInfo = request.getInitiator() != null ?
+                request.getInitiator().getName() + " (" + request.getInitiator().getRole() + ")" : "N/A";
+
         log.info("Priority change for account {}: writeOff={}, accrual={}, reason={}, initiator={}",
                 account.getAccountId(),
                 priorityData.getPriorityForWriteOff(),
                 priorityData.getPriorityForAccrual(),
                 request.getReason(),
-                request.getInitiator() != null ?
-                        request.getInitiator().getName() + " (" + request.getInitiator().getRole() + ")" : "N/A");
+                initiatorInfo);
     }
 }
