@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+            http://www.liquibase.org/xml/ns/dbchangelog
+            https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+    <changeSet id="039" author="vladimir_kapyrin">
+        <preConditions onFail="HALT">
+            <not>
+                <tableExists tableName="accounts"/>
+            </not>
+        </preConditions>
+        <createTable tableName="accounts" remarks="Счета">
+            <column name="account_id" type="UUID"  defaultValueComputed="gen_random_uuid()" remarks="Уникальный идентификатор счета">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="client_id" type="UUID" remarks="Идентификатор клиента">
+                <constraints nullable="false"/>
+            </column>
+            <column name="account_type" type="VARCHAR(50)" remarks="Тип счета"/>
+            <column name="balance" type="NUMERIC(15,2)" defaultValue="0.00" remarks="Текущий баланс">
+                <constraints nullable="false"/>
+            </column>
+            <column name="currency" type="VARCHAR(3)" remarks="Валюта счета">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="VARCHAR(20)" defaultValue="открыт" remarks="Статус счета">
+                <constraints nullable="false"/>
+            </column>
+            <column name="opened_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP" remarks="Дата открытия счета">
+                <constraints nullable="false"/>
+            </column>
+            <column name="closed_at" type="TIMESTAMP" remarks="Дата закрытия счета"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP" remarks="Дата создания записи">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP" remarks="Дата обновления записи">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint
+                baseTableName="accounts"
+                baseColumnNames="client_id"
+                constraintName="fk_accounts_clients"
+                referencedTableName="clients"
+                referencedColumnNames="id"/>
+    </changeSet>
+</databaseChangeLog>

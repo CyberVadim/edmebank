@@ -43,4 +43,11 @@
     <include file="db/migration/036-create-login-credentials-table.xml"/>
     <include file="db/migration/037-insert-login-credentials-table.sql"/>
     <include file="db/migration/038-changes-credit-history-table.sql"/>
+    <include file="db/migration/039-create-accounts-table.xml"/>
+    <include file="db/migration/040-insert-accounts-table.sql"/>
+    <include file="db/migration/041-create-account-product-links-table.xml"/>
+    <include file="db/migration/042-insert-account-product-links-table.sql"/>
+    <include file="db/migration/043-create-account-hierarchy-table.xml"/>
+    <include file="db/migration/044-add-constraint-parent-child-id.sql"/>
+    <include file="db/migration/045-insert-account-hierarchy-table.sql"/>
 </databaseChangeLog>
