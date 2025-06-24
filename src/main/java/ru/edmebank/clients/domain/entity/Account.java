@@ -10,6 +10,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.GeneratedValue;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -22,6 +23,12 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
+
+/**
+ * ! nullable = false в миграции защищает БД, а @Column(nullable = false) синхронизирует модель JPA с схемой.
+ * @NotNull добавляет валидацию в коде, ловя null раньше. Дублирование нужно для надёжности и согласованности.
+ * Поэтому еще и прописаны название таблиц в @Column, хоть может и само мапиться. Все для надеждности и согласованности.
+ */
 
 @Entity
 @Table(name = "accounts", schema = "client_data")
@@ -36,7 +43,6 @@ public class Account {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "account_id", nullable = false)
-    @NotNull
     @EqualsAndHashCode.Include
     private UUID accountId;
 
@@ -53,11 +59,11 @@ public class Account {
     private BigDecimal balance = defaultBalance;
 
     @Column(name = "currency", nullable = false, length = 3)
-    @NotNull
+    @NotBlank
     private String currency;
 
     @Column(name = "status", nullable = false, length = 20)
-    @NotNull
+    @NotBlank
     private String status = defaultStatus;
 
     @Column(name = "opened_at", nullable = false)
