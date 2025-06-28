@@ -6,8 +6,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.HttpClientErrorException;
 import ru.edmebank.print.app.exception.FontLoadException;
 import ru.edmebank.print.app.exception.FontNotFoundException;
 import ru.edmebank.print.app.exception.HtmlGenerationException;
@@ -23,6 +27,9 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleEntityNotFound(EntityNotFoundException ex) {
         log.warn("Entity not found", ex);
+        if (ex.getMessage().contains("Account")) {
+            return buildResponse("ACCOUNT_NOT_FOUND", ex.getMessage(), HttpStatus.NOT_FOUND);
+        }
         return buildResponse("ENTITY_NOT_FOUND", ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
@@ -68,6 +75,36 @@ public class GlobalExceptionHandler {
         log.error("Ошибка генерации DTO: {}", ex.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body("Ошибка при генерации: " + ex.getMessage());
+    }
+
+    @ExceptionHandler(AccountPriorityException.class)
+    public ResponseEntity<ErrorResponse> handleAccountPriorityException(AccountPriorityException ex) {
+        log.warn("Account priority error: {}", ex.getMessage(), ex);
+        return buildResponse(ex.getCode(), ex.getMessage(), ex.getStatus());
+    }
+
+    @ExceptionHandler(org.springframework.security.access.AccessDeniedException.class)
+    public ResponseEntity<ErrorResponse> handleAccessDenied(AccessDeniedException ex) {
+        log.warn("Access denied", ex);
+        return buildResponse("FORBIDDEN", "У пользователя нет прав на выполнение операции", HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<ErrorResponse> handleMethodNotAllowed(HttpRequestMethodNotSupportedException ex) {
+        log.warn("Method not allowed", ex);
+        return buildResponse("METHOD_NOT_ALLOWED", ex.getMessage(), HttpStatus.METHOD_NOT_ALLOWED);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorResponse> handleValidationException(MethodArgumentNotValidException ex) {
+        log.warn("Validation error", ex);
+        return buildResponse("INVALID_REQUEST", "Неверный формат запроса: " + ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(HttpClientErrorException.TooManyRequests.class)
+    public ResponseEntity<ErrorResponse> handleTooManyRequests(HttpClientErrorException.TooManyRequests ex) {
+        log.warn("Too many requests", ex);
+        return buildResponse("TOO_MANY_REQUESTS", "Слишком много запросов. Повторите попытку позже", HttpStatus.TOO_MANY_REQUESTS);
     }
 
     private ResponseEntity<ErrorResponse> buildResponse(String code, String message, HttpStatus status) {
