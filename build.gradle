@@ -31,6 +31,11 @@ dependencies {
     // Генерация по регулярному выражению
     implementation libs.rgxgen
 
+    // JWT зависимости
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+
     // Spring Cloud
     implementation libs.spring.cloud.openfeign
 
@@ -69,6 +74,10 @@ dependencies {
 
     // Caffeine Cache
     implementation 'com.github.ben-manes.caffeine:caffeine:3.1.8'
+
+    // Зависимости для тестирования
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.mockito:mockito-core'
 }
 
 tasks.withType(Test) {

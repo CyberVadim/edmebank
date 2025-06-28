@@ -4,7 +4,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import ru.edmebank.clients.domain.entity.AccountPriority;
 import ru.edmebank.contracts.enums.AccountPriorityStatus;
 
-import java.util.Optional;
 import java.util.UUID;
 
 public interface AccountPriorityRepository extends JpaRepository<AccountPriority, UUID> {
