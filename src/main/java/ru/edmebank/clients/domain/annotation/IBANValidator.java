@@ -9,7 +9,7 @@ import static ru.edmebank.clients.fw.Constants.IBAN_MAX_LENGTH;
 import static ru.edmebank.clients.fw.Constants.IBAN_MIN_LENGTH;
 import static ru.edmebank.clients.fw.Constants.REGEX_IBAN;
 
-class IBANValidator implements ConstraintValidator<ValidIBAN, String> {
+public class IBANValidator implements ConstraintValidator<ValidIBAN, String> {
     private static final Pattern PATTERN = Pattern.compile(REGEX_IBAN);
 
     @Override

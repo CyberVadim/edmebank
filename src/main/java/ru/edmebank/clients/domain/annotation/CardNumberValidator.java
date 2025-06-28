@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 
 import static ru.edmebank.clients.fw.Constants.REGEX_CARD_NUMBER;
 
-class CardNumberValidator implements ConstraintValidator<ValidCardNumber, String> {
+public class CardNumberValidator implements ConstraintValidator<ValidCardNumber, String> {
     private static final Pattern PATTERN = Pattern.compile(REGEX_CARD_NUMBER);
 
     @Override

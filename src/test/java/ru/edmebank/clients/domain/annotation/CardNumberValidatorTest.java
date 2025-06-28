@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 @SpringBootTest
-class CardNumberValidatorTest {
+public class CardNumberValidatorTest {
 
     @Autowired
     private Validator validator;

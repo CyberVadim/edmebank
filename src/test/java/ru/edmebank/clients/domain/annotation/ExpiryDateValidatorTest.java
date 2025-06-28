@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
-class ExpiryDateValidatorTest {
+public class ExpiryDateValidatorTest {
     @Autowired
     private Validator validator;
 

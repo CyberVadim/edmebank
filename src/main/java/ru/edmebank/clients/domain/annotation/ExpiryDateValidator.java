@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 
 import static ru.edmebank.clients.fw.Constants.REGEX_EXPIRY_DATE;
 
-class ExpiryDateValidator implements ConstraintValidator<ValidExpiryDate, String> {
+public class ExpiryDateValidator implements ConstraintValidator<ValidExpiryDate, String> {
     private static final Pattern PATTERN = Pattern.compile(REGEX_EXPIRY_DATE);
 
     @Override

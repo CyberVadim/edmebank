@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 
 import static ru.edmebank.clients.fw.Constants.REGEX_CORRESPONDENT_ACCOUNT;
 
-class CorrespondentAccountValidator implements ConstraintValidator<ValidCorrespondentAccount, String> {
+public class CorrespondentAccountValidator implements ConstraintValidator<ValidCorrespondentAccount, String> {
     private static final Pattern PATTERN = Pattern.compile(REGEX_CORRESPONDENT_ACCOUNT);
 
     @Override

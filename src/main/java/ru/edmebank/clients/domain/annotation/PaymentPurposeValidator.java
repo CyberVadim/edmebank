@@ -10,7 +10,7 @@ import static ru.edmebank.clients.fw.Constants.FORBIDDEN_PHRASES;
 import static ru.edmebank.clients.fw.Constants.REGEX_FORBIDDEN_CHARS;
 
 
-class PaymentPurposeValidator implements ConstraintValidator<ValidPaymentPurpose, String> {
+public class PaymentPurposeValidator implements ConstraintValidator<ValidPaymentPurpose, String> {
     private static final Pattern FORBIDDEN_CHARS_PATTERN = Pattern.compile(REGEX_FORBIDDEN_CHARS);
     private static final List<String> FORBIDDEN_PHRASES_LIST = List.of(FORBIDDEN_PHRASES);
 

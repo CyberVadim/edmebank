@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
-class PaymentPurposeValidatorTest {
+public class PaymentPurposeValidatorTest {
     @Autowired
     private Validator validator;
 
