@@ -1,4 +1,4 @@
-package ru.edmebank.clients.app.api.controller;
+package ru.edmebank.clients.adapter.input.rest;
 
 import io.jsonwebtoken.Claims;
 import io.swagger.v3.oas.annotations.Operation;

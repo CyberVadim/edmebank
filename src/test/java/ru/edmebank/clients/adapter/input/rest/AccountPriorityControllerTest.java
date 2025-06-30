@@ -1,4 +1,4 @@
-package ru.edmebank.clients.app.controller;
+package ru.edmebank.clients.adapter.input.rest;
 
 import io.jsonwebtoken.Claims;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,7 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import ru.edmebank.clients.app.api.controller.AccountPriorityController;
 import ru.edmebank.clients.app.api.service.AccountPriorityService;
 import ru.edmebank.clients.fw.exception.AccountPriorityException;
 import ru.edmebank.clients.fw.security.JwtTokenUtil;
