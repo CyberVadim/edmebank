@@ -1,6 +1,5 @@
 package ru.edmebank.clients.adapter.input.rest;
 
-import io.jsonwebtoken.Claims;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -11,13 +10,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.edmebank.clients.app.api.service.AccountPriorityService;
-import ru.edmebank.clients.fw.exception.AccountPriorityException;
 import ru.edmebank.clients.fw.exception.ErrorResponse;
-import ru.edmebank.clients.fw.security.JwtTokenUtil;
 import ru.edmebank.contracts.dto.common.ApiResponseDto;
 import ru.edmebank.contracts.dto.request.AccountPriorityUpdateRequest;
 import ru.edmebank.contracts.dto.response.AccountPriorityDetailsResponse;
@@ -32,10 +28,10 @@ import java.util.UUID;
 @Tag(name = "Account Priorities", description = "API для управления приоритетами счетов")
 public class AccountPriorityController {
 
-    private final AccountPriorityService accountPriorityService;
-    private final JwtTokenUtil jwtTokenUtil;
     private static final String REQUEST_ID_HEADER = "X-Request-ID";
     private static final String AUTH_HEADER = "Authorization";
+
+    private final AccountPriorityService accountPriorityService;
 
     @GetMapping("/{accountId}/priority")
     @Operation(summary = "Получение текущих настроек приоритетов счета",
@@ -56,9 +52,9 @@ public class AccountPriorityController {
             @Parameter(description = "Идентификатор запроса") String requestId,
             @RequestHeader(value = AUTH_HEADER, required = false)
             @Parameter(description = "JWT токен в формате 'Bearer {token}'") String authHeader) {
-        validateToken(authHeader);
+
         log.info("Получение приоритетов счета: {}, RequestId: {}", accountId, requestId);
-        AccountPriorityDetailsResponse details = accountPriorityService.getAccountPriorityDetails(accountId);
+        AccountPriorityDetailsResponse details = accountPriorityService.getAccountPriorityDetails(accountId, authHeader);
         return ResponseEntity.ok(ApiResponseDto.success(details));
     }
 
@@ -90,52 +86,11 @@ public class AccountPriorityController {
             @RequestHeader(value = AUTH_HEADER, required = false)
             @Parameter(description = "JWT токен в формате 'Bearer {token}'") String authHeader) {
 
-        String token = validateToken(authHeader);
-        validateInitiator(token, request.getInitiator().getId());
         log.info("Обновление приоритетов счета: {}, RequestId: {}. WriteOff: {}, Accrual: {}, Initiator: {} ({})",
                 accountId, requestId, request.getPriorityForWriteOff(), request.getPriorityForAccrual(),
                 request.getInitiator().getName(), request.getInitiator().getRole());
-        AccountPriorityUpdateResponse result = accountPriorityService.updateAccountPriority(accountId, request);
+
+        AccountPriorityUpdateResponse result = accountPriorityService.updateAccountPriority(accountId, request, authHeader);
         return ResponseEntity.ok(ApiResponseDto.success(result));
-    }
-
-
-    private String validateToken(String authHeader) {
-        String token = jwtTokenUtil.extractTokenFromHeader(authHeader);
-
-        if (token == null) {
-            throw new AccountPriorityException(
-                    HttpStatus.UNAUTHORIZED.name(),
-                    "Отсутствует JWT токен в заголовке Authorization",
-                    HttpStatus.UNAUTHORIZED);
-        }
-
-        if (!jwtTokenUtil.validateToken(token)) {
-            throw new AccountPriorityException(
-                    HttpStatus.UNAUTHORIZED.name(),
-                    "Невалидный JWT токен",
-                    HttpStatus.UNAUTHORIZED);
-        }
-        return token;
-    }
-
-    private void validateInitiator(String token, String initiatorId) {
-        Claims claims = jwtTokenUtil.getClaims(token);
-
-        if (claims == null) {
-            throw new AccountPriorityException(
-                    HttpStatus.UNAUTHORIZED.name(),
-                    "Невозможно извлечь данные из JWT токена",
-                    HttpStatus.UNAUTHORIZED);
-        }
-
-        String tokenUserId = claims.getSubject();
-
-        if (!tokenUserId.equals(initiatorId)) {
-            throw new AccountPriorityException(
-                    HttpStatus.FORBIDDEN.name(),
-                    "ID пользователя в токене не совпадает с ID инициатора в запросе",
-                    HttpStatus.FORBIDDEN);
-        }
     }
 }

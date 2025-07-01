@@ -12,6 +12,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -52,6 +53,7 @@ public class Account {
     private Client client;
 
     @Column(name = "account_type", length = 50)
+    @Size(max = 50, message = "Тип счета не должен превышать 50 символов")
     private String accountType;
 
     @Column(name = "balance", nullable = false, precision = 15, scale = 2)
@@ -59,10 +61,12 @@ public class Account {
     private BigDecimal balance = defaultBalance;
 
     @Column(name = "currency", nullable = false, length = 3)
+    @Size(min = 3, max = 3, message = "Код валюты должен быть строго 3 символа")
     @NotBlank
     private String currency;
 
     @Column(name = "status", nullable = false, length = 20)
+    @Size(max = 20, message = "Статус счета не должен превышать 20 символов")
     @NotBlank
     private String status = defaultStatus;
 

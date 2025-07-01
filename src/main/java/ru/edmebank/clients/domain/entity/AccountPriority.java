@@ -13,6 +13,7 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Version;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -50,6 +51,7 @@ public class AccountPriority {
     private Account account;
 
     @Column(name = "account_type", length = 20, nullable = false)
+    @Size(max = 20, message = "Тип счета не должен превышать 20 символов")
     @NotBlank
     private String accountType;
 
@@ -74,22 +76,27 @@ public class AccountPriority {
     private List<String> changeReasons;
 
     @Column(name = "change_reason", nullable = false, length = 500)
+    @Size(max = 500, message = "Причина изменения не должна превышать 500 символов")
     @NotBlank
     private String changeReason;
 
     @Column(name = "initiator_id", nullable = false, length = 50)
+    @Size(max = 50, message = "ID инициатора не должен превышать 50 символов")
     @NotBlank
     private String initiatorId;
 
     @Column(name = "initiator_name", nullable = false, length = 100)
+    @Size(max = 100, message = "ФИО инициатора не должно превышать 100 символов")
     @NotBlank
     private String initiatorName;
 
     @Column(name = "initiator_role", nullable = false, length = 30)
+    @Size(max = 30, message = "Роль инициатора не должна превышать 30 символов")
     @NotBlank
     private String initiatorRole;
 
     @Column(name = "last_updated_by", nullable = false, length = 100)
+    @Size(max = 100, message = "Информация о пользователе не должна превышать 100 символов")
     @NotBlank
     private String lastUpdatedBy;
 
@@ -111,6 +118,7 @@ public class AccountPriority {
     private Integer version = defaultVersion;
 
     @Column(name = "status", nullable = false, length = 20)
+    @Size(max = 20, message = "Статус не должен превышать 20 символов")
     @NotBlank
     private AccountPriorityStatus status = defaultStatus;
 }

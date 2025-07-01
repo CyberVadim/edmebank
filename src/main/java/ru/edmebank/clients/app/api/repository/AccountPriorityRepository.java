@@ -11,5 +11,5 @@ public interface AccountPriorityRepository extends JpaRepository<AccountPriority
     /**
      * Поиск активных настроек приоритетов по ID счета
      */
-    AccountPriority findByAccount_AccountIdAndStatus(UUID accountId, AccountPriorityStatus status);
+    AccountPriority findByAccountAccountIdAndStatus(UUID accountId, AccountPriorityStatus status);
 }

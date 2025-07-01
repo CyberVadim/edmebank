@@ -8,7 +8,6 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -17,6 +16,8 @@ import org.springframework.test.web.servlet.ResultActions;
 import ru.edmebank.clients.app.api.service.AccountPriorityService;
 import ru.edmebank.clients.fw.exception.AccountPriorityException;
 import ru.edmebank.clients.fw.security.JwtTokenUtil;
+import ru.edmebank.config.AccountPriorityTestConfig;
+import ru.edmebank.contracts.dto.request.AccountPriorityUpdateRequest;
 import ru.edmebank.contracts.dto.response.AccountPriorityDetailsResponse;
 import ru.edmebank.contracts.dto.response.AccountPriorityUpdateResponse;
 import ru.edmebank.contracts.enums.AccountPriorityType;
@@ -25,11 +26,9 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -37,7 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(AccountPriorityController.class)
 @AutoConfigureMockMvc(addFilters = false)
-@Import(AccountPriorityControllerTest.TestConfig.class)
+@Import(AccountPriorityTestConfig.class)
 class AccountPriorityControllerTest {
 
     private static final String API_PATH = "/api/accounts/{accountId}/priority";
@@ -54,18 +53,16 @@ class AccountPriorityControllerTest {
     private static final String ERROR_CONFLICT_PRIORITIES_CODE = "CONFLICT_PRIORITIES";
     private static final String ERROR_CONFLICT_PRIORITIES_MESSAGE =
             "Для кредитных счетов можно установить только один тип приоритета";
-
-    static class TestConfig {
-        @Bean
-        public AccountPriorityService accountPriorityService() {
-            return Mockito.mock(AccountPriorityService.class);
-        }
-
-        @Bean
-        public JwtTokenUtil jwtTokenUtil() {
-            return Mockito.mock(JwtTokenUtil.class);
-        }
-    }
+    private static final String VALID_JSON = "{"
+                                            + "\"priorityForWriteOff\": true,"
+                                            + "\"priorityForAccrual\": false,"
+                                            + "\"reason\": \"%s\","
+                                            + "\"initiator\": {"
+                                            + "    \"id\": \"%s\","
+                                            + "    \"name\": \"%s\","
+                                            + "    \"role\": \"CREDIT_MANAGER\""
+                                            + "  }"
+                                            + "}";
 
     @Autowired
     private MockMvc mockMvc;
@@ -89,14 +86,14 @@ class AccountPriorityControllerTest {
     @DisplayName("Получение деталей приоритетов счета - успешный сценарий")
     void getAccountPrioritySuccess() throws Exception {
         // Arrange
-        when(accountPriorityService.getAccountPriorityDetails(any()))
+        when(accountPriorityService.getAccountPriorityDetails(any(UUID.class), anyString()))
                 .thenReturn(createDetailsResponse());
 
         // Act & Assert
         performAuthenticatedGet()
                 .andExpect(status().isOk());
 
-        verify(accountPriorityService).getAccountPriorityDetails(any());
+        verify(accountPriorityService).getAccountPriorityDetails(eq(accountId), eq(AUTH_VALUE));
     }
 
     @Test
@@ -104,19 +101,25 @@ class AccountPriorityControllerTest {
     void getAccountPriorityNoToken() throws Exception {
         // Arrange
         when(jwtTokenUtil.extractTokenFromHeader(null)).thenReturn(null);
+        doThrow(new AccountPriorityException(
+                HttpStatus.UNAUTHORIZED.name(),
+                "Отсутствует JWT токен в заголовке Authorization",
+                HttpStatus.UNAUTHORIZED
+        )).when(accountPriorityService).getAccountPriorityDetails(any(UUID.class), isNull());
 
         // Act & Assert
         performUnauthenticatedGet()
-                .andExpect(status().is4xxClientError());
+                .andExpect(status().isUnauthorized());
 
-        verifyNoInteractions(accountPriorityService);
+        verify(accountPriorityService).getAccountPriorityDetails(eq(accountId), isNull());
     }
 
     @Test
     @DisplayName("Обновление приоритетов счета - успешный сценарий")
     void updateAccountPrioritySuccess() throws Exception {
         // Arrange
-        when(accountPriorityService.updateAccountPriority(any(), any()))
+        when(accountPriorityService.updateAccountPriority(
+                any(UUID.class), any(AccountPriorityUpdateRequest.class), anyString()))
                 .thenReturn(createUpdateResponse());
 
         // Act & Assert
@@ -130,10 +133,11 @@ class AccountPriorityControllerTest {
                                 .content(json)
                                 .accept(MediaType.APPLICATION_JSON)
                 )
-                .andDo(print()) // Включим печать для отладки
+                .andDo(print())
                 .andExpect(status().isOk());
 
-        verify(accountPriorityService).updateAccountPriority(any(), any());
+        verify(accountPriorityService).updateAccountPriority(
+                eq(accountId), any(AccountPriorityUpdateRequest.class), eq(AUTH_VALUE));
     }
 
     @Test
@@ -144,7 +148,8 @@ class AccountPriorityControllerTest {
                 ERROR_CONFLICT_PRIORITIES_CODE,
                 ERROR_CONFLICT_PRIORITIES_MESSAGE,
                 HttpStatus.CONFLICT
-        )).when(accountPriorityService).updateAccountPriority(any(), any());
+        )).when(accountPriorityService).updateAccountPriority(
+                any(UUID.class), any(AccountPriorityUpdateRequest.class), anyString());
 
         // Act & Assert
         String json = createValidJson();
@@ -157,10 +162,11 @@ class AccountPriorityControllerTest {
                                 .content(json)
                                 .accept(MediaType.APPLICATION_JSON)
                 )
-                .andDo(print()) // Включим печать для отладки
+                .andDo(print())
                 .andExpect(status().isConflict());
 
-        verify(accountPriorityService).updateAccountPriority(any(), any());
+        verify(accountPriorityService).updateAccountPriority(
+                eq(accountId), any(AccountPriorityUpdateRequest.class), eq(AUTH_VALUE));
     }
 
     private void setupJwtMock() {
@@ -194,18 +200,7 @@ class AccountPriorityControllerTest {
      * Важно: ID инициатора должен совпадать с ID пользователя в JWT токене.
      */
     private String createValidJson() {
-        return String.format(
-                "{"
-                + "\"priorityForWriteOff\": true,"
-                + "\"priorityForAccrual\": false,"
-                + "\"reason\": \"%s\","
-                + "\"initiator\": {"
-                + "    \"id\": \"%s\","
-                + "    \"name\": \"%s\","
-                + "    \"role\": \"CREDIT_MANAGER\""
-                + "  }"
-                + "}",
-                TEST_REASON, TEST_USER_ID, TEST_USER_NAME);
+        return String.format(VALID_JSON, TEST_REASON, TEST_USER_ID, TEST_USER_NAME);
     }
 
     private AccountPriorityDetailsResponse createDetailsResponse() {
