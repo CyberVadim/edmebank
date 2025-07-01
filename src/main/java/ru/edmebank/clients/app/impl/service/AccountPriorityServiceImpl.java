@@ -1,5 +1,6 @@
 package ru.edmebank.clients.app.impl.service;
 
+import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -11,11 +12,13 @@ import ru.edmebank.clients.app.api.service.AccountPriorityService;
 import ru.edmebank.clients.domain.entity.Account;
 import ru.edmebank.clients.domain.entity.AccountPriority;
 import ru.edmebank.clients.fw.exception.AccountPriorityException;
+import ru.edmebank.clients.fw.security.JwtTokenUtil;
 import ru.edmebank.contracts.dto.request.AccountPriorityUpdateRequest;
 import ru.edmebank.contracts.dto.response.AccountPriorityDetailsResponse;
 import ru.edmebank.contracts.dto.response.AccountPriorityUpdateResponse;
 import ru.edmebank.contracts.enums.AccountPriorityStatus;
 import ru.edmebank.contracts.enums.AccountPriorityType;
+import ru.edmebank.contracts.enums.InitiatorRole;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -36,18 +39,24 @@ public class AccountPriorityServiceImpl implements AccountPriorityService {
     private static final String RESTRICTION_ACCOUNT_CLOSED = "Счет закрыт";
     private static final String RESTRICTION_DEPOSIT_NO_CHANGES = "Приоритеты для депозитных счетов не изменяются";
     private static final String RESTRICTION_LOAN_ONE_PRIORITY = "Только один приоритет разрешен для кредитных счетов";
+    private static final int SINGLE_RESTRICTION = 1;
+    private static final int FIRST_RESTRICTION_INDEX = 0;
+    private static final int INITIAL_VERSION = 1;
+    private static final int VERSION_INCREMENT = 1;
 
     private final AccountRepository accountRepository;
     private final AccountPriorityRepository accountPriorityRepository;
+    private final JwtTokenUtil jwtTokenUtil;
 
-    @Override
     @Transactional(readOnly = true)
-    public AccountPriorityDetailsResponse getAccountPriorityDetails(UUID accountId) throws AccountPriorityException {
+    public AccountPriorityDetailsResponse getAccountPriorityDetails(UUID accountId, String authHeader) throws AccountPriorityException {
+        validateToken(authHeader);
+
         Account account = findAccountById(accountId);
         validateAccountIsActive(account);
 
         AccountPriority priority = accountPriorityRepository
-                .findByAccount_AccountIdAndStatus(accountId, AccountPriorityStatus.ACTIVE);
+                .findByAccountAccountIdAndStatus(accountId, AccountPriorityStatus.ACTIVE);
 
         if (priority == null) {
             priority = createDefaultPriority(account);
@@ -63,7 +72,10 @@ public class AccountPriorityServiceImpl implements AccountPriorityService {
     @Override
     @Transactional
     public AccountPriorityUpdateResponse updateAccountPriority(
-            UUID accountId, AccountPriorityUpdateRequest request) throws AccountPriorityException {
+            UUID accountId, AccountPriorityUpdateRequest request, String authHeader) throws AccountPriorityException {
+
+        String token = validateToken(authHeader);
+        validateInitiator(token, request.getInitiator().getId());
 
         Account account = findAccountById(accountId);
         validateAccountIsActive(account);
@@ -71,19 +83,56 @@ public class AccountPriorityServiceImpl implements AccountPriorityService {
 
         // Архивируем существующую запись, если есть
         AccountPriority existingPriority = accountPriorityRepository
-                .findByAccount_AccountIdAndStatus(accountId, AccountPriorityStatus.ACTIVE);
+                .findByAccountAccountIdAndStatus(accountId, AccountPriorityStatus.ACTIVE);
 
         if (existingPriority != null) {
             existingPriority.setStatus(AccountPriorityStatus.ARCHIVED);
-            accountPriorityRepository.save(existingPriority);
         }
 
         // Создаем и сохраняем новую запись
-        int version = (existingPriority != null) ? existingPriority.getVersion() + 1 : 1;
+        int version = (existingPriority != null) ? existingPriority.getVersion() + VERSION_INCREMENT : INITIAL_VERSION;
         AccountPriority newPriority = createNewPriority(account, request, version);
-        AccountPriority savedPriority = accountPriorityRepository.save(newPriority);
 
-        return buildUpdateResponse(account, savedPriority);
+        return buildUpdateResponse(account, newPriority);
+    }
+
+    private String validateToken(String authHeader) {
+        String token = jwtTokenUtil.extractTokenFromHeader(authHeader);
+
+        if (token == null) {
+            throw new AccountPriorityException(
+                    HttpStatus.UNAUTHORIZED.name(),
+                    "Отсутствует JWT токен в заголовке Authorization",
+                    HttpStatus.UNAUTHORIZED);
+        }
+
+        if (!jwtTokenUtil.validateToken(token)) {
+            throw new AccountPriorityException(
+                    HttpStatus.UNAUTHORIZED.name(),
+                    "Невалидный JWT токен",
+                    HttpStatus.UNAUTHORIZED);
+        }
+        return token;
+    }
+
+    private void validateInitiator(String token, String initiatorId) {
+        Claims claims = jwtTokenUtil.getClaims(token);
+
+        if (claims == null) {
+            throw new AccountPriorityException(
+                    HttpStatus.UNAUTHORIZED.name(),
+                    "Невозможно извлечь данные из JWT токена",
+                    HttpStatus.UNAUTHORIZED);
+        }
+
+        String tokenUserId = claims.getSubject();
+
+        if (!tokenUserId.equals(initiatorId)) {
+            throw new AccountPriorityException(
+                    HttpStatus.FORBIDDEN.name(),
+                    "ID пользователя в токене не совпадает с ID инициатора в запросе",
+                    HttpStatus.FORBIDDEN);
+        }
     }
 
     private Account findAccountById(UUID accountId) throws AccountPriorityException {
@@ -155,9 +204,9 @@ public class AccountPriorityServiceImpl implements AccountPriorityService {
         priority.setCanSetAccrual(true);
         priority.setChangeReasons(Collections.emptyList());
         priority.setChangeReason("Инициализация приоритетов");
-        priority.setInitiatorId("SYSTEM");
+        priority.setInitiatorId(InitiatorRole.SYSTEM.name());
         priority.setInitiatorName("Система");
-        priority.setInitiatorRole("SYSTEM");
+        priority.setInitiatorRole(InitiatorRole.SYSTEM.name());
         priority.setLastUpdatedBy("Система (SYSTEM)");
         priority.setStatus(AccountPriorityStatus.ACTIVE);
         return priority;
@@ -224,7 +273,8 @@ public class AccountPriorityServiceImpl implements AccountPriorityService {
      */
     private boolean canSetWriteOff(List<String> restrictions) {
         return restrictions.isEmpty() ||
-               (restrictions.size() == 1 && RESTRICTION_LOAN_ONE_PRIORITY.equals(restrictions.get(0)));
+               (restrictions.size() == SINGLE_RESTRICTION &&
+                RESTRICTION_LOAN_ONE_PRIORITY.equals(restrictions.get(FIRST_RESTRICTION_INDEX)));
     }
 
     /**
@@ -232,7 +282,8 @@ public class AccountPriorityServiceImpl implements AccountPriorityService {
      */
     private boolean canSetAccrual(List<String> restrictions) {
         return restrictions.isEmpty() ||
-               (restrictions.size() == 1 && RESTRICTION_LOAN_ONE_PRIORITY.equals(restrictions.get(0)));
+               (restrictions.size() == SINGLE_RESTRICTION &&
+                RESTRICTION_LOAN_ONE_PRIORITY.equals(restrictions.get(FIRST_RESTRICTION_INDEX)));
     }
 
     /**
@@ -248,9 +299,12 @@ public class AccountPriorityServiceImpl implements AccountPriorityService {
         String lowerType = accountType.toLowerCase();
 
         // Определение типа счета по подстрокам в названии
-        boolean isLoanAccount = lowerType.contains("loan") || lowerType.contains("кредит");
-        boolean isInterestAccount = lowerType.contains("interest") || lowerType.contains("процент");
-        boolean isDepositAccount = lowerType.contains("deposit") || lowerType.contains("депозит");
+        boolean isLoanAccount =
+                lowerType.contains(AccountPriorityType.LOAN_PRINCIPAL.name()) || lowerType.contains("кредит");
+        boolean isInterestAccount =
+                lowerType.contains(AccountPriorityType.LOAN_INTEREST.name()) || lowerType.contains("процент");
+        boolean isDepositAccount =
+                lowerType.contains(AccountPriorityType.DEPOSIT.name()) || lowerType.contains("депозит");
 
         if (isLoanAccount) {
             if (isInterestAccount) {

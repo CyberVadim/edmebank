@@ -12,12 +12,13 @@ public interface AccountPriorityService {
     /**
      * Получить текущие настройки приоритетов счета
      */
-    AccountPriorityDetailsResponse getAccountPriorityDetails(UUID accountId) throws AccountPriorityException;
+    AccountPriorityDetailsResponse getAccountPriorityDetails(
+            UUID accountId, String authHeader) throws AccountPriorityException;
 
     /**
      * Обновить настройки приоритетов счета
      */
     AccountPriorityUpdateResponse updateAccountPriority(
-            UUID accountId, AccountPriorityUpdateRequest request) throws AccountPriorityException;
+            UUID accountId, AccountPriorityUpdateRequest request, String authHeader) throws AccountPriorityException;
 
 }
