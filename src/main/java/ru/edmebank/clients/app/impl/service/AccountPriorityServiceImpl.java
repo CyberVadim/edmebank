@@ -87,11 +87,13 @@ public class AccountPriorityServiceImpl implements AccountPriorityService {
 
         if (existingPriority != null) {
             existingPriority.setStatus(AccountPriorityStatus.ARCHIVED);
+            accountPriorityRepository.save(existingPriority);
         }
 
         // Создаем и сохраняем новую запись
         int version = (existingPriority != null) ? existingPriority.getVersion() + VERSION_INCREMENT : INITIAL_VERSION;
         AccountPriority newPriority = createNewPriority(account, request, version);
+        newPriority = accountPriorityRepository.save(newPriority);
 
         return buildUpdateResponse(account, newPriority);
     }
