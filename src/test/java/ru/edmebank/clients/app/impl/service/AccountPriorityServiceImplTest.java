@@ -33,8 +33,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -214,6 +216,57 @@ class AccountPriorityServiceImplTest {
         assertEquals(HttpStatus.FORBIDDEN.name(), exception.getCode());
         verifyNoInteractions(accountRepository);
         verifyNoInteractions(accountPriorityRepository);
+    }
+
+    @Test
+    @DisplayName("Обновление приоритетов счета - успешное обновление с существующим приоритетом")
+    void updateAccountPrioritySuccess() {
+        // Arrange
+        account = createTestAccount(ACCOUNT_TYPE_CREDIT);
+        accountPriority = createTestAccountPriority(account);
+        updateRequest = createTestUpdateRequest();
+
+        when(accountRepository.findById(accountId)).thenReturn(Optional.of(account));
+        when(accountPriorityRepository.findByAccountAccountIdAndStatus(accountId, AccountPriorityStatus.ACTIVE))
+                .thenReturn(accountPriority);
+        when(accountPriorityRepository.save(any(AccountPriority.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        // Act
+        accountPriorityService.updateAccountPriority(accountId, updateRequest, TEST_AUTH_HEADER);
+
+        // Assert
+        verify(accountRepository).findById(accountId);
+        verify(accountPriorityRepository).findByAccountAccountIdAndStatus(accountId, AccountPriorityStatus.ACTIVE);
+        verify(accountPriorityRepository).save(accountPriority); // Verify existing priority is saved after archiving
+        
+        // Check that the existing priority was archived
+        assertEquals(AccountPriorityStatus.ARCHIVED, accountPriority.getStatus());
+        
+        // Verify that save was called twice (once for existing priority, once for new priority)
+        verify(accountPriorityRepository, times(2)).save(any(AccountPriority.class));
+    }
+
+    @Test
+    @DisplayName("Обновление приоритетов счета - успешное обновление без существующего приоритета")
+    void updateAccountPrioritySuccessWithoutExisting() {
+        // Arrange
+        account = createTestAccount(ACCOUNT_TYPE_CREDIT);
+        updateRequest = createTestUpdateRequest();
+
+        when(accountRepository.findById(accountId)).thenReturn(Optional.of(account));
+        when(accountPriorityRepository.findByAccountAccountIdAndStatus(accountId, AccountPriorityStatus.ACTIVE))
+                .thenReturn(null);
+        when(accountPriorityRepository.save(any(AccountPriority.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        // Act
+        accountPriorityService.updateAccountPriority(accountId, updateRequest, TEST_AUTH_HEADER);
+
+        // Assert
+        verify(accountRepository).findById(accountId);
+        verify(accountPriorityRepository).findByAccountAccountIdAndStatus(accountId, AccountPriorityStatus.ACTIVE);
+        
+        // Verify that save was called only once (for the new priority)
+        verify(accountPriorityRepository, times(1)).save(any(AccountPriority.class));
     }
 
     private Account createTestAccount(String accountType) {
